@@ -19,9 +19,143 @@
     <!-- Bootstrap & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <!-- Custom Styles -->
     <link href="/adm/css/style.css" rel="stylesheet">
+    
+    <style>
+        /* Animação Realista de Candlesticks no Footer Admin */
+        .admin-footer-candlestick {
+            position: absolute;
+            width: 8px;
+            border-radius: 2px;
+            opacity: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .admin-footer-candlestick.green {
+            background: linear-gradient(to bottom, #00ff88 0%, #00d4aa 30%, #00b894 70%, #00ff88 100%);
+            border: 1px solid #00ff88;
+        }
+
+        .admin-footer-candlestick.red {
+            background: linear-gradient(to bottom, #ff4757 0%, #ff3742 30%, #e84393 70%, #ff4757 100%);
+            border: 1px solid #ff4757;
+        }
+
+        .admin-footer-candlestick::before,
+        .admin-footer-candlestick::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            background: inherit;
+            border-radius: 1px;
+        }
+
+        .admin-footer-candlestick::before {
+            top: -12px;
+            height: 12px;
+        }
+
+        .admin-footer-candlestick::after {
+            bottom: -12px;
+            height: 12px;
+        }
+
+        /* Animações de Mercado para Admin */
+        @keyframes adminMarketRise {
+            0% {
+                transform: translateY(80px) scale(0.8);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.7;
+                transform: translateY(60px) scale(0.9);
+            }
+            30% {
+                transform: translateY(40px) scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translateY(20px) scale(1.1);
+                opacity: 0.9;
+            }
+            70% {
+                transform: translateY(10px) scale(1);
+                opacity: 0.8;
+            }
+            85% {
+                transform: translateY(-10px) scale(0.9);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-30px) scale(0.7);
+                opacity: 0;
+            }
+        }
+
+        @keyframes adminMarketFall {
+            0% {
+                transform: translateY(80px) scale(0.8);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.7;
+                transform: translateY(70px) scale(0.9);
+            }
+            30% {
+                transform: translateY(60px) scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translateY(50px) scale(1.1);
+                opacity: 0.9;
+            }
+            70% {
+                transform: translateY(40px) scale(1);
+                opacity: 0.8;
+            }
+            85% {
+                transform: translateY(20px) scale(0.9);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-10px) scale(0.7);
+                opacity: 0;
+            }
+        }
+
+        @keyframes adminMarketVolatility {
+            0% {
+                transform: translateY(80px) scale(0.8) rotate(0deg);
+                opacity: 0;
+            }
+            20% {
+                transform: translateY(50px) scale(1) rotate(5deg);
+                opacity: 0.8;
+            }
+            40% {
+                transform: translateY(30px) scale(1.1) rotate(-3deg);
+                opacity: 0.9;
+            }
+            60% {
+                transform: translateY(20px) scale(1) rotate(2deg);
+                opacity: 0.8;
+            }
+            80% {
+                transform: translateY(10px) scale(0.9) rotate(-1deg);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-20px) scale(0.7) rotate(0deg);
+                opacity: 0;
+            }
+        }
+    </style>
 </head>
 
 <body class="fade-in-up">
@@ -29,8 +163,7 @@
     <nav class="navbar navbar-expand-lg glass fixed-top">
         <div class="container">
             <a href="/admin/students/dashboard" class="navbar-brand">
-                <img src="/adm/images/logo-dark.png" alt="7Trader" class="logo logo-dark">
-                <img src="/adm/images/logo-light.png" alt="7Trader" class="logo logo-light">
+                <strong class="footer-title-admin">7</strong><span style="color:#fff!importa">Trader</span>
             </a>
 
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -170,17 +303,24 @@
     </main>
 
     <!-- Footer -->
-    <footer class="glass mt-5 py-4">
-        <div class="container text-center">
+    <footer class="trading-footer-admin py-4 mt-5 position-relative overflow-hidden">
+        <!-- Animação de Candlesticks -->
+        <div class="candlestick-container position-absolute w-100 h-100" id="adminFooterCandlesticks"></div>
+        
+        <div class="container text-center position-relative" style="z-index: 10;">
             <div class="row align-items-center">
                 <div class="col-md-6 text-md-start">
-                    <p class="mb-0">
-                        <i class="bi bi-graph-up-arrow me-2"></i>
-                        <strong>7 Trader todos os direitos reservados.</strong>
+                    <p class="mb-0 footer-brand">
+                        <strong class="footer-title-admin">7</strong><span>Trader</span>
+                        <span class="footer-subtitle-admin">todos os direitos reservados.</span>
                     </p>
                 </div>
                 <div class="col-md-6 text-md-end">
-
+                    <div class="footer-stats-admin">
+                        <span class="stat-badge">📊 Analytics</span>
+                        <span class="stat-badge">🎯 Performance</span>
+                        <span class="stat-badge">📈 Growth</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -260,6 +400,177 @@
                 }, 100);
             });
         });
+
+        // Footer Candlestick Animation para Admin com Simulação de Mercado
+        class AdminMarketSimulator {
+            constructor() {
+                this.currentTrend = 'neutral';
+                this.trendDuration = 0;
+                this.maxTrendDuration = 18;
+                this.price = 100;
+                this.priceHistory = [];
+                this.volatility = 0.4;
+                
+                this.updateTrend();
+            }
+            
+            updateTrend() {
+                const trends = ['bullish', 'bearish', 'neutral', 'volatile'];
+                const weights = [0.35, 0.35, 0.15, 0.15];
+                
+                let random = Math.random();
+                let cumulativeWeight = 0;
+                
+                for (let i = 0; i < trends.length; i++) {
+                    cumulativeWeight += weights[i];
+                    if (random <= cumulativeWeight) {
+                        this.currentTrend = trends[i];
+                        break;
+                    }
+                }
+                
+                this.trendDuration = 0;
+                this.maxTrendDuration = Math.random() * 25 + 15;
+                
+                switch(this.currentTrend) {
+                    case 'volatile':
+                        this.volatility = Math.random() * 0.9 + 0.8;
+                        break;
+                    case 'bullish':
+                    case 'bearish':
+                        this.volatility = Math.random() * 0.5 + 0.3;
+                        break;
+                    default:
+                        this.volatility = Math.random() * 0.3 + 0.2;
+                }
+            }
+            
+            getMarketData() {
+                this.trendDuration++;
+                
+                if (this.trendDuration >= this.maxTrendDuration) {
+                    this.updateTrend();
+                }
+                
+                let priceChange = 0;
+                const baseChange = (Math.random() - 0.5) * this.volatility;
+                
+                switch(this.currentTrend) {
+                    case 'bullish':
+                        priceChange = baseChange + (Math.random() * 0.4 + 0.15);
+                        break;
+                    case 'bearish':
+                        priceChange = baseChange - (Math.random() * 0.4 + 0.15);
+                        break;
+                    case 'volatile':
+                        priceChange = (Math.random() - 0.5) * this.volatility * 2.5;
+                        break;
+                    default:
+                        priceChange = baseChange * 0.6;
+                }
+                
+                this.price += priceChange;
+                this.priceHistory.push(this.price);
+                
+                if (this.priceHistory.length > 60) {
+                    this.priceHistory.shift();
+                }
+                
+                return {
+                    trend: this.currentTrend,
+                    price: this.price,
+                    change: priceChange,
+                    volatility: this.volatility,
+                    isGreen: priceChange >= 0
+                };
+            }
+        }
+        
+        const adminMarketSim = new AdminMarketSimulator();
+        
+        function createAdminRealisticCandlestick() {
+            const container = document.getElementById('adminFooterCandlesticks');
+            if (!container) return;
+            
+            const marketData = adminMarketSim.getMarketData();
+            const candlestick = document.createElement('div');
+            
+            const isGreen = marketData.isGreen;
+            const baseHeight = 18;
+            const volatilityHeight = Math.abs(marketData.change) * 18;
+            const height = Math.max(baseHeight + volatilityHeight, 10);
+            const leftPosition = Math.random() * 94 + 3;
+            
+            let animationDuration, animationType;
+            
+            switch(marketData.trend) {
+                case 'bullish':
+                    animationDuration = Math.random() * 3 + 7;
+                    animationType = 'adminMarketRise';
+                    break;
+                case 'bearish':
+                    animationDuration = Math.random() * 3 + 8;
+                    animationType = 'adminMarketFall';
+                    break;
+                case 'volatile':
+                    animationDuration = Math.random() * 2 + 5;
+                    animationType = 'adminMarketVolatility';
+                    break;
+                default:
+                    animationDuration = Math.random() * 4 + 9;
+                    animationType = Math.random() > 0.5 ? 'adminMarketRise' : 'adminMarketFall';
+            }
+            
+            candlestick.className = `admin-footer-candlestick ${isGreen ? 'green' : 'red'}`;
+            candlestick.style.left = leftPosition + '%';
+            candlestick.style.height = height + 'px';
+            candlestick.style.animation = `${animationType} ${animationDuration}s ease-out forwards`;
+            
+            if (marketData.volatility > 0.9) {
+                candlestick.style.boxShadow = `0 0 18px ${isGreen ? '#00ff88' : '#ff4757'}`;
+            }
+            
+            container.appendChild(candlestick);
+            
+            setTimeout(() => {
+                if (candlestick.parentNode) {
+                    candlestick.parentNode.removeChild(candlestick);
+                }
+            }, animationDuration * 1000);
+        }
+        
+        let adminCandlestickInterval;
+        
+        function updateAdminCandlestickFrequency() {
+            const marketData = adminMarketSim.getMarketData();
+            let frequency;
+            
+            switch(marketData.trend) {
+                case 'volatile':
+                    frequency = Math.random() * 900 + 700;
+                    break;
+                case 'bullish':
+                case 'bearish':
+                    frequency = Math.random() * 1200 + 1400;
+                    break;
+                default:
+                    frequency = Math.random() * 1800 + 2200;
+            }
+            
+            if (adminCandlestickInterval) {
+                clearInterval(adminCandlestickInterval);
+            }
+            
+            adminCandlestickInterval = setInterval(createAdminRealisticCandlestick, frequency);
+            setTimeout(updateAdminCandlestickFrequency, frequency * 2.5);
+        }
+        
+        // Inicializar sistema admin
+        updateAdminCandlestickFrequency();
+        
+        for (let i = 0; i < 2; i++) {
+            setTimeout(createAdminRealisticCandlestick, i * 900);
+        }
     </script>
 </body>
 

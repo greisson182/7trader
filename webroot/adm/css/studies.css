@@ -157,115 +157,14 @@
     }
 }
 
-/* Table Enhancements */
+/* Month Studies Table - Using unified table system from style.css */
 .month-studies .table {
     margin: 0;
-    background: transparent;
+    border-radius: 0 0 16px 16px;
+    overflow: hidden;
 }
 
-.month-studies .table thead th {
-    background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 136, 0.08));
-    border: none;
-    color: #00ff88;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 1rem;
-    font-size: 0.875rem;
-    text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
-}
-
-.month-studies .table tbody tr {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.02);
-}
-
-.month-studies .table tbody tr:hover {
-    background: rgba(0, 255, 136, 0.05);
-    transform: scale(1.005);
-    box-shadow: 0 4px 16px rgba(0, 255, 136, 0.1);
-}
-
-.month-studies .table tbody td {
-    padding: 1rem;
-    border: none;
-    color: #ffffff;
-    vertical-align: middle;
-}
-
-/* Badge Enhancements */
-.month-studies .badge {
-    border-radius: 8px;
-    font-weight: 600;
-    padding: 0.4rem 0.8rem;
-    font-size: 0.75rem;
-    text-shadow: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.month-studies .badge.bg-success {
-    background: linear-gradient(135deg, #00ff88, #00cc6a) !important;
-    color: #000;
-}
-
-.month-studies .badge.bg-danger {
-    background: linear-gradient(135deg, #ff5722, #f44336) !important;
-    color: #fff;
-}
-
-.month-studies .badge.bg-warning {
-    background: linear-gradient(135deg, #ffc107, #ff9800) !important;
-    color: #000;
-}
-
-/* Action Buttons */
-.month-studies .actions .btn {
-    border-radius: 8px;
-    padding: 0.4rem 0.6rem;
-    margin: 0 0.1rem;
-    transition: all 0.3s ease;
-    border: 1px solid transparent;
-}
-
-.month-studies .actions .btn-outline-primary {
-    border-color: rgba(0, 255, 136, 0.3);
-    color: #00ff88;
-    background: rgba(0, 255, 136, 0.05);
-}
-
-.month-studies .actions .btn-outline-primary:hover {
-    background: linear-gradient(135deg, #00ff88, #00cc6a);
-    color: #000;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
-}
-
-.month-studies .actions .btn-outline-warning {
-    border-color: rgba(255, 193, 7, 0.3);
-    color: #ffc107;
-    background: rgba(255, 193, 7, 0.05);
-}
-
-.month-studies .actions .btn-outline-warning:hover {
-    background: linear-gradient(135deg, #ffc107, #ff9800);
-    color: #000;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
-}
-
-.month-studies .actions .btn-outline-danger {
-    border-color: rgba(255, 87, 34, 0.3);
-    color: #ff5722;
-    background: rgba(255, 87, 34, 0.05);
-}
-
-.month-studies .actions .btn-outline-danger:hover {
-    background: linear-gradient(135deg, #ff5722, #f44336);
-    color: #fff;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3);
-}
+/* Estilos removidos - usando novo sistema de tabelas do style.css */
 
 /* Gradient Text */
 .gradient-text {

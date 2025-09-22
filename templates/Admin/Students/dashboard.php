@@ -219,31 +219,31 @@ use App\Helper\CurrencyHelper;
                                     <i class="bi bi-calendar me-1"></i>
                                     Período
                                 </th>
-                                <th class="border-0 text-center">
+                                <th class="border-0">
                                     <i class="bi bi-journal me-1"></i>
                                     Estudos
                                 </th>
-                                <th class="border-0 text-center">
+                                <th class="border-0">
                                     <i class="bi bi-check-circle me-1"></i>
                                     Vitórias
                                 </th>
-                                <th class="border-0 text-center">
+                                <th class="border-0">
                                     <i class="bi bi-x-circle me-1"></i>
                                     Derrotas
                                 </th>
-                                <th class="border-0 text-center">
+                                <th class="border-0">
                                     <i class="bi bi-bar-chart me-1"></i>
                                     Operações
                                 </th>
-                                <th class="border-0 text-center">
+                                <th class="border-0">
                                     <i class="bi bi-percent me-1"></i>
                                     Taxa de Acerto
                                 </th>
-                                <th class="border-0 text-center">
+                                <th class="border-0">
                                     <i class="bi bi-currency-dollar me-1"></i>
                                     P&L
                                 </th>
-                                <th class="border-0 text-center">
+                                <th class="border-0">
                                     <i class="bi bi-calendar-event me-1"></i>
                                     Período
                                 </th>
@@ -258,19 +258,19 @@ use App\Helper\CurrencyHelper;
                                         <?= h($data['month_name']) ?> <?= h($data['year']) ?>
                                     </div>
                                 </td>
-                                <td class="text-center">
+                                <td>
                                     <span class="badge bg-primary rounded-pill"><?= number_format($data['total_studies']) ?></span>
                                 </td>
-                                <td class="text-center">
+                                <td>
                                     <span class="badge bg-success rounded-pill"><?= number_format($data['total_wins']) ?></span>
                                 </td>
-                                <td class="text-center">
+                                <td>
                                     <span class="badge bg-danger rounded-pill"><?= number_format($data['total_losses']) ?></span>
                                 </td>
-                                <td class="text-center">
+                                <td>
                                     <span class="badge bg-info rounded-pill"><?= number_format($data['total_trades']) ?></span>
                                 </td>
-                                <td class="text-center">
+                                <td>
                                     <div class="d-flex align-items-center justify-content-center">
                                         <div class="progress me-2" style="width: 40px; height: 6px;">
                                             <div class="progress-bar <?= $data['avg_win_rate'] >= 50 ? 'bg-success' : 'bg-warning' ?>" 
@@ -281,13 +281,13 @@ use App\Helper\CurrencyHelper;
                                         </span>
                                     </div>
                                 </td>
-                                <td class="text-center">
+                                <td>
                                     <span class="fw-bold <?= ($data['total_profit_loss'] ?? 0) >= 0 ? 'text-success' : 'text-danger' ?>">
                                         <i class="bi bi-<?= ($data['total_profit_loss'] ?? 0) >= 0 ? 'arrow-up' : 'arrow-down' ?> me-1"></i>
                                         <?= CurrencyHelper::formatForUser((float)($data['total_profit_loss'] ?? 0), $student['currency'] ?? 'BRL') ?>
                                     </span>
                                 </td>
-                                <td class="text-center text-muted small text-period">
+                                <td class="text-muted small text-period">
                                     <?= date('d/m', strtotime($data['first_study'])) ?> - <?= date('d/m', strtotime($data['last_study'])) ?>
                                 </td>
                             </tr>
@@ -398,32 +398,7 @@ use App\Helper\CurrencyHelper;
     color: white;
 }
 
-.modern-table {
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-.modern-table thead th {
-    background: rgba(var(--bs-primary-rgb), 0.05);
-    font-weight: 600;
-    font-size: 0.875rem;
-    color: var(--bs-gray-700);
-    padding: 1rem 0.75rem;
-}
-
-.modern-table tbody tr {
-    transition: all 0.2s ease;
-}
-
-.modern-table tbody tr:hover {
-    background: rgba(var(--bs-primary-rgb), 0.02);
-    transform: scale(1.01);
-}
-
-.table-row-hover td {
-    padding: 1rem 0.75rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
+/* Estilos removidos - usando novo sistema de tabelas do style.css */
 
 .month-indicator {
     width: 8px;

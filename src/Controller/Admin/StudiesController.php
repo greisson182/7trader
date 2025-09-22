@@ -68,6 +68,7 @@ class StudiesController extends AppController
                     $monthYear = $date->format('Y-m');
                     $monthYearDisplay = ControllerHelper::getMonthNamePortuguese((int)$date->format('m')) . ' ' . $date->format('Y');
 
+                    $study['study_date'] = ControllerHelper::dataView($study['study_date']);
                     if (!isset($studiesByMonth[$monthYear])) {
                         $studiesByMonth[$monthYear] = [
                             'display'           => $monthYearDisplay,

@@ -258,23 +258,25 @@ class ControllerHelper
     }
 
     /**
-     * Converte array de datas brasileiras para formato americano
+     * Converte data do formato americano (YYYY-MM-DD) para formato brasileiro (DD/MM/YYYY)
      * 
-     * @param array $datesBr Array de datas no formato brasileiro
-     * @return array Array de datas no formato americano (valores inválidos são removidos)
+     * @param string $date Data no formato americano (YYYY-MM-DD)
+     * @return string Data no formato brasileiro (DD/MM/YYYY)
      */
-    public static function convertBrazilianDatesArray(array $datesBr): array
+    public static function dataView(string $date): string
     {
-        $convertedDates = [];
-        
-        foreach ($datesBr as $key => $dateBr) {
-            $converted = self::brazilianToAmerican($dateBr);
-            if ($converted !== false) {
-                $convertedDates[$key] = $converted;
-            }
+        if (empty($date)) {
+            return '';
         }
         
-        return $convertedDates;
+        // Verifica se a data está no formato americano (YYYY-MM-DD)
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            $convertedDate = implode('/', array_reverse(explode('-', $date)));
+            return $convertedDate;
+        }
+        
+        // Se já estiver no formato brasileiro ou outro formato, retorna como está
+        return $date;
     }
 
     /**
