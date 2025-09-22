@@ -19,7 +19,7 @@
     /* Cinza escuro */
     --trading-medium: #333333;
     /* Cinza médio */
-    --trading-light: #666666;
+    --trading-light: #a3a3a3;
     /* Cinza claro */
     --trading-lighter: #999999;
     /* Cinza muito claro */
@@ -187,7 +187,7 @@ body {
 
 .section-title.neon {
     color: var(--trading-primary);
-    text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+    text-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
 }
 
 .section-subtitle {

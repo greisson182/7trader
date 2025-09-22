@@ -36,26 +36,9 @@
             
             <div class="col-lg-6">
                 <div class="trading-arena position-relative">
-           
-                    <!-- Simulador de Trading - Apenas Gráfico -->
-                    <div class="trading-simulator">
-                        <!-- Container do gráfico -->
-                        <div class="chart-container">
-                            <div class="chart-area" id="chartArea">
-                                <!-- Eixo de preços -->
-                                <div class="price-axis" id="priceLabels"></div>
-                                
-                                <!-- Eixo de tempo -->
-                                <div class="time-axis" id="timeLabels"></div>
-                                
-                                <!-- Container dos candlesticks -->
-                                <div class="candlesticks-container" id="candlesticksContainer"></div>
-                                
-                                <!-- Removida a linha amarela do último preço -->
-                                
-                                <!-- Removida a bolinha do currentTick -->
-                            </div>
-                        </div>
+                    <!-- Imagem do Gráfico de Trading -->
+                    <div class="trading-chart-image">
+                        <img src="/site/images/trading-chart.svg" alt="Gráfico de Trading" class="img-fluid rounded shadow-lg">
                     </div>
                 </div>
             </div>
@@ -765,52 +748,33 @@
 }
 </style>
 
-<!-- Trading Simulator JavaScript -->
-<script src="/site/js/trading-simulator.js"></script>
-<script>
-// Inicializar o simulador quando a página carregar
-document.addEventListener('DOMContentLoaded', function() {
-    const simulator = new TradingSimulator();
-    simulator.start();
-    
-    // Configurar controles do simulador
-    const candlePeriodSelect = document.getElementById('candlePeriod');
-    const visibleHistorySelect = document.getElementById('visibleHistory');
-    const simulationSpeedSelect = document.getElementById('simulationSpeed');
-    
-    if (candlePeriodSelect) {
-        candlePeriodSelect.innerHTML = `
-            <option value="1000">1 segundo</option>
-            <option value="2000">2 segundos</option>
-            <option value="3000" selected>3 segundos</option>
-            <option value="5000">5 segundos</option>
-            <option value="10000">10 segundos</option>
-            <option value="15000">15 segundos</option>
-            <option value="30000">30 segundos</option>
-            <option value="60000">1 minuto</option>
-        `;
+<!-- Trading Chart Image Styles -->
+<style>
+.trading-chart-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    padding: 2rem;
+}
+
+.trading-chart-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.trading-chart-image img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+@media (max-width: 768px) {
+    .trading-chart-image {
+        min-height: 300px;
+        padding: 1rem;
     }
-    
-    if (visibleHistorySelect) {
-        visibleHistorySelect.innerHTML = `
-            <option value="10">10 velas</option>
-            <option value="15">15 velas</option>
-            <option value="20" selected>20 velas</option>
-            <option value="30">30 velas</option>
-            <option value="50">50 velas</option>
-            <option value="100">100 velas</option>
-        `;
-    }
-    
-    if (simulationSpeedSelect) {
-        simulationSpeedSelect.innerHTML = `
-            <option value="0.25">0.25x</option>
-            <option value="0.5">0.5x</option>
-            <option value="1" selected>1x</option>
-            <option value="2">2x</option>
-            <option value="5">5x</option>
-            <option value="10">10x</option>
-        `;
-    }
-});
-</script>
+}
+</style>
