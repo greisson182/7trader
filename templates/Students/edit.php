@@ -80,15 +80,6 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label for="currency" class="form-label">Preferred Currency</label>
-                            <select class="form-select" id="currency" name="currency" required>
-                                <option value="BRL" <?= (isset($user['currency']) && $user['currency'] === 'BRL') ? 'selected' : '' ?>>BRL (Brazilian Real)</option>
-                                <option value="USD" <?= (isset($user['currency']) && $user['currency'] === 'USD') ? 'selected' : '' ?>>USD (US Dollar)</option>
-                            </select>
-                            <div class="form-text">Currency used to display monetary values</div>
-                        </div>
-                        
-                        <div class="mb-3">
                             <label for="new_password" class="form-label">New Password (Optional)</label>
                             <input type="password" class="form-control" id="new_password" name="new_password" 
                                    placeholder="Leave blank to keep current password">
@@ -132,12 +123,6 @@
                             <strong>Account Status:</strong> 
                             <span class="badge <?= $user['active'] ? 'bg-success' : 'bg-secondary' ?>">
                                 <?= $user['active'] ? 'Active' : 'Inactive' ?>
-                            </span>
-                        </div>
-                        <div class="mb-3">
-                            <strong>Preferred Currency:</strong> 
-                            <span class="badge bg-warning text-dark">
-                                <?= isset($user['currency']) ? $user['currency'] : 'BRL' ?>
                             </span>
                         </div>
                         <div class="mb-3">

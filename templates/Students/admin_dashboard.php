@@ -126,7 +126,7 @@ $title = 'Dashboard Administrativo';
                                 </div>
                                 <div class="text-end">
                                     <span class="fw-bold text-success">
-                                        <?= \App\Helper\CurrencyHelper::formatForUser($student['total_profit_loss'], $student['currency'] ?? 'BRL') ?>
+                                        <?= \App\Helper\CurrencyHelper::formatForUser($student['total_profit_loss'], 'BRL') ?>
                                     </span>
                                 </div>
                             </div>
@@ -170,7 +170,7 @@ $title = 'Dashboard Administrativo';
                                 </div>
                                 <div class="text-end">
                                     <span class="fw-bold text-danger">
-                                        <?= \App\Helper\CurrencyHelper::formatForUser($student['total_profit_loss'], $student['currency'] ?? 'BRL') ?>
+                                        <?= \App\Helper\CurrencyHelper::formatForUser($student['total_profit_loss'], 'BRL') ?>
                                     </span>
                                 </div>
                             </div>
@@ -228,7 +228,7 @@ $title = 'Dashboard Administrativo';
                                                 </span>
                                             </td>
                                             <td class="<?= $activity['profit_loss'] >= 0 ? 'text-success' : 'text-danger' ?>">
-                                                <?= \App\Helper\CurrencyHelper::formatForUser($activity['profit_loss'], $activity['currency'] ?? 'BRL') ?>
+                                                <?= \App\Helper\CurrencyHelper::formatForUser($activity['profit_loss'], 'BRL') ?>
                                             </td>
                                             <td>
                                                 <a href="/studies/view/<?= $activity['id'] ?>" class="btn btn-sm btn-outline-primary">

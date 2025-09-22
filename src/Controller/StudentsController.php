@@ -52,7 +52,7 @@ class StudentsController extends AppController
             }
             
             $stmt = $pdo->prepare("
-                SELECT s.*, u.currency, u.username, u.role, u.active 
+                SELECT s.*, u.username, u.role, u.active 
                 FROM students s 
                 LEFT JOIN users u ON s.id = u.student_id 
                 WHERE s.id = ?
@@ -106,6 +106,16 @@ class StudentsController extends AppController
                     return $this->render('Students/add');
                 }
                 
+                // Verificar se username foi fornecido e se já existe
+                if (!empty($data['username'])) {
+                    $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
+                    $stmt->execute([$data['username']]);
+                    if ($stmt->fetch()) {
+                        $this->flash('Este username já está em uso.', 'error');
+                        return $this->render('Students/add');
+                    }
+                }
+                
                 // Iniciar transação
                 $pdo->beginTransaction();
                 
@@ -114,34 +124,53 @@ class StudentsController extends AppController
                 $stmt->execute([$data['name'], $data['email']]);
                 $studentId = $pdo->lastInsertId();
                 
-                // Criar username baseado no nome (remover espaços e caracteres especiais)
-                $username = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $data['name']));
-                
-                // Verificar se o username já existe e adicionar número se necessário
-                $originalUsername = $username;
-                $counter = 1;
-                while (true) {
-                    $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
-                    $stmt->execute([$username]);
-                    if (!$stmt->fetch()) {
-                        break;
+                // Processar username
+                if (!empty($data['username'])) {
+                    $username = $data['username'];
+                } else {
+                    // Criar username baseado no nome (remover espaços e caracteres especiais)
+                    $username = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $data['name']));
+                    
+                    // Verificar se o username já existe e adicionar número se necessário
+                    $originalUsername = $username;
+                    $counter = 1;
+                    while (true) {
+                        $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
+                        $stmt->execute([$username]);
+                        if (!$stmt->fetch()) {
+                            break;
+                        }
+                        $username = $originalUsername . $counter;
+                        $counter++;
                     }
-                    $username = $originalUsername . $counter;
-                    $counter++;
                 }
                 
-                // Gerar senha temporária (primeiros 6 caracteres do nome + 123)
-                $tempPassword = strtolower(substr(preg_replace('/[^a-zA-Z]/', '', $data['name']), 0, 6)) . '123';
-                $hashedPassword = password_hash($tempPassword, PASSWORD_DEFAULT);
+                // Processar senha
+                if (!empty($data['password'])) {
+                    $password = $data['password'];
+                } else {
+                    // Gerar senha temporária (primeiros 6 caracteres do nome + 123)
+                    $password = strtolower(substr(preg_replace('/[^a-zA-Z]/', '', $data['name']), 0, 6)) . '123';
+                }
+                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                
+                // Processar outros campos do usuário
+                $role = $data['role'] ?? 'student';
+                $active = isset($data['active']) ? 1 : 0;
                 
                 // Inserir usuário
-                $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, student_id, active, currency, created, modified) VALUES (?, ?, ?, 'student', ?, 1, 'BRL', NOW(), NOW())");
-                $stmt->execute([$username, $data['email'], $hashedPassword, $studentId]);
+                $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, student_id, active, created, modified) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
+                $stmt->execute([$username, $data['email'], $hashedPassword, $role, $studentId, $active]);
                 
                 // Confirmar transação
                 $pdo->commit();
                 
-                $this->flash("Estudante criado com sucesso! Username: {$username}, Senha temporária: {$tempPassword}", 'success');
+                // Mensagem de sucesso personalizada
+                $successMessage = "Estudante criado com sucesso! Username: {$username}";
+                if (empty($data['password'])) {
+                    $successMessage .= ", Senha temporária: {$password}";
+                }
+                $this->flash($successMessage, 'success');
                 return $this->redirect(['action' => 'index']);
             } catch (Exception $e) {
                 // Reverter transação em caso de erro
@@ -245,12 +274,6 @@ class StudentsController extends AppController
                     $updateFields[] = "active = ?";
                     $updateValues[] = $active;
                     
-                    // Currency
-                    if (!empty($data['currency']) && in_array($data['currency'], ['BRL', 'USD'])) {
-                        $updateFields[] = "currency = ?";
-                        $updateValues[] = $data['currency'];
-                    }
-                    
                     // Password (se fornecida)
                     if (!empty($data['new_password'])) {
                         $updateFields[] = "password = ?";
@@ -270,7 +293,6 @@ class StudentsController extends AppController
                     $username = !empty($data['username']) ? $data['username'] : strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $data['name']));
                     $role = !empty($data['role']) && in_array($data['role'], ['student', 'admin']) ? $data['role'] : 'student';
                     $active = isset($data['active']) && $data['active'] == '1' ? 1 : 0;
-                    $currency = !empty($data['currency']) && in_array($data['currency'], ['BRL', 'USD']) ? $data['currency'] : 'BRL';
                     
                     // Verificar se o username já existe e adicionar número se necessário
                     $originalUsername = $username;
@@ -290,8 +312,8 @@ class StudentsController extends AppController
                     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
                     
                     // Inserir novo usuário
-                    $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, student_id, active, currency, created, modified) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-                    $stmt->execute([$username, $data['email'], $hashedPassword, $role, $id, $active, $currency]);
+                    $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, student_id, active, created, modified) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
+                    $stmt->execute([$username, $data['email'], $hashedPassword, $role, $id, $active]);
                     
                     $this->flash("Usuário criado com sucesso! Username: {$username}", 'info');
                 }
@@ -351,7 +373,7 @@ class StudentsController extends AppController
             
             // Verificar se o estudante existe e buscar dados do usuário associado
             $stmt = $pdo->prepare("
-                SELECT s.*, u.currency, u.username, u.role, u.active 
+                SELECT s.*, u.username, u.role, u.active 
                 FROM students s 
                 LEFT JOIN users u ON s.id = u.student_id 
                 WHERE s.id = ?
@@ -407,7 +429,7 @@ class StudentsController extends AppController
             
             // Buscar estudante com dados do usuário associado
             $stmt = $pdo->prepare("
-                SELECT s.*, u.currency, u.username, u.role, u.active 
+                SELECT s.*, u.username, u.role, u.active 
                 FROM students s 
                 LEFT JOIN users u ON s.id = u.student_id 
                 WHERE s.id = ?
@@ -487,9 +509,9 @@ class StudentsController extends AppController
 
             $pdo = $this->getDbConnection();
             
-            // Buscar estudante com dados do usuário associado (incluindo moeda)
+            // Buscar estudante com dados do usuário associado
             $stmt = $pdo->prepare("
-                SELECT s.*, u.currency, u.username, u.role, u.active 
+                SELECT s.*, u.username, u.role, u.active 
                 FROM students s 
                 LEFT JOIN users u ON s.id = u.student_id 
                 WHERE s.id = ?
@@ -611,7 +633,7 @@ class StudentsController extends AppController
             
             // Top 5 estudantes por profit/loss
             $topStudents = $this->db->query("
-                SELECT s.name, s.id, u.currency, SUM(st.profit_loss) as total_profit_loss, 
+                SELECT s.name, s.id, SUM(st.profit_loss) as total_profit_loss, 
                        COUNT(st.id) as total_studies,
                        SUM(st.wins) as total_wins,
                        SUM(st.losses) as total_losses
@@ -619,14 +641,14 @@ class StudentsController extends AppController
                 LEFT JOIN studies st ON s.id = st.student_id 
                 LEFT JOIN users u ON s.id = u.student_id
                 WHERE u.active = 1
-                GROUP BY s.id, s.name, u.currency 
+                GROUP BY s.id, s.name 
                 ORDER BY total_profit_loss DESC 
                 LIMIT 5
             ")->fetchAll(PDO::FETCH_ASSOC);
             
             // Estudantes com pior performance
             $worstStudents = $this->db->query("
-                SELECT s.name, s.id, u.currency, SUM(st.profit_loss) as total_profit_loss, 
+                SELECT s.name, s.id, SUM(st.profit_loss) as total_profit_loss, 
                        COUNT(st.id) as total_studies,
                        SUM(st.wins) as total_wins,
                        SUM(st.losses) as total_losses
@@ -634,14 +656,14 @@ class StudentsController extends AppController
                 LEFT JOIN studies st ON s.id = st.student_id 
                 LEFT JOIN users u ON s.id = u.student_id
                 WHERE u.active = 1
-                GROUP BY s.id, s.name, u.currency 
+                GROUP BY s.id, s.name 
                 ORDER BY total_profit_loss ASC 
                 LIMIT 5
             ")->fetchAll(PDO::FETCH_ASSOC);
             
             // Atividade recente (últimos 10 estudos)
             $recentActivity = $this->db->query("
-                SELECT st.*, s.name as student_name, u.currency
+                SELECT st.*, s.name as student_name
                 FROM studies st 
                 JOIN students s ON st.student_id = s.id 
                 LEFT JOIN users u ON s.id = u.student_id

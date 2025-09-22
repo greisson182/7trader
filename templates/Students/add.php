@@ -29,6 +29,42 @@
                         Por favor, forneça um email válido.
                     </div>
                 </div>
+                
+                <hr class="my-4">
+                <h5 class="mb-3"><i class="fas fa-user-cog"></i> Dados de Acesso</h5>
+                
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Deixe em branco para gerar automaticamente">
+                    <div class="form-text">Se não preenchido, será gerado automaticamente baseado no nome.</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="password" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Deixe em branco para gerar automaticamente">
+                    <div class="form-text">Se não preenchida, será gerada automaticamente.</div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Função</label>
+                            <select class="form-select" id="role" name="role" required>
+                                <option value="student" selected>Estudante</option>
+                                <option value="admin">Administrador</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="active" name="active" value="1" checked>
+                        <label class="form-check-label" for="active">
+                            Usuário ativo
+                        </label>
+                    </div>
+                </div>
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                     <a href="/students" class="btn btn-secondary me-md-2 btn-with-icon">
                         <i class="fas fa-times"></i>

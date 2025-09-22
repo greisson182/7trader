@@ -55,12 +55,6 @@ class ProfileController extends AppController
                 $updateFields[] = "email = ?";
                 $updateValues[] = $data['email'];
                 
-                // Currency
-                if (!empty($data['currency']) && in_array($data['currency'], ['BRL', 'USD'])) {
-                    $updateFields[] = "currency = ?";
-                    $updateValues[] = $data['currency'];
-                }
-                
                 // Password (se fornecida)
                 if (!empty($data['new_password'])) {
                     // Verificar senha atual se fornecida

@@ -113,7 +113,7 @@ use App\Helper\CurrencyHelper;
                                         <?= CurrencyHelper::formatForUser($study['profit_loss'] ?? 0, $study['user']['currency'] ?? 'BRL') ?>
                                     </td>
                                     <td class="actions" onclick="event.stopPropagation();">
-                                        <a href="/studies/view/<?= h($study['id']) ?>" class="btn btn-sm btn-outline-primary" title="Ver"><i class="fas fa-eye"></i></a>
+                                        <a href="/studies/view/<?= h($study['id']) ?>" class="btn btn-sm btn-outline-primary " title="Ver"><i class="fas fa-eye"></i></a>
                                         <a href="/studies/edit/<?= h($study['id']) ?>" class="btn btn-sm btn-outline-warning" title="Editar"><i class="fas fa-edit"></i></a>
                                         <form method="post" action="/studies/delete/<?= h($study['id']) ?>" style="display: inline;" onsubmit="return confirm('Tem certeza que deseja excluir # <?= h($study['id']) ?>?');">
                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir"><i class="fas fa-trash"></i></button>

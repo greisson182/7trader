@@ -27,6 +27,13 @@ return static function (RouteBuilder $routes) {
         $builder->connect('/studies/edit/*', ['controller' => 'Studies', 'action' => 'edit']);
         $builder->connect('/studies/delete/*', ['controller' => 'Studies', 'action' => 'delete']);
         
+        // Markets routes
+        $builder->connect('/markets', ['controller' => 'Markets', 'action' => 'index']);
+        $builder->connect('/markets/add', ['controller' => 'Markets', 'action' => 'add']);
+        $builder->connect('/markets/view/*', ['controller' => 'Markets', 'action' => 'view']);
+        $builder->connect('/markets/edit/*', ['controller' => 'Markets', 'action' => 'edit']);
+        $builder->connect('/markets/delete/*', ['controller' => 'Markets', 'action' => 'delete']);
+        
         // Metrics routes
         $builder->connect('/students/metrics/*', ['controller' => 'Students', 'action' => 'metrics']);
         

@@ -1197,7 +1197,7 @@ span.text-danger {
   align-items: center;
   min-height: 40px;
   backdrop-filter: blur(10px);
-  margin: 2px 8px;
+  margin: 0px -0px;
 }
 
 .dropdown-menu .dropdown-item::before {
@@ -1509,4 +1509,8 @@ footer {
 
 [data-theme="dark"] p {
   color: #fff !important;
+}
+
+.dropdown-menu[data-bs-popper] {
+    left: -87px !important;
 }

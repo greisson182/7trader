@@ -21,7 +21,7 @@ class StudiesController extends AppController
                     return $this->render('Studies/index');
                 }
                 $stmt = $pdo->prepare("
-                    SELECT s.*, st.name as student_name, m.name as market_name, u.currency, u.username, u.role, u.active 
+                    SELECT s.*, st.name as student_name, m.name as market_name, m.currency, u.username, u.role, u.active 
                     FROM studies s 
                     LEFT JOIN students st ON s.student_id = st.id 
                     LEFT JOIN markets m ON s.market_id = m.id
@@ -33,7 +33,7 @@ class StudiesController extends AppController
             } else {
                 // Admin vê todos os estudos
                 $stmt = $pdo->query("
-                    SELECT s.*, st.name as student_name, m.name as market_name, u.currency, u.username, u.role, u.active 
+                    SELECT s.*, st.name as student_name, m.name as market_name, m.currency, u.username, u.role, u.active 
                     FROM studies s 
                     LEFT JOIN students st ON s.student_id = st.id 
                     LEFT JOIN markets m ON s.market_id = m.id
@@ -99,7 +99,7 @@ class StudiesController extends AppController
             $pdo = $this->getDbConnection();
             $stmt = $pdo->prepare("
                 SELECT s.*, st.name as student_name, st.email as student_email, 
-                       m.name as market_name, m.code as market_code, m.description as market_description,
+                       m.name as market_name, m.code as market_code, m.description as market_description, m.currency,
                        u.username, u.role, u.active 
                 FROM studies s 
                 LEFT JOIN students st ON s.student_id = st.id 
@@ -113,7 +113,7 @@ class StudiesController extends AppController
             if ($study) {
                 // Adicionar dados do usuário ao array do study para compatibilidade com o template
                 $study['user'] = [
-                    'currency' => 'BRL', // Valor padrão já que currency não existe na tabela
+                    'currency' => $study['currency'] ?? 'BRL', // Agora vem do market
                     'username' => $study['username'],
                     'role' => $study['role'],
                     'active' => $study['active']

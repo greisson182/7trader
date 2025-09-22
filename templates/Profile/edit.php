@@ -40,16 +40,6 @@ use App\Helper\CurrencyHelper;
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="currency" class="form-label">Moeda Preferida</label>
-                                    <select class="form-select" id="currency" name="currency" required>
-                                        <option value="BRL" <?= (isset($user['currency']) && $user['currency'] === 'BRL') ? 'selected' : '' ?>>BRL (Real Brasileiro)</option>
-                                        <option value="USD" <?= (isset($user['currency']) && $user['currency'] === 'USD') ? 'selected' : '' ?>>USD (Dólar Americano)</option>
-                                    </select>
-                                    <div class="form-text">Moeda utilizada para exibir valores monetários</div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
                                     <label for="role" class="form-label">Função</label>
                                     <input type="text" class="form-control" id="role" 
                                            value="<?= isset($user['role']) ? ucfirst($user['role']) : '' ?>" readonly>
@@ -117,13 +107,6 @@ use App\Helper\CurrencyHelper;
                             <strong>Status da Conta:</strong> 
                             <span class="badge <?= $user['active'] ? 'bg-success' : 'bg-secondary' ?>">
                                 <?= $user['active'] ? 'Ativa' : 'Inativa' ?>
-                            </span>
-                        </div>
-                        <div class="mb-3">
-                            <strong>Moeda Preferida:</strong> 
-                            <span class="badge bg-warning text-dark">
-                                <?= isset($user['currency']) ? $user['currency'] : 'BRL' ?>
-                                (<?= CurrencyHelper::getSymbol($user['currency'] ?? 'BRL') ?>)
                             </span>
                         </div>
                         <div class="mb-3">

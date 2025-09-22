@@ -93,20 +93,7 @@
                 <ul class="navbar-nav">
 
 
-                    <?php if (isset($currentUser) && $currentUser['role'] === 'admin'): ?>
-                        <li class="nav-item">
-                            <a href="/students/add" class="nav-link">
-                                <i class="bi bi-person-plus me-1"></i>
-                                Adicionar Estudante
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/studies/add" class="nav-link">
-                                <i class="bi bi-journal-plus me-1"></i>
-                                Adicionar Estudo
-                            </a>
-                        </li>
-                    <?php endif; ?>
+
 
                     <?php if (isset($currentUser)): ?>
                         <li class="nav-item dropdown">
@@ -120,7 +107,9 @@
                                         <i class="bi bi-person-gear me-2"></i>
                                         Editar Perfil
                                     </a></li>
-                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
                                 <li><a class="dropdown-item" href="/logout">
                                         <i class="bi bi-box-arrow-right me-2"></i>
                                         Sair
@@ -133,6 +122,29 @@
                                 <i class="bi bi-box-arrow-in-right me-1"></i>
                                 Entrar
                             </a>
+                        </li>
+                    <?php endif; ?>
+
+                    <?php if (isset($currentUser) && $currentUser['role'] === 'admin'): ?>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="configDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-gear me-1"></i>
+                            </a>
+                            <ul class="dropdown-menu glass">
+                                <li>
+                                    <a class="dropdown-item" href="/markets">
+                                        <i class="bi bi-currency-exchange me-2"></i>
+                                        Mercados
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="/students/add">
+                                        <i class="bi bi-person-plus me-1"></i>
+                                        Adicionar Estudante
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                     <?php endif; ?>
 
@@ -172,15 +184,11 @@
                 <div class="col-md-6 text-md-start">
                     <p class="mb-0">
                         <i class="bi bi-graph-up-arrow me-2"></i>
-                        <strong>Market Replay Tracker</strong>
+                        <strong>7 Trader todos os direitos reservados.</strong>
                     </p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <p class="mb-0">
-                        &copy; <?= date('Y') ?> Built with
-                        <i class="bi bi-heart-fill text-danger mx-1"></i>
-                        using PHP
-                    </p>
+
                 </div>
             </div>
         </div>
