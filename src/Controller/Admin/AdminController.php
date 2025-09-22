@@ -15,21 +15,18 @@ class AdminController extends AppController
     /**
      * Initialization hook method.
      */
-    public function initialize(): void
+    public function __construct()
     {
-        parent::initialize();
+        parent::__construct();
         
         // Verificar se o usuário está logado
-        if (!$this->request->getSession()->read('Auth.User')) {
-            $this->Flash->error('Você precisa estar logado para acessar esta área.');
-            return $this->redirect(['controller' => 'Auth', 'action' => 'login']);
+        if (!$this->isLoggedIn()) {
+            $this->flash('Você precisa estar logado para acessar esta área.', 'error');
+            $this->redirect('/login');
         }
         
-        // Verificar se é admin (se necessário no futuro)
-        // $user = $this->request->getSession()->read('Auth.User');
-        // if (!$user['is_admin']) {
-        //     $this->Flash->error('Acesso negado.');
-        //     return $this->redirect('/');
-        // }
+        // Permitir acesso tanto para admin quanto para estudantes
+        // Cada controller específico pode implementar suas próprias restrições
+        // usando $this->requireAdmin() quando necessário
     }
 }

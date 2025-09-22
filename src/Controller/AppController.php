@@ -18,6 +18,12 @@ class AppController
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+        
+        // Load the global getDbConnection function from index.php
+        if (!function_exists('getDbConnection')) {
+            require_once ROOT . DS . 'webroot' . DS . 'index.php';
+        }
+        
         $this->db = getDbConnection();
         $this->checkAuth();
     }
@@ -25,7 +31,7 @@ class AppController
     protected function checkAuth()
     {
         // Páginas que não precisam de autenticação
-        $publicPages = ['/login', '/logout'];
+        $publicPages = ['/login', '/logout', '/', '/sobre', '/contato'];
         $currentPath = $_SERVER['REQUEST_URI'];
         
         if (in_array($currentPath, $publicPages)) {
@@ -93,6 +99,7 @@ class AppController
         
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
             $_SESSION['user_role'] = $user['role'];
             return true;
         }

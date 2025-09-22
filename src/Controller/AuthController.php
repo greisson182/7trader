@@ -29,7 +29,7 @@ class AuthController extends AppController
             } else {
                 if ($this->login($username, $password)) {
                     $this->flash('Login realizado com sucesso!', 'success');
-                    $this->redirect('/');
+                    $this->redirect('/admin');
                 } else {
                     $this->flash('Usuário ou senha inválidos.', 'error');
                 }

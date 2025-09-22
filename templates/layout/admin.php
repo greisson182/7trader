@@ -21,7 +21,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Custom Styles -->
-    <link href="/admin/css/style.css" rel="stylesheet">
+    <link href="/adm/css/style.css" rel="stylesheet">
 </head>
 
 <body class="fade-in-up">
@@ -29,8 +29,8 @@
     <nav class="navbar navbar-expand-lg glass fixed-top">
         <div class="container">
             <a href="/admin/students/dashboard" class="navbar-brand">
-                <img src="/admin/images/logo-dark.png" alt="7Trader" class="logo logo-dark">
-                <img src="/admin/images/logo-light.png" alt="7Trader" class="logo logo-light">
+                <img src="/adm/images/logo-dark.png" alt="7Trader" class="logo logo-dark">
+                <img src="/adm/images/logo-light.png" alt="7Trader" class="logo logo-light">
             </a>
 
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -65,18 +65,18 @@
                                     <li>
                                         <h6 class="dropdown-header">
                                             <i class="bi bi-person-gear me-1"></i>
-                                            Selecionar Estudante
+                                            Selecionar Alunos
                                         </h6>
                                     </li>
                                     <li><a class="dropdown-item" href="/admin/students">
                                             <i class="bi bi-list-ul me-2"></i>
-                                            Ver Todos os Estudantes
+                                            Ver Todos os Alunos
                                         </a></li>
                                 </ul>
                             <li class="nav-item">
                                 <a href="/admin/students" class="nav-link">
                                     <i class="bi bi-people me-1"></i>
-                                    Estudantes
+                                    Alunos
                                 </a>
                             </li>
                             </li>
@@ -89,17 +89,8 @@
                             Estudos
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="/admin/markets" class="nav-link">
-                            <i class="bi bi-graph-up me-1"></i>
-                            Mercados
-                        </a>
-                    </li>
                 </ul>
                 <ul class="navbar-nav">
-
-
-
 
                     <?php if (isset($currentUser)): ?>
                         <li class="nav-item dropdown">
@@ -147,7 +138,7 @@
                                 <li>
                                     <a class="dropdown-item" href="/admin/students/add">
                                         <i class="bi bi-person-plus me-1"></i>
-                                        Adicionar Estudante
+                                        Adicionar Aluno
                                     </a>
                                 </li>
                             </ul>
@@ -202,8 +193,8 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/admin/js/theme.js"></script>
-    <script src="/admin/js/value-colors.js"></script>
+    <script src="/adm/js/theme.js"></script>
+    <script src="/adm/js/value-colors.js"></script>
 
     <!-- Custom JavaScript for enhanced UX -->
     <script>

@@ -50,7 +50,7 @@
             <div class="col-md-6 col-lg-4">
                 <div class="login-card">
                     <div class="login-header">
-                        <img src="/images/logo-dark.png" alt="Sistema Backtest" class="img-fluid">
+                        <img src="/adm/images/logo-dark.png" alt="7 Trader" class="img-fluid">
                     </div>
                     
                     <div class="login-body">

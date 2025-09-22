@@ -12,15 +12,22 @@ use App\Controller\AppController;
  */
 class HomeController extends AppController
 {
+    public function __construct()
+    {
+        // Não chamar parent::__construct() para evitar verificação de auth
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $this->db = getDbConnection();
+    }
+    
     /**
      * Initialization hook method.
      */
     public function initialize(): void
     {
-        parent::initialize();
-        
         // Site público não precisa de autenticação
-        // Remover verificações de login se existirem
+        // Não chamar parent::initialize() que força autenticação
     }
     
     /**
@@ -49,20 +56,18 @@ class HomeController extends AppController
         return $this->render('Site/Home/about');
     }
     
+    protected function getLayout()
+    {
+        // Usar layout do site público
+        return 'layout/site';
+    }
+    
     /**
      * Contact method - Contato
      */
     public function contact()
     {
-        if ($this->request->is('post')) {
-            $data = $this->request->getData();
-            
-            // Aqui você pode implementar o envio de email
-            // Por enquanto, apenas uma mensagem de sucesso
-            $this->Flash->success('Mensagem enviada com sucesso! Entraremos em contato em breve.');
-            return $this->redirect(['action' => 'contact']);
-        }
-        
+        // Simplificar o método contact removendo a verificação de POST por enquanto
         $this->set([
             'title' => 'Contato - BackTest',
             'description' => 'Entre em contato conosco'

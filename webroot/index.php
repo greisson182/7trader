@@ -37,44 +37,68 @@ if ($path === 'login') {
     $id = $matches[1]; // student id
     $year = $matches[2];
     $month = $matches[3];
-} elseif (strpos($path, 'admin/') === 0) {
+} elseif (strpos($path, 'admin') === 0) {
     // Handle admin routes: /admin/{controller}/{action}/{id}
-    $adminSegments = array_slice($segments, 1); // Remove 'admin' from segments
-    $controller = 'Admin/' . (!empty($adminSegments[0]) ? ucfirst($adminSegments[0]) : 'Students');
-    $action = !empty($adminSegments[1]) ? $adminSegments[1] : 'index';
-    $id = !empty($adminSegments[2]) ? $adminSegments[2] : null;
-} else {
-    // Check if user is logged in and redirect based on role
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
+    if ($path === 'admin' || $path === 'admin/') {
+        // Root admin route - redirect to admin dashboard
+        $controller = 'Admin/Students';
+        $action = 'admin_dashboard';
+        $id = null;
+    } else {
+        $adminSegments = array_slice($segments, 1); // Remove 'admin' from segments
+        $controller = 'Admin/' . (!empty($adminSegments[0]) ? ucfirst($adminSegments[0]) : 'Students');
+        $action = !empty($adminSegments[1]) ? $adminSegments[1] : 'index';
+        $id = !empty($adminSegments[2]) ? $adminSegments[2] : null;
     }
-    if (isset($_SESSION['user_id']) && empty($segments[0])) {
-        // Get user role from database
-        $db = getDbConnection();
-        $stmt = $db->prepare("SELECT role, student_id FROM users WHERE id = ? AND active = 1");
-        $stmt->execute([$_SESSION['user_id']]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+} else {
+    // Handle public site routes
+    if (empty($path) || $path === '') {
+        // Home page
+        $controller = 'Site/Home';
+        $action = 'index';
+        $id = null;
+    } elseif ($path === 'sobre') {
+        $controller = 'Site/Home';
+        $action = 'about';
+        $id = null;
+    } elseif ($path === 'contato') {
+        $controller = 'Site/Home';
+        $action = 'contact';
+        $id = null;
+    } else {
+        // Check if user is logged in and redirect based on role
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         
-        if ($user) {
-            if ($user['role'] === 'student') {
-                // Redirect students to their dashboard
-                header('Location: /students/dashboard/' . $user['student_id']);
-                exit;
-            } elseif ($user['role'] === 'admin') {
-                // Redirect admins to admin dashboard
-                header('Location: /students/admin-dashboard');
-                exit;
+        if (isset($_SESSION['user_id']) && empty($segments[0])) {
+            // Get user role from database
+            $db = getDbConnection();
+            $stmt = $db->prepare("SELECT role, student_id FROM users WHERE id = ? AND active = 1");
+            $stmt->execute([$_SESSION['user_id']]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($user) {
+                if ($user['role'] === 'student') {
+                    // Redirect students to their dashboard
+                    header('Location: /admin/students/dashboard/' . $user['student_id']);
+                    exit;
+                } elseif ($user['role'] === 'admin') {
+                    // Redirect admins to admin dashboard
+                    header('Location: /admin/students/admin_dashboard');
+                    exit;
+                }
             }
         }
+        
+        // Default routing logic
+        $controller = !empty($segments[0]) ? ucfirst($segments[0]) : 'Students';
+        $action = !empty($segments[1]) ? $segments[1] : 'index';
+        $id = !empty($segments[2]) ? $segments[2] : null;
+        
+        // Convert kebab-case to snake_case for action names
+        $action = str_replace('-', '_', $action);
     }
-    
-    // Default routing logic
-    $controller = !empty($segments[0]) ? ucfirst($segments[0]) : 'Students';
-    $action = !empty($segments[1]) ? $segments[1] : 'index';
-    $id = !empty($segments[2]) ? $segments[2] : null;
-    
-    // Convert kebab-case to snake_case for action names
-    $action = str_replace('-', '_', $action);
 }
 
 // Database connection
@@ -112,7 +136,7 @@ function getDbConnection() {
 function render($template, $data = []) {
     extract($data);
     ob_start();
-    include dirname(__DIR__) . "/templates/layout/admin.php";
+    include dirname(__DIR__) . "/templates/{$template}.php";
     return ob_get_clean();
 }
 
@@ -133,9 +157,11 @@ try {
     
     require_once $controllerFile;
     
-    // Handle namespace for Admin controllers
+    // Handle namespace for controllers
     if (strpos($controller, 'Admin/') === 0) {
         $controllerClass = "App\\Controller\\Admin\\" . substr($controller, 6) . "Controller";
+    } elseif (strpos($controller, 'Site/') === 0) {
+        $controllerClass = "App\\Controller\\Site\\" . substr($controller, 5) . "Controller";
     } else {
         $controllerClass = "App\\Controller\\{$controller}Controller";
     }
@@ -164,8 +190,11 @@ try {
     
 } catch (Exception $e) {
     // Simple error page
-    http_response_code(404);
+    http_response_code(500);
     echo "<h1>Error</h1>";
     echo "<p>" . htmlspecialchars($e->getMessage()) . "</p>";
+    echo "<p>Controller: " . htmlspecialchars($controller ?? 'unknown') . "</p>";
+    echo "<p>Action: " . htmlspecialchars($action ?? 'unknown') . "</p>";
+    echo "<p>Path: " . htmlspecialchars($path ?? 'unknown') . "</p>";
     echo "<p><a href='/admin/'>Go Home</a></p>";
 }

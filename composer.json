@@ -1,5 +1,5 @@
 {
-    "name": "market-replay-tracker",
+    "name": "7trader",
     "description": "CakePHP application for tracking students' market replay studies",
     "type": "project",
     "require": {

@@ -24,8 +24,8 @@ return static function (RouteBuilder $routes) {
     // ===========================================
     $routes->scope('/admin', function (RouteBuilder $builder) {
         // Dashboard administrativo
-        $builder->connect('/', ['controller' => 'Admin/Students', 'action' => 'dashboard']);
-        $builder->connect('/dashboard', ['controller' => 'Admin/Students', 'action' => 'dashboard']);
+        $builder->connect('/', ['controller' => 'Admin/Students', 'action' => 'admin_dashboard']);
+        $builder->connect('/dashboard/:student_id', ['controller' => 'Admin/Students', 'action' => 'dashboard']);
         
         // Students routes (admin)
         $builder->connect('/students', ['controller' => 'Admin/Students', 'action' => 'index']);

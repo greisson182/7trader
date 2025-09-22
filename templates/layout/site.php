@@ -11,8 +11,7 @@
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Site CSS -->
-    <?= $this->Html->css('/site/css/site.css') ?>
-    <?= $this->Html->css('/site/css/style.css') ?>
+    <link rel="stylesheet" href="/site/css/site.css">
 </head>
 <body>
     <!-- Navigation -->
@@ -41,8 +40,8 @@
                 
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="/login">
-                            <i class="fas fa-sign-in-alt me-1"></i>Área Administrativa
+                        <a class="nav-link" href="/admin/students/dashboard">
+                            <i class="fas fa-sign-in-alt me-1"></i>Área do Aluno
                         </a>
                     </li>
                 </ul>
@@ -53,12 +52,17 @@
     <!-- Main Content -->
     <main class="main-content">
         <!-- Flash Messages -->
-        <?php if (isset($this) && method_exists($this, 'Flash')): ?>
-            <?= $this->Flash->render() ?>
+        <?php if (isset($flash_messages)): ?>
+            <?php foreach ($flash_messages as $message): ?>
+                <div class="alert alert-<?= $message['type'] ?> alert-dismissible fade show" role="alert">
+                    <?= htmlspecialchars($message['message']) ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endforeach; ?>
         <?php endif; ?>
         
         <!-- Page Content -->
-        <?= $this->fetch('content') ?>
+        <?= $content ?>
     </main>
 
     <!-- Footer -->
@@ -79,7 +83,6 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Site JS -->
-    <?= $this->Html->script('/site/js/site.js') ?>
-    <?= $this->Html->script('/site/js/value-colors.js') ?>
+    <script src="/site/js/site.js"></script>
 </body>
 </html>
