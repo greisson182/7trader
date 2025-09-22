@@ -124,7 +124,17 @@ class AppController
     {
         $allVars = array_merge($this->viewVars, $vars);
         $content = renderPartial($template, $allVars);
-        return render('layout/default', array_merge($allVars, ['content' => $content]));
+        
+        // Determinar qual layout usar baseado no namespace do controller
+        $layout = $this->getLayout();
+        
+        return render($layout, array_merge($allVars, ['content' => $content]));
+    }
+    
+    protected function getLayout()
+    {
+        // Usar sempre o layout admin
+        return 'layout/admin';
     }
     
     protected function redirect($url)

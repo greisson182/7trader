@@ -37,6 +37,12 @@ if ($path === 'login') {
     $id = $matches[1]; // student id
     $year = $matches[2];
     $month = $matches[3];
+} elseif (strpos($path, 'admin/') === 0) {
+    // Handle admin routes: /admin/{controller}/{action}/{id}
+    $adminSegments = array_slice($segments, 1); // Remove 'admin' from segments
+    $controller = 'Admin/' . (!empty($adminSegments[0]) ? ucfirst($adminSegments[0]) : 'Students');
+    $action = !empty($adminSegments[1]) ? $adminSegments[1] : 'index';
+    $id = !empty($adminSegments[2]) ? $adminSegments[2] : null;
 } else {
     // Check if user is logged in and redirect based on role
     if (session_status() === PHP_SESSION_NONE) {
@@ -106,7 +112,7 @@ function getDbConnection() {
 function render($template, $data = []) {
     extract($data);
     ob_start();
-    include dirname(__DIR__) . "/templates/layout/default.php";
+    include dirname(__DIR__) . "/templates/layout/admin.php";
     return ob_get_clean();
 }
 
@@ -127,7 +133,12 @@ try {
     
     require_once $controllerFile;
     
-    $controllerClass = "App\\Controller\\{$controller}Controller";
+    // Handle namespace for Admin controllers
+    if (strpos($controller, 'Admin/') === 0) {
+        $controllerClass = "App\\Controller\\Admin\\" . substr($controller, 6) . "Controller";
+    } else {
+        $controllerClass = "App\\Controller\\{$controller}Controller";
+    }
     
     if (!class_exists($controllerClass)) {
         throw new Exception("Controller class not found: {$controllerClass}");
