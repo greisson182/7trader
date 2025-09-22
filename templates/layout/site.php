@@ -30,6 +30,31 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/">Início</a>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="cursosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-graduation-cap me-1"></i>Cursos
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="cursosDropdown">
+                            <li><a class="dropdown-item" href="/cursos/basico">
+                                <i class="fas fa-play-circle me-2 text-primary"></i>Trading Básico
+                            </a></li>
+                            <li><a class="dropdown-item" href="/cursos/avancado">
+                                <i class="fas fa-chart-line me-2 text-success"></i>Trading Avançado
+                            </a></li>
+                            <li><a class="dropdown-item" href="/cursos/profissional">
+                                <i class="fas fa-trophy me-2 text-warning"></i>Trading Profissional
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/cursos">
+                                <i class="fas fa-list me-2"></i>Ver Todos os Cursos
+                            </a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mentoria">
+                            <i class="fas fa-handshake me-1"></i>Mentoria
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/sobre">Sobre</a>
                     </li>
@@ -422,100 +447,37 @@
         // Instância do simulador
         const marketSim = new MarketSimulator();
         
-        // Função melhorada para criar candlesticks realistas
-        function createRealisticFooterCandlestick() {
+        // Função para criar candlesticks estáticos
+        function createStaticFooterCandlesticks() {
             const container = document.getElementById('footerCandlesticks');
             if (!container) return;
             
-            const marketData = marketSim.getMarketData();
-            const candlestick = document.createElement('div');
+            // Criar candlesticks estáticos para decoração
+            const candlestickPositions = [10, 20, 30, 40, 50, 60, 70, 80, 90];
+            const candlestickTypes = [true, false, true, false, true, true, false, true, false]; // true = green, false = red
+            const candlestickHeights = [22, 28, 20, 32, 24, 30, 26, 18, 25];
             
-            // Propriedades baseadas no mercado
-            const isGreen = marketData.isGreen;
-            const baseHeight = 20;
-            const volatilityHeight = Math.abs(marketData.change) * 15;
-            const height = Math.max(baseHeight + volatilityHeight, 12);
-            const leftPosition = Math.random() * 95 + 2.5; // 2.5-97.5%
-            
-            // Duração baseada na tendência do mercado
-            let animationDuration, animationType;
-            
-            switch(marketData.trend) {
-                case 'bullish':
-                    animationDuration = Math.random() * 3 + 8; // 8-11s
-                    animationType = 'marketRise';
-                    break;
-                case 'bearish':
-                    animationDuration = Math.random() * 3 + 9; // 9-12s
-                    animationType = 'marketFall';
-                    break;
-                case 'volatile':
-                    animationDuration = Math.random() * 2 + 6; // 6-8s
-                    animationType = 'marketVolatility';
-                    break;
-                default: // neutral
-                    animationDuration = Math.random() * 4 + 10; // 10-14s
-                    animationType = Math.random() > 0.5 ? 'marketRise' : 'marketFall';
-            }
-            
-            candlestick.className = `footer-candlestick ${isGreen ? 'green' : 'red'}`;
-            candlestick.style.left = leftPosition + '%';
-            candlestick.style.height = height + 'px';
-            candlestick.style.animation = `${animationType} ${animationDuration}s ease-out forwards`;
-            
-            // Adicionar efeito de brilho para alta volatilidade
-            if (marketData.volatility > 0.8) {
-                candlestick.style.boxShadow = `0 0 15px ${isGreen ? '#00ff88' : '#ff4757'}`;
-            }
-            
-            container.appendChild(candlestick);
-            
-            // Remove o elemento após a animação
-            setTimeout(() => {
-                if (candlestick.parentNode) {
-                    candlestick.parentNode.removeChild(candlestick);
-                }
-            }, animationDuration * 1000);
+            candlestickPositions.forEach((position, index) => {
+                const candlestick = document.createElement('div');
+                const isGreen = candlestickTypes[index];
+                const height = candlestickHeights[index];
+                
+                candlestick.className = `footer-candlestick ${isGreen ? 'green' : 'red'} static`;
+                candlestick.style.left = position + '%';
+                candlestick.style.height = height + 'px';
+                candlestick.style.position = 'absolute';
+                candlestick.style.bottom = '0';
+                candlestick.style.animation = 'none'; // Remove todas as animações
+                candlestick.style.opacity = '0.5'; // Deixa mais sutil como decoração
+                
+                container.appendChild(candlestick);
+            });
         }
         
-        // Sistema de intervalos dinâmicos baseado no mercado
-        let candlestickInterval;
-        
-        function updateCandlestickFrequency() {
-            const marketData = marketSim.getMarketData();
-            let frequency;
-            
-            switch(marketData.trend) {
-                case 'volatile':
-                    frequency = Math.random() * 800 + 600; // 600-1400ms
-                    break;
-                case 'bullish':
-                case 'bearish':
-                    frequency = Math.random() * 1000 + 1200; // 1200-2200ms
-                    break;
-                default: // neutral
-                    frequency = Math.random() * 1500 + 2000; // 2000-3500ms
-            }
-            
-            if (candlestickInterval) {
-                clearInterval(candlestickInterval);
-            }
-            
-            candlestickInterval = setInterval(createRealisticFooterCandlestick, frequency);
-            
-            // Reagendar próxima atualização de frequência
-            setTimeout(updateCandlestickFrequency, frequency * 3);
-        }
-        
-        // Iniciar animação quando a página carregar
+        // Iniciar candlesticks estáticos quando a página carregar
         document.addEventListener('DOMContentLoaded', function() {
-            // Iniciar sistema de candlesticks dinâmico
-            updateCandlestickFrequency();
-            
-            // Criar alguns candlesticks iniciais
-            for (let i = 0; i < 2; i++) {
-                setTimeout(createRealisticFooterCandlestick, i * 800);
-            }
+            // Criar candlesticks estáticos apenas uma vez
+            createStaticFooterCandlesticks();
             
             // Debug: mostrar tendência atual no console (remover em produção)
             setInterval(() => {

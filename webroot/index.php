@@ -17,6 +17,8 @@ $path = trim($path, '/');
 // Remove query parameters for routing
 $segments = explode('/', $path);
 
+
+
 // Handle special auth routes (both GET and POST)
 if ($path === 'login' || $path === 'auth/login') {
     $controller = 'Auth';
@@ -79,37 +81,10 @@ if ($path === 'login' || $path === 'auth/login') {
         $id = !empty($adminSegments[2]) ? $adminSegments[2] : null;
     }
 } else {
+
     // Handle public site routes
     if (empty($path) || $path === '') {
-        // Check if user is logged in and redirect based on role
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        
-        if (isset($_SESSION['user_id'])) {
-            // Get user role from database
-            $db = getDbConnection();
-            $stmt = $db->prepare("SELECT role, student_id FROM users WHERE id = ? AND active = 1");
-            $stmt->execute([$_SESSION['user_id']]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            if ($user) {
-                if ($user['role'] === 'student') {
-                    // Redirect students to their dashboard (without ID - controller will handle it)
-                    header('Location: /admin/students/dashboard/');
-                    exit;
-                } elseif ($user['role'] === 'admin') {
-                    // Redirect admins to admin dashboard
-                    header('Location: /admin/students/admin_dashboard');
-                    exit;
-                }
-            }
-        } else {
-            // Not logged in, redirect to login
-            header('Location: /login');
-            exit;
-        }
-        
+    
         // This should never be reached, but keeping as fallback
         $controller = 'Site/Home';
         $action = 'index';
@@ -117,6 +92,10 @@ if ($path === 'login' || $path === 'auth/login') {
     } elseif ($path === 'sobre') {
         $controller = 'Site/Home';
         $action = 'about';
+        $id = null;
+    } elseif ($path === 'mentoria') {
+        $controller = 'Site/Mentoria';
+        $action = 'index';
         $id = null;
     } elseif ($path === 'contato') {
         $controller = 'Site/Home';

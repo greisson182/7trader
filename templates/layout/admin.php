@@ -488,89 +488,34 @@
         
         const adminMarketSim = new AdminMarketSimulator();
         
-        function createAdminRealisticCandlestick() {
+        function createStaticAdminCandlesticks() {
             const container = document.getElementById('adminFooterCandlesticks');
             if (!container) return;
             
-            const marketData = adminMarketSim.getMarketData();
-            const candlestick = document.createElement('div');
+            // Criar candlesticks estáticos para decoração
+            const candlestickPositions = [15, 25, 35, 45, 55, 65, 75, 85, 95, 105];
+            const candlestickTypes = [true, false, true, true, false, true, false, true, false, true]; // true = green, false = red
+            const candlestickHeights = [20, 25, 35, 50, 22, 28, 24, 26, 28, 30];
             
-            const isGreen = marketData.isGreen;
-            const baseHeight = 18;
-            const volatilityHeight = Math.abs(marketData.change) * 18;
-            const height = Math.max(baseHeight + volatilityHeight, 10);
-            const leftPosition = Math.random() * 94 + 3;
-            
-            let animationDuration, animationType;
-            
-            switch(marketData.trend) {
-                case 'bullish':
-                    animationDuration = Math.random() * 3 + 7;
-                    animationType = 'adminMarketRise';
-                    break;
-                case 'bearish':
-                    animationDuration = Math.random() * 3 + 8;
-                    animationType = 'adminMarketFall';
-                    break;
-                case 'volatile':
-                    animationDuration = Math.random() * 2 + 5;
-                    animationType = 'adminMarketVolatility';
-                    break;
-                default:
-                    animationDuration = Math.random() * 4 + 9;
-                    animationType = Math.random() > 0.5 ? 'adminMarketRise' : 'adminMarketFall';
-            }
-            
-            candlestick.className = `admin-footer-candlestick ${isGreen ? 'green' : 'red'}`;
-            candlestick.style.left = leftPosition + '%';
-            candlestick.style.height = height + 'px';
-            candlestick.style.animation = `${animationType} ${animationDuration}s ease-out forwards`;
-            
-            if (marketData.volatility > 0.9) {
-                candlestick.style.boxShadow = `0 0 18px ${isGreen ? '#00ff88' : '#ff4757'}`;
-            }
-            
-            container.appendChild(candlestick);
-            
-            setTimeout(() => {
-                if (candlestick.parentNode) {
-                    candlestick.parentNode.removeChild(candlestick);
-                }
-            }, animationDuration * 1000);
+            candlestickPositions.forEach((position, index) => {
+                const candlestick = document.createElement('div');
+                const isGreen = candlestickTypes[index];
+                const height = candlestickHeights[index];
+                
+                candlestick.className = `admin-footer-candlestick ${isGreen ? 'green' : 'red'} static`;
+                candlestick.style.left = position + '%';
+                candlestick.style.height = height + 'px';
+                candlestick.style.position = 'absolute';
+                candlestick.style.bottom = position+'px';
+                candlestick.style.animation = 'none'; // Remove todas as animações
+                candlestick.style.opacity = '0.3'; // Deixa mais sutil como decoração
+                
+                container.appendChild(candlestick);
+            });
         }
         
-        let adminCandlestickInterval;
-        
-        function updateAdminCandlestickFrequency() {
-            const marketData = adminMarketSim.getMarketData();
-            let frequency;
-            
-            switch(marketData.trend) {
-                case 'volatile':
-                    frequency = Math.random() * 900 + 700;
-                    break;
-                case 'bullish':
-                case 'bearish':
-                    frequency = Math.random() * 1200 + 1400;
-                    break;
-                default:
-                    frequency = Math.random() * 1800 + 2200;
-            }
-            
-            if (adminCandlestickInterval) {
-                clearInterval(adminCandlestickInterval);
-            }
-            
-            adminCandlestickInterval = setInterval(createAdminRealisticCandlestick, frequency);
-            setTimeout(updateAdminCandlestickFrequency, frequency * 2.5);
-        }
-        
-        // Inicializar sistema admin
-        updateAdminCandlestickFrequency();
-        
-        for (let i = 0; i < 2; i++) {
-            setTimeout(createAdminRealisticCandlestick, i * 900);
-        }
+        // Criar candlesticks estáticos apenas uma vez
+        createStaticAdminCandlesticks();
     </script>
 </body>
 

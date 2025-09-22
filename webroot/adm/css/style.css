@@ -30,7 +30,7 @@
   /* Card and Glass Effects - Light Mode */
   --card-bg: rgba(255, 255, 255, 0.9);
   --card-border: rgba(0, 0, 0, 0.1);
-  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-bg: rgba(255, 255, 255, 0.5);
   --glass-border: rgba(0, 0, 0, 0.1);
 
   /* Navbar - Light Mode */
@@ -82,7 +82,7 @@
   /* Card and Glass Effects - Dark Mode */
   --card-bg: rgba(255, 255, 255, 0.05);
   --card-border: rgba(255, 255, 255, 0.1);
-  --glass-bg: rgba(0, 255, 136, 0.1);
+  --glass-bg: rgba(0, 255, 136, 0.8);
   --glass-border: rgba(0, 255, 136, 0.2);
 
   /* Navbar - Dark Mode */
@@ -1139,7 +1139,7 @@ span.text-danger {
 
 /* Cabeçalho da tabela */
 .table thead th {
-  background: #5a5a5a;
+  background: var(--bg-primary);
   color: white;
   font-weight: 600;
   font-size: 0.875rem;
@@ -1490,7 +1490,6 @@ span.text-danger {
 
 /* Dropdown Menus */
 .dropdown-menu {
-  background: rgb(0 0 0 / 76%);
   backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
