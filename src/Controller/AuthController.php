@@ -7,9 +7,18 @@ class AuthController extends AppController
 {
     public function __construct()
     {
-        // Não chamar parent::__construct() para evitar verificação de auth
-        session_start();
+        // Inicializar sessão e banco sem verificação de auth
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        // Load the global getDbConnection function from index.php
+        if (!function_exists('getDbConnection')) {
+            require_once ROOT . DS . 'webroot' . DS . 'index.php';
+        }
+        
         $this->db = getDbConnection();
+        // Não chamar checkAuth() para páginas de login
     }
     
     public function loginAction()

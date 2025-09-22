@@ -61,7 +61,7 @@
                             </div>
                         <?php endif; ?>
                         
-                        <form method="post" action="/login">
+                        <form method="post" action="/auth/login">
                             <div class="mb-3">
                                 <label for="username" class="form-label">
                                     <i class="fas fa-user me-2"></i>Usuário ou Email

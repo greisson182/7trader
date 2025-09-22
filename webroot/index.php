@@ -18,7 +18,7 @@ $path = trim($path, '/');
 $segments = explode('/', $path);
 
 // Handle special auth routes (both GET and POST)
-if ($path === 'login') {
+if ($path === 'login' || $path === 'auth/login') {
     $controller = 'Auth';
     $action = 'loginAction';
     $id = null;
@@ -40,10 +40,31 @@ if ($path === 'login') {
 } elseif (strpos($path, 'admin') === 0) {
     // Handle admin routes: /admin/{controller}/{action}/{id}
     if ($path === 'admin' || $path === 'admin/') {
-        // Root admin route - redirect to admin dashboard
-        $controller = 'Admin/Students';
-        $action = 'admin_dashboard';
-        $id = null;
+        // Root admin route - check user role and redirect appropriately
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        if (isset($_SESSION['user_role'])) {
+            if ($_SESSION['user_role'] === 'admin') {
+                $controller = 'Admin/Students';
+                $action = 'admin_dashboard';
+                $id = null;
+            } elseif ($_SESSION['user_role'] === 'student') {
+                // Redirect students to their dashboard
+                $controller = 'Admin/Students';
+                $action = 'dashboard';
+                $id = null;
+            } else {
+                // Unknown role, redirect to login
+                header('Location: /login');
+                exit;
+            }
+        } else {
+            // Not logged in, redirect to login
+            header('Location: /login');
+            exit;
+        }
     } else {
         $adminSegments = array_slice($segments, 1); // Remove 'admin' from segments
         $controller = 'Admin/' . (!empty($adminSegments[0]) ? ucfirst($adminSegments[0]) : 'Students');
@@ -53,7 +74,32 @@ if ($path === 'login') {
 } else {
     // Handle public site routes
     if (empty($path) || $path === '') {
-        // Home page
+        // Check if user is logged in and redirect based on role
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        if (isset($_SESSION['user_id'])) {
+            // Get user role from database
+            $db = getDbConnection();
+            $stmt = $db->prepare("SELECT role, student_id FROM users WHERE id = ? AND active = 1");
+            $stmt->execute([$_SESSION['user_id']]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($user) {
+                if ($user['role'] === 'student') {
+                    // Redirect students to their dashboard (without ID - controller will handle it)
+                    header('Location: /admin/students/dashboard/');
+                    exit;
+                } elseif ($user['role'] === 'admin') {
+                    // Redirect admins to admin dashboard
+                    header('Location: /admin/students/admin_dashboard');
+                    exit;
+                }
+            }
+        }
+        
+        // Home page for non-logged users
         $controller = 'Site/Home';
         $action = 'index';
         $id = null;
@@ -66,31 +112,6 @@ if ($path === 'login') {
         $action = 'contact';
         $id = null;
     } else {
-        // Check if user is logged in and redirect based on role
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        
-        if (isset($_SESSION['user_id']) && empty($segments[0])) {
-            // Get user role from database
-            $db = getDbConnection();
-            $stmt = $db->prepare("SELECT role, student_id FROM users WHERE id = ? AND active = 1");
-            $stmt->execute([$_SESSION['user_id']]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            if ($user) {
-                if ($user['role'] === 'student') {
-                    // Redirect students to their dashboard
-                    header('Location: /admin/students/dashboard/' . $user['student_id']);
-                    exit;
-                } elseif ($user['role'] === 'admin') {
-                    // Redirect admins to admin dashboard
-                    header('Location: /admin/students/admin_dashboard');
-                    exit;
-                }
-            }
-        }
-        
         // Default routing logic
         $controller = !empty($segments[0]) ? ucfirst($segments[0]) : 'Students';
         $action = !empty($segments[1]) ? $segments[1] : 'index';
