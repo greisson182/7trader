@@ -10,18 +10,15 @@
                             <i class="fas fa-circle me-1"></i>MERCADO DISPONÍVEL PARA VOCÊ
                         </span>
                     </div>
-                    
                     <h1 class="section-title neon mb-4 typing-animation">
-                        Domine o <span class="text-success glow-text">Day Trade</span><br>
-                        <span class="text-white">Como um Profissional, obtendo ganhos diários, envista no seu conhecimento.</span>
+                        Domine o <span class="text-success glow-text">Day Trade</span> como um Profissional<br>
+                        <span class="text-white">Conquiste ganhos diários investindo no seu conhecimento.
+                            Torne-se um trader de sucesso com nossa metodologia testada e aprovada.</span>
                     </h1>
-                    
                     <p class="section-subtitle mb-4 fade-in-up">
-                        Transforme-se em um trader de sucesso com nossa metodologia comprovada. 
-                        Aprenda a leitura do preço sem utilizar indicadores o famoso price action. Utilize nossa plataforma para lhe auxiliar nos estudos e também em operações de mercado real.
+                        Aprenda a ler o preço sem depender de indicadores — domine o Price Action.
+                        Use nossa plataforma para acelerar seus estudos e atuar com segurança no mercado real.
                     </p>
-                    
-                    
                     <div class="d-flex gap-3 flex-wrap mb-4">
                         <a href="#cursos" class="btn btn-primary-modern btn-lg">
                             <i class="fas fa-chart-line me-2"></i>Começe seus estudos
@@ -30,25 +27,21 @@
                             <i class="fas fa-handshake me-2"></i>Mentoria VIP
                         </a>
                     </div>
-                    
                 </div>
             </div>
-            
             <div class="col-lg-6">
                 <div class="trading-arena position-relative">
                     <!-- Imagem do Gráfico de Trading -->
                     <div class="trading-chart-image">
-                        <img src="/site/images/trading-chart.svg" alt="Gráfico de Trading" class="img-fluid rounded shadow-lg">
+                        <img src="/site/images/candles.png" alt="Gráfico de Trading" class="img-fluid rounded img-banner">
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
     <!-- Background Pattern -->
     <div class="financial-pattern"></div>
 </section>
-
 <!-- Features Section -->
 <section class="py-5 financial-features-bg" id="aprenda-dominar-mercado">
     <div class="container">
@@ -61,7 +54,6 @@
                 <p class="lead text-light opacity-75">Metodologia completa para formar traders de elite</p>
             </div>
         </div>
-        
         <div class="row g-4">
             <div class="col-md-4">
                 <div class="modern-card h-100">
@@ -74,7 +66,7 @@
                         </div>
                         <h5 class="card-title text-white fw-bold">Cursos Profissionais</h5>
                         <p class="card-text text-light opacity-75">
-                            Videoaulas exclusivas com estratégias de traders profissionais. 
+                            Videoaulas exclusivas com estratégias de traders profissionais.
                             Do básico ao avançado com cases reais do mercado.
                         </p>
                         <div class="feature-stats mt-3">
@@ -84,7 +76,6 @@
                     </div>
                 </div>
             </div>
-            
             <div class="col-md-4">
                 <div class="modern-card h-100">
                     <div class="card-body text-center p-4">
@@ -96,7 +87,7 @@
                         </div>
                         <h5 class="card-title text-white fw-bold">Mentoria VIP</h5>
                         <p class="card-text text-light opacity-75">
-                            Sessões individuais com traders experientes. 
+                            Sessões individuais com traders experientes.
                             Análise personalizada dos seus trades e estratégias.
                         </p>
                         <div class="feature-stats mt-3">
@@ -106,7 +97,6 @@
                     </div>
                 </div>
             </div>
-            
             <div class="col-md-4">
                 <div class="modern-card h-100">
                     <div class="card-body text-center p-4">
@@ -118,7 +108,7 @@
                         </div>
                         <h5 class="card-title text-white fw-bold">Comunidade Elite</h5>
                         <p class="card-text text-light opacity-75">
-                            Faça parte de uma comunidade exclusiva de traders. 
+                            Faça parte de uma comunidade exclusiva de traders.
                             Compartilhe experiências e aprenda com os melhores.
                         </p>
                         <div class="feature-stats mt-3">
@@ -144,7 +134,7 @@
                 <p class="lead text-light opacity-75">Sistema completo para análise e controle de trades</p>
             </div>
         </div>
-        
+
         <div class="row g-4">
             <div class="col-lg-3 col-md-6">
                 <div class="tool-card h-100">
@@ -167,7 +157,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-lg-3 col-md-6">
                 <div class="tool-card h-100">
                     <div class="card-body text-center p-4">
@@ -189,7 +179,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-lg-3 col-md-6">
                 <div class="tool-card h-100">
                     <div class="card-body text-center p-4">
@@ -211,7 +201,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-lg-3 col-md-6">
                 <div class="tool-card h-100">
                     <div class="card-body text-center p-4">
@@ -234,7 +224,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats Row -->
         <div class="row text-center mt-5 pt-4 border-top">
             <div class="col-md-3">
@@ -274,7 +264,7 @@
                 <p class="section-subtitle">Escolha a melhor opção para acelerar seu aprendizado em day trade</p>
             </div>
         </div>
-        
+
         <div class="row g-4">
             <!-- Curso Card -->
             <div class="col-lg-4 col-md-6">
@@ -284,29 +274,29 @@
                             <i class="fas fa-graduation-cap me-1"></i>Mais Popular
                         </span>
                     </div>
-                    
+
                     <div class="card-body p-4 pt-5">
                         <div class="service-icon mb-4">
                             <div class="icon-container bg-info bg-opacity-20 rounded-circle p-4 d-inline-flex align-items-center justify-content-center neon-glow">
                                 <i class="fas fa-play-circle fa-3x text-info"></i>
                             </div>
                         </div>
-                        
+
                         <h4 class="card-title text-light mb-3">Curso Completo</h4>
                         <p class="card-text text-light opacity-75 mb-4">
                             Video aulas completas do básico ao avançado. Aprenda a leitura do preço sem indicadores o famoso price action.
                         </p>
-                        
+
                         <div class="service-features mb-4">
                             <ul class="list-unstyled text-start">
                                 <li class="mb-2 text-light opacity-75">
-                                    <i class="fas fa-check text-success me-2"></i>50+ videoaulas em HD
+                                    <i class="fas fa-check text-success me-2"></i>20+ videoaulas em HD
                                 </li>
                                 <li class="mb-2 text-light opacity-75">
                                     <i class="fas fa-check text-success me-2"></i>Material didático completo
                                 </li>
                                 <li class="mb-2 text-light opacity-75">
-                                    <i class="fas fa-check text-success me-2"></i>Certificado de conclusão
+                                    <i class="fas fa-check text-success me-2"></i>Acesso ao portal do aluno
                                 </li>
                                 <li class="mb-2 text-light opacity-75">
                                     <i class="fas fa-check text-success me-2"></i>Acesso vitalício
@@ -316,10 +306,10 @@
                                 </li>
                             </ul>
                         </div>
-                        
+
                         <div class="pricing mb-4">
                             <div class="price-container text-center">
-                                <span class="price-old text-light opacity-50 text-decoration-line-through">R$ 997</span>
+                               <!-- <span class="price-old text-light opacity-50 text-decoration-line-through">R$ 997</span>-->
                                 <div class="price-current">
                                     <span class="currency text-primary">R$</span>
                                     <span class="amount text-primary fw-bold h2 neon-glow">497</span>
@@ -327,14 +317,14 @@
                                 <small class="text-light opacity-75">pagamento único</small>
                             </div>
                         </div>
-                        
+
                         <a href="/cursos" class="btn btn-primary-modern w-100 btn-lg">
                             <i class="fas fa-shopping-cart me-2"></i>Comprar Curso
                         </a>
                     </div>
                 </div>
             </div>
-            
+
             <!-- Mentoria em Grupo Card -->
             <div class="col-lg-4 col-md-6">
                 <div class="modern-card h-100 text-center position-relative">
@@ -343,24 +333,21 @@
                             <i class="fas fa-users me-1"></i>Interativo
                         </span>
                     </div>
-                    
                     <div class="card-body p-4 pt-5">
                         <div class="service-icon mb-4">
                             <div class="icon-container bg-success bg-opacity-20 rounded-circle p-4 d-inline-flex align-items-center justify-content-center neon-glow">
                                 <i class="fas fa-users fa-3x text-success"></i>
                             </div>
                         </div>
-                        
                         <h4 class="card-title text-light mb-3">Mentoria em Grupo</h4>
                         <p class="card-text text-light opacity-75 mb-4">
-                            Sessões ao vivo com outros alunos. Troque experiências, 
+                            Sessões ao vivo com outros alunos. Troque experiências,
                             aprenda com casos reais e tire dúvidas em tempo real.
                         </p>
-                        
                         <div class="service-features mb-4">
                             <ul class="list-unstyled text-start">
                                 <li class="mb-2 text-light opacity-75">
-                                    <i class="fas fa-check text-success me-2"></i>4 sessões mensais ao vivo
+                                    <i class="fas fa-check text-success me-2"></i>5 aulas semanais com replay de mercado
                                 </li>
                                 <li class="mb-2 text-light opacity-75">
                                     <i class="fas fa-check text-success me-2"></i>Grupo exclusivo no Telegram
@@ -369,32 +356,31 @@
                                     <i class="fas fa-check text-success me-2"></i>Análise de trades em grupo
                                 </li>
                                 <li class="mb-2 text-light opacity-75">
-                                    <i class="fas fa-check text-success me-2"></i>Gravações das sessões
+                                    <i class="fas fa-check text-success me-2"></i>Gravações das aulas
                                 </li>
                                 <li class="mb-2 text-light opacity-75">
                                     <i class="fas fa-check text-success me-2"></i>Suporte da comunidade
                                 </li>
                             </ul>
                         </div>
-                        
+
                         <div class="pricing mb-4">
                             <div class="price-container text-center">
                                 <div class="price-current">
                                     <span class="currency text-success">R$</span>
-                                    <span class="amount text-success fw-bold h2 neon-glow">297</span>
-                                    <span class="period text-light opacity-75">/mês</span>
+                                    <span class="amount text-success fw-bold h2 neon-glow">1097</span>
+                                    <span class="period text-light opacity-75">em até 12x</span>
                                 </div>
-                                <small class="text-light opacity-75">cancele quando quiser</small>
                             </div>
                         </div>
-                        
-                        <a href="/mentoria" class="btn btn-outline-modern w-100 btn-lg">
-                            <i class="fas fa-users me-2"></i>Participar do Grupo
+
+                        <a href="/mentoria" class="btn btn-primary-modern w-100 btn-lg">
+                            <i class="fas fa-crown me-2"></i>Comprar Mentoria
                         </a>
                     </div>
                 </div>
             </div>
-            
+
             <!-- Mentoria Individual Card -->
             <div class="col-lg-4 col-md-6">
                 <div class="modern-card h-100 text-center position-relative">
@@ -403,20 +389,17 @@
                             <i class="fas fa-crown me-1"></i>Premium
                         </span>
                     </div>
-                    
                     <div class="card-body p-4 pt-5">
                         <div class="service-icon mb-4">
                             <div class="icon-container bg-warning bg-opacity-20 rounded-circle p-4 d-inline-flex align-items-center justify-content-center neon-glow">
                                 <i class="fas fa-user-tie fa-3x text-warning"></i>
                             </div>
                         </div>
-                        
                         <h4 class="card-title text-light mb-3">Mentoria Individual</h4>
                         <p class="card-text text-light opacity-75 mb-4">
-                            Acompanhamento personalizado 1:1. Foco total nos seus pontos 
+                            Acompanhamento personalizado 1:1. Foco total nos seus pontos
                             de melhoria com estratégias customizadas para seu perfil.
                         </p>
-                        
                         <div class="service-features mb-4">
                             <ul class="list-unstyled text-start">
                                 <li class="mb-2 text-light opacity-75">
@@ -436,18 +419,18 @@
                                 </li>
                             </ul>
                         </div>
-                        
+
                         <div class="pricing mb-4">
                             <div class="price-container text-center">
                                 <div class="price-current">
                                     <span class="currency text-warning">R$</span>
-                                    <span class="amount text-warning fw-bold h2 neon-glow">797</span>
+                                    <span class="amount text-warning fw-bold h2 neon-glow">2997</span>
                                     <span class="period text-light opacity-75">/mês</span>
                                 </div>
                                 <small class="text-light opacity-75">primeira semana grátis</small>
                             </div>
                         </div>
-                        
+
                         <a href="/mentoria" class="btn btn-primary-modern w-100 btn-lg">
                             <i class="fas fa-crown me-2"></i>Quero Mentoria VIP
                         </a>
@@ -455,7 +438,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Comparison Section -->
         <div class="row mt-5">
             <div class="col-12 text-center">
@@ -465,11 +448,11 @@
                         Não sabe qual escolher?
                     </h5>
                     <p class="text-light opacity-75 mb-3">
-                        Comece com o <strong>Curso Completo</strong> para aprender os fundamentos, 
-                        depois evolua para a <strong>Mentoria em Grupo</strong> para praticar com outros alunos, 
+                        Comece com o <strong>Curso Completo</strong> para aprender os fundamentos,
+                        depois evolua para a <strong>Mentoria em Grupo</strong> para praticar com outros alunos,
                         e finalmente a <strong>Mentoria Individual</strong> para acelerar seus resultados.
                     </p>
-                    <a href="/contato" class="btn btn-outline-modern">
+                    <a href="/contato" class="btn btn-primary-modern w-100 btn-lg">
                         <i class="fas fa-comments me-2"></i>Falar com Consultor
                     </a>
                 </div>
@@ -496,285 +479,368 @@
 </section>
 
 <style>
-.hero-section {
-    background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 25%, #45b7d1 50%, #96ceb4 75%, #ffeaa7 100%);
-    background-size: 400% 400%;
-    animation: gradientShift 8s ease infinite;
-    position: relative;
-    overflow: hidden;
-}
-
-.hero-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(255, 177, 153, 0.3) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(120, 219, 226, 0.2) 0%, transparent 50%);
-    z-index: 1;
-}
-
-.hero-section::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: 
-        repeating-linear-gradient(
-            45deg,
-            transparent,
-            transparent 2px,
-            rgba(255, 255, 255, 0.03) 2px,
-            rgba(255, 255, 255, 0.03) 4px
-        );
-    z-index: 1;
-}
-
-.hero-section .container {
-    position: relative;
-    z-index: 2;
-}
-
-.hero-content {
-    animation: fadeInUp 1s ease-out;
-}
-
-@keyframes gradientShift {
-    0% {
-        background-position: 0% 50%;
+    .hero-section {
+        background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 25%, #45b7d1 50%, #96ceb4 75%, #ffeaa7 100%);
+        background-size: 400% 400%;
+        animation: gradientShift 8s ease infinite;
+        position: relative;
+        overflow: hidden;
     }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
-}
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+            radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255, 177, 153, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(120, 219, 226, 0.2) 0%, transparent 50%);
+        z-index: 1;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+
+    .hero-section::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image:
+            repeating-linear-gradient(45deg,
+                transparent,
+                transparent 2px,
+                rgba(255, 255, 255, 0.03) 2px,
+                rgba(255, 255, 255, 0.03) 4px);
+        z-index: 1;
     }
-}
 
-.glow-text {
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.3);
-    animation: textGlow 2s ease-in-out infinite alternate;
-}
+    .hero-section .container {
+        position: relative;
+        z-index: 2;
+    }
 
-@keyframes textGlow {
-    from {
+    .hero-content {
+        animation: fadeInUp 1s ease-out;
+    }
+
+    @keyframes gradientShift {
+        0% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .glow-text {
         text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.3);
+        animation: textGlow 2s ease-in-out infinite alternate;
     }
-    to {
-        text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px rgba(255, 255, 255, 0.5);
+
+    @keyframes textGlow {
+        from {
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.3);
+        }
+
+        to {
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px rgba(255, 255, 255, 0.5);
+        }
     }
-}
 
-.feature-icon {
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    .feature-icon {
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-.stat-item {
-    padding: 2rem 0;
-}
+    .stat-item {
+        padding: 2rem 0;
+    }
 
-.card {
-    transition: transform 0.3s ease;
-}
+    .card {
+        transition: transform 0.3s ease;
+    }
 
-.card:hover {
-    transform: translateY(-5px);
-}
+    .card:hover {
+        transform: translateY(-5px);
+    }
 
-.course-card {
-    transition: all 0.3s ease;
-}
+    .course-card {
+        transition: all 0.3s ease;
+    }
 
-.course-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
-}
+    .course-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+    }
 
-.course-icon {
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    .course-icon {
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-.feature-icon-sm {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(13, 110, 253, 0.1);
-    border-radius: 50%;
-    font-size: 1.2rem;
-}
+    .feature-icon-sm {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(13, 110, 253, 0.1);
+        border-radius: 50%;
+        font-size: 1.2rem;
+    }
 
-.mentor-card {
-    max-width: 300px;
-    margin: 0 auto;
-    transition: transform 0.3s ease;
-}
+    .mentor-card {
+        max-width: 300px;
+        margin: 0 auto;
+        transition: transform 0.3s ease;
+    }
 
-.mentor-card:hover {
-    transform: scale(1.05);
-}
+    .mentor-card:hover {
+        transform: scale(1.05);
+    }
 
-.mentoring-features .feature-item {
-    transition: transform 0.2s ease;
-}
+    .mentoring-features .feature-item {
+        transition: transform 0.2s ease;
+    }
 
-.mentoring-features .feature-item:hover {
-    transform: translateX(10px);
-}
+    .mentoring-features .feature-item:hover {
+        transform: translateX(10px);
+    }
 
-/* Enhanced Mentoring Section Styles */
-.bg-gradient-light {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-}
+    /* Enhanced Mentoring Section Styles */
+    .bg-gradient-light {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
 
-.mentoring-content .section-badge .badge {
-    font-size: 0.875rem;
-    font-weight: 500;
-}
+    .mentoring-content .section-badge .badge {
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
 
-.mentoring-features .feature-item {
-    transition: all 0.3s ease;
-    border: 1px solid transparent;
-}
+    .mentoring-features .feature-item {
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+    }
 
-.mentoring-features .feature-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
-    border-color: rgba(13, 110, 253, 0.2);
-}
+    .mentoring-features .feature-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+        border-color: rgba(13, 110, 253, 0.2);
+    }
 
-.feature-icon-container .feature-icon-bg {
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-}
+    .feature-icon-container .feature-icon-bg {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
 
-.feature-item:hover .feature-icon-bg {
-    transform: scale(1.1);
-}
+    .feature-item:hover .feature-icon-bg {
+        transform: scale(1.1);
+    }
 
-.pricing-highlight {
-    border: 2px solid rgba(13, 110, 253, 0.1);
-    transition: all 0.3s ease;
-}
+    .pricing-highlight {
+        border: 2px solid rgba(13, 110, 253, 0.1);
+        transition: all 0.3s ease;
+    }
 
-.pricing-highlight:hover {
-    border-color: rgba(13, 110, 253, 0.3);
-    transform: translateY(-2px);
-}
+    .pricing-highlight:hover {
+        border-color: rgba(13, 110, 253, 0.3);
+        transform: translateY(-2px);
+    }
 
-.mentor-card {
-    max-width: 400px;
-    margin: 0 auto;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(0,0,0,0.05);
-}
+    .mentor-card {
+        max-width: 400px;
+        margin: 0 auto;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
 
-.mentor-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
-}
+    .mentor-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+    }
 
-.avatar-container {
-    transition: transform 0.3s ease;
-}
+    .avatar-container {
+        transition: transform 0.3s ease;
+    }
 
-.mentor-card:hover .avatar-container {
-    transform: scale(1.05);
-}
+    .mentor-card:hover .avatar-container {
+        transform: scale(1.05);
+    }
 
-.stat-card {
-    transition: all 0.3s ease;
-    border: 1px solid transparent;
-}
+    .stat-card {
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+    }
 
-.stat-card:hover {
-    transform: translateY(-3px);
-    border-color: rgba(0,0,0,0.1);
-}
+    .stat-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(0, 0, 0, 0.1);
+    }
 
-.testimonial-preview {
-    border: 1px solid rgba(0,0,0,0.05);
-    transition: all 0.3s ease;
-}
+    .testimonial-preview {
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
 
-.mentor-card:hover .testimonial-preview {
-    background-color: #fff !important;
-    border-color: rgba(13, 110, 253, 0.2);
-}
+    .mentor-card:hover .testimonial-preview {
+        background-color: #fff !important;
+        border-color: rgba(13, 110, 253, 0.2);
+    }
 
-.floating-icon {
-    opacity: 0.7;
-}
+    .floating-icon {
+        opacity: 0.7;
+    }
 
-@keyframes animate-float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
-}
+    @keyframes animate-float {
 
-.animate-float {
-    animation: animate-float 3s ease-in-out infinite;
-}
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
 
-.main-content {
-    padding-top: 76px; /* Account for fixed navbar */
-}
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+
+    .animate-float {
+        animation: animate-float 3s ease-in-out infinite;
+    }
+
+    .main-content {
+        padding-top: 76px;
+        /* Account for fixed navbar */
+    }
 </style>
 
 <!-- Trading Chart Image Styles -->
 <style>
-.trading-chart-image {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 400px;
-    padding: 2rem;
-}
-
-.trading-chart-image img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.trading-chart-image img:hover {
-    transform: scale(1.02);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-}
-
-@media (max-width: 768px) {
     .trading-chart-image {
-        min-height: 300px;
-        padding: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 400px;
+        padding: 2rem;
+        position: relative;
     }
-}
+
+    .trading-chart-image::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at center, rgba(0, 233, 68, 0.1) 0%, transparent 70%);
+        border-radius: 20px;
+        z-index: 1;
+        animation: neonPulse 3s ease-in-out infinite alternate;
+    }
+
+    .img-banner {
+        max-width: 100%;
+        height: auto;
+        border-radius: 15px;
+        position: relative;
+        z-index: 2;
+        transition: all 0.3s ease;
+
+        /* Efeitos de saturação e neon */
+        filter:
+            saturate(1.8) contrast(1.2) brightness(1.1) drop-shadow(0 0 20px rgba(0, 233, 68, 0.6)) drop-shadow(0 0 40px rgba(0, 233, 68, 0.4)) drop-shadow(0 0 60px rgba(0, 233, 68, 0.3));
+
+        /* Borda neon */
+        box-shadow:
+            0 0 20px rgba(0, 233, 68, 0.8),
+            0 0 40px rgba(0, 233, 68, 0.6),
+            0 0 60px rgba(0, 233, 68, 0.4),
+            inset 0 0 20px rgba(255, 255, 255, 0.1);
+
+        animation: neonGlow 2s ease-in-out infinite alternate;
+    }
+
+    .img-banner:hover {
+        transform: scale(1.05);
+        filter:
+            saturate(2.2) contrast(1.4) brightness(1.3) drop-shadow(0 0 30px rgba(0, 233, 68, 0.8)) drop-shadow(0 0 50px rgba(0, 233, 68, 0.6)) drop-shadow(0 0 70px rgba(0, 233, 68, 0.5));
+
+        box-shadow:
+            0 0 30px rgba(0, 233, 68, 1),
+            0 0 50px rgba(0, 233, 68, 0.8),
+            0 0 70px rgba(0, 233, 68, 0.6),
+            inset 0 0 30px rgba(255, 255, 255, 0.2);
+    }
+
+    @keyframes neonGlow {
+        0% {
+            filter:
+                saturate(1.8) contrast(1.2) brightness(1.1) drop-shadow(0 0 20px rgba(0, 233, 68, 0.6)) drop-shadow(0 0 40px rgba(0, 233, 68, 0.4)) drop-shadow(0 0 60px rgba(0, 233, 68, 0.3));
+
+            box-shadow:
+                0 0 20px rgba(0, 233, 68, 0.8),
+                0 0 40px rgba(0, 233, 68, 0.6),
+                0 0 60px rgba(0, 233, 68, 0.4),
+                inset 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        100% {
+            filter:
+                saturate(1.8) contrast(1.0) brightness(1.1) drop-shadow(0 0 20px rgba(0, 233, 68, 0.02)) drop-shadow(0 0 40px rgba(0, 233, 68, 0.50)) drop-shadow(0 0 60px rgba(0, 233, 68, 0.01)) box-shadow: 0 0 25px rgba(0, 233, 68, 1),
+                0 0 45px rgba(0, 233, 68, 0.8),
+                0 0 65px rgba(0, 233, 68, 0.6),
+                inset 0 0 25px rgba(255, 255, 255, 0.15);
+        }
+    }
+
+    @keyframes neonPulse {
+        0% {
+            background: radial-gradient(circle at center, rgba(0, 233, 68, 0.1) 0%, transparent 70%);
+            transform: scale(1);
+        }
+
+        100% {
+            background: radial-gradient(circle at center, rgba(0, 233, 68, 0.15) 0%, transparent 80%);
+            transform: scale(1.02);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .trading-chart-image {
+            min-height: 300px;
+            padding: 1rem;
+        }
+
+        .img-banner {
+            filter:
+                saturate(1.6) contrast(1.1) brightness(1.05) drop-shadow(0 0 15px rgba(0, 233, 68, 0.5)) drop-shadow(0 0 30px rgba(0, 233, 68, 0.3)) drop-shadow(0 0 45px rgba(0, 233, 68, 0.2));
+        }
+    }
 </style>

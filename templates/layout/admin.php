@@ -23,139 +23,6 @@
 
     <!-- Custom Styles -->
     <link href="/adm/css/style.css" rel="stylesheet">
-    
-    <style>
-        /* Animação Realista de Candlesticks no Footer Admin */
-        .admin-footer-candlestick {
-            position: absolute;
-            width: 8px;
-            border-radius: 2px;
-            opacity: 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .admin-footer-candlestick.green {
-            background: linear-gradient(to bottom, #00ff88 0%, #00d4aa 30%, #00b894 70%, #00ff88 100%);
-            border: 1px solid #00ff88;
-        }
-
-        .admin-footer-candlestick.red {
-            background: linear-gradient(to bottom, #ff4757 0%, #ff3742 30%, #e84393 70%, #ff4757 100%);
-            border: 1px solid #ff4757;
-        }
-
-        .admin-footer-candlestick::before,
-        .admin-footer-candlestick::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 2px;
-            background: inherit;
-            border-radius: 1px;
-        }
-
-        .admin-footer-candlestick::before {
-            top: -12px;
-            height: 12px;
-        }
-
-        .admin-footer-candlestick::after {
-            bottom: -12px;
-            height: 12px;
-        }
-
-        /* Animações de Mercado para Admin */
-        @keyframes adminMarketRise {
-            0% {
-                transform: translateY(80px) scale(0.8);
-                opacity: 0;
-            }
-            15% {
-                opacity: 0.7;
-                transform: translateY(60px) scale(0.9);
-            }
-            30% {
-                transform: translateY(40px) scale(1);
-                opacity: 0.8;
-            }
-            50% {
-                transform: translateY(20px) scale(1.1);
-                opacity: 0.9;
-            }
-            70% {
-                transform: translateY(10px) scale(1);
-                opacity: 0.8;
-            }
-            85% {
-                transform: translateY(-10px) scale(0.9);
-                opacity: 0.6;
-            }
-            100% {
-                transform: translateY(-30px) scale(0.7);
-                opacity: 0;
-            }
-        }
-
-        @keyframes adminMarketFall {
-            0% {
-                transform: translateY(80px) scale(0.8);
-                opacity: 0;
-            }
-            15% {
-                opacity: 0.7;
-                transform: translateY(70px) scale(0.9);
-            }
-            30% {
-                transform: translateY(60px) scale(1);
-                opacity: 0.8;
-            }
-            50% {
-                transform: translateY(50px) scale(1.1);
-                opacity: 0.9;
-            }
-            70% {
-                transform: translateY(40px) scale(1);
-                opacity: 0.8;
-            }
-            85% {
-                transform: translateY(20px) scale(0.9);
-                opacity: 0.6;
-            }
-            100% {
-                transform: translateY(-10px) scale(0.7);
-                opacity: 0;
-            }
-        }
-
-        @keyframes adminMarketVolatility {
-            0% {
-                transform: translateY(80px) scale(0.8) rotate(0deg);
-                opacity: 0;
-            }
-            20% {
-                transform: translateY(50px) scale(1) rotate(5deg);
-                opacity: 0.8;
-            }
-            40% {
-                transform: translateY(30px) scale(1.1) rotate(-3deg);
-                opacity: 0.9;
-            }
-            60% {
-                transform: translateY(20px) scale(1) rotate(2deg);
-                opacity: 0.8;
-            }
-            80% {
-                transform: translateY(10px) scale(0.9) rotate(-1deg);
-                opacity: 0.6;
-            }
-            100% {
-                transform: translateY(-20px) scale(0.7) rotate(0deg);
-                opacity: 0;
-            }
-        }
-    </style>
 </head>
 
 <body class="fade-in-up">
@@ -163,7 +30,7 @@
     <nav class="navbar navbar-expand-lg glass fixed-top">
         <div class="container">
             <a href="/admin/students/dashboard" class="navbar-brand">
-                <strong class="footer-title-admin">7</strong><span style="color:#fff!importa">Trader</span>
+                <strong class="footer-title-admin">7</strong><span style="color:#fff!important">Trader</span>
             </a>
 
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -227,7 +94,7 @@
                                 <?= h($currentUser['username']) ?>
                                 <span class="badge bg-primary ms-2"><?= ucfirst($currentUser['role']) ?></span>
                             </a>
-                            <ul class="dropdown-menu glass dropdown-menu-end">
+                            <ul class="dropdown-menu glass dropdown-menu-end sub-menu">
                                 <li><a class="dropdown-item" href="/admin/profile/edit<?= isset($currentUser['id']) ? '/' . $currentUser['id'] : '' ?>">
                                         <i class="bi bi-person-gear me-2"></i>
                                         Editar Perfil
@@ -235,10 +102,12 @@
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a class="dropdown-item" href="/logout">
+                                <li>
+                                    <a class="dropdown-item" href="/logout">
                                         <i class="bi bi-box-arrow-right me-2"></i>
                                         Sair
-                                    </a></li>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                     <?php else: ?>
@@ -256,7 +125,7 @@
                             <a class="nav-link dropdown-toggle" href="#" id="configDropdown" role="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-gear me-1"></i>
                             </a>
-                            <ul class="dropdown-menu glass">
+                            <ul class="dropdown-menu glass sub-menu">
                                 <li>
                                     <a class="dropdown-item" href="/admin/markets">
                                         <i class="bi bi-currency-exchange me-2"></i>
@@ -306,7 +175,7 @@
     <footer class="trading-footer-admin py-4 mt-5 position-relative overflow-hidden">
         <!-- Animação de Candlesticks -->
         <div class="candlestick-container position-absolute w-100 h-100" id="adminFooterCandlesticks"></div>
-        
+
         <div class="container text-center position-relative" style="z-index: 10;">
             <div class="row align-items-center">
                 <div class="col-md-6 text-md-start">
@@ -410,17 +279,17 @@
                 this.price = 100;
                 this.priceHistory = [];
                 this.volatility = 0.4;
-                
+
                 this.updateTrend();
             }
-            
+
             updateTrend() {
                 const trends = ['bullish', 'bearish', 'neutral', 'volatile'];
                 const weights = [0.35, 0.35, 0.15, 0.15];
-                
+
                 let random = Math.random();
                 let cumulativeWeight = 0;
-                
+
                 for (let i = 0; i < trends.length; i++) {
                     cumulativeWeight += weights[i];
                     if (random <= cumulativeWeight) {
@@ -428,11 +297,11 @@
                         break;
                     }
                 }
-                
+
                 this.trendDuration = 0;
                 this.maxTrendDuration = Math.random() * 25 + 15;
-                
-                switch(this.currentTrend) {
+
+                switch (this.currentTrend) {
                     case 'volatile':
                         this.volatility = Math.random() * 0.9 + 0.8;
                         break;
@@ -444,18 +313,18 @@
                         this.volatility = Math.random() * 0.3 + 0.2;
                 }
             }
-            
+
             getMarketData() {
                 this.trendDuration++;
-                
+
                 if (this.trendDuration >= this.maxTrendDuration) {
                     this.updateTrend();
                 }
-                
+
                 let priceChange = 0;
                 const baseChange = (Math.random() - 0.5) * this.volatility;
-                
-                switch(this.currentTrend) {
+
+                switch (this.currentTrend) {
                     case 'bullish':
                         priceChange = baseChange + (Math.random() * 0.4 + 0.15);
                         break;
@@ -468,14 +337,14 @@
                     default:
                         priceChange = baseChange * 0.6;
                 }
-                
+
                 this.price += priceChange;
                 this.priceHistory.push(this.price);
-                
+
                 if (this.priceHistory.length > 60) {
                     this.priceHistory.shift();
                 }
-                
+
                 return {
                     trend: this.currentTrend,
                     price: this.price,
@@ -485,35 +354,35 @@
                 };
             }
         }
-        
+
         const adminMarketSim = new AdminMarketSimulator();
-        
+
         function createStaticAdminCandlesticks() {
             const container = document.getElementById('adminFooterCandlesticks');
             if (!container) return;
-            
+
             // Criar candlesticks estáticos para decoração
             const candlestickPositions = [15, 25, 35, 45, 55, 65, 75, 85, 95, 105];
             const candlestickTypes = [true, false, true, true, false, true, false, true, false, true]; // true = green, false = red
             const candlestickHeights = [20, 25, 35, 50, 22, 28, 24, 26, 28, 30];
-            
+
             candlestickPositions.forEach((position, index) => {
                 const candlestick = document.createElement('div');
                 const isGreen = candlestickTypes[index];
                 const height = candlestickHeights[index];
-                
+
                 candlestick.className = `admin-footer-candlestick ${isGreen ? 'green' : 'red'} static`;
                 candlestick.style.left = position + '%';
                 candlestick.style.height = height + 'px';
                 candlestick.style.position = 'absolute';
-                candlestick.style.bottom = position+'px';
+                candlestick.style.bottom = position + 'px';
                 candlestick.style.animation = 'none'; // Remove todas as animações
                 candlestick.style.opacity = '0.3'; // Deixa mais sutil como decoração
-                
+
                 container.appendChild(candlestick);
             });
         }
-        
+
         // Criar candlesticks estáticos apenas uma vez
         createStaticAdminCandlesticks();
     </script>

@@ -190,6 +190,11 @@ body {
     text-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
 }
 
+
+.img-banner {
+    box-shadow: none!important;
+}
+
 .section-subtitle {
     font-size: 1.2rem;
     color: var(--trading-light);
