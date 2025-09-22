@@ -1,0 +1,594 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use PDO;
+use Exception;
+
+class StudentsController extends AppController
+{
+    public function index()
+    {
+        try {
+            $pdo = $this->getDbConnection();
+            
+            // Se for estudante, mostrar apenas seus próprios dados
+            if ($this->isStudent()) {
+                $studentId = $this->getCurrentStudentId();
+                if (!$studentId) {
+                    $this->flash('Usuário estudante não está associado a nenhum registro de estudante.', 'error');
+                    return $this->render('Students/index');
+                }
+                $stmt = $pdo->prepare("SELECT * FROM students WHERE id = ?");
+                $stmt->execute([$studentId]);
+                $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            } else {
+                // Admin vê todos os estudantes
+                $stmt = $pdo->query("SELECT * FROM students ORDER BY created DESC");
+                $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+            
+            $this->set('students', $students);
+            return $this->render('Students/index');
+        } catch (Exception $e) {
+            $this->flash('Error loading students: ' . $e->getMessage(), 'error');
+            return $this->render('Students/index');
+        }
+    }
+
+    public function view($id = null)
+    {
+        try {
+            $pdo = $this->getDbConnection();
+            
+            // Verificar se estudante pode acessar este registro
+            if ($this->isStudent()) {
+                $studentId = $this->getCurrentStudentId();
+                if ($studentId != $id) {
+                    $this->flash('Acesso negado. Você só pode visualizar seus próprios dados.', 'error');
+                    return $this->redirect('/students');
+                }
+            }
+            
+            $stmt = $pdo->prepare("
+                SELECT s.*, u.currency, u.username, u.role, u.active 
+                FROM students s 
+                LEFT JOIN users u ON s.id = u.student_id 
+                WHERE s.id = ?
+            ");
+            $stmt->execute([$id]);
+            $student = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$student) {
+                $this->flash('Student not found.', 'error');
+                return $this->redirect(['action' => 'index']);
+            }
+            
+            // Get related studies
+            $stmt = $pdo->prepare("SELECT * FROM studies WHERE student_id = ? ORDER BY created DESC");
+            $stmt->execute([$id]);
+            $studies = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            $this->set('student', $student);
+            $this->set('studies', $studies);
+            return $this->render('Students/view');
+        } catch (Exception $e) {
+            $this->flash('Error loading student: ' . $e->getMessage(), 'error');
+            return $this->redirect(['action' => 'index']);
+        }
+    }
+
+    public function add()
+    {
+        // Verificar se o usuário é administrador
+        $this->requireAdmin();
+        
+        if ($this->isPost()) {
+            $data = $this->getPostData();
+            
+            try {
+                $pdo = $this->getDbConnection();
+                
+                // Verificar se o email já existe na tabela students
+                $stmt = $pdo->prepare("SELECT id FROM students WHERE email = ?");
+                $stmt->execute([$data['email']]);
+                if ($stmt->fetch()) {
+                    $this->flash('Este email já está cadastrado para outro estudante.', 'error');
+                    return $this->render('Students/add');
+                }
+                
+                // Verificar se o email já existe na tabela users
+                $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+                $stmt->execute([$data['email']]);
+                if ($stmt->fetch()) {
+                    $this->flash('Este email já está cadastrado como usuário.', 'error');
+                    return $this->render('Students/add');
+                }
+                
+                // Iniciar transação
+                $pdo->beginTransaction();
+                
+                // Inserir estudante
+                $stmt = $pdo->prepare("INSERT INTO students (name, email, created, modified) VALUES (?, ?, NOW(), NOW())");
+                $stmt->execute([$data['name'], $data['email']]);
+                $studentId = $pdo->lastInsertId();
+                
+                // Criar username baseado no nome (remover espaços e caracteres especiais)
+                $username = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $data['name']));
+                
+                // Verificar se o username já existe e adicionar número se necessário
+                $originalUsername = $username;
+                $counter = 1;
+                while (true) {
+                    $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
+                    $stmt->execute([$username]);
+                    if (!$stmt->fetch()) {
+                        break;
+                    }
+                    $username = $originalUsername . $counter;
+                    $counter++;
+                }
+                
+                // Gerar senha temporária (primeiros 6 caracteres do nome + 123)
+                $tempPassword = strtolower(substr(preg_replace('/[^a-zA-Z]/', '', $data['name']), 0, 6)) . '123';
+                $hashedPassword = password_hash($tempPassword, PASSWORD_DEFAULT);
+                
+                // Inserir usuário
+                $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, student_id, active, currency, created, modified) VALUES (?, ?, ?, 'student', ?, 1, 'BRL', NOW(), NOW())");
+                $stmt->execute([$username, $data['email'], $hashedPassword, $studentId]);
+                
+                // Confirmar transação
+                $pdo->commit();
+                
+                $this->flash("Estudante criado com sucesso! Username: {$username}, Senha temporária: {$tempPassword}", 'success');
+                return $this->redirect(['action' => 'index']);
+            } catch (Exception $e) {
+                // Reverter transação em caso de erro
+                if ($pdo->inTransaction()) {
+                    $pdo->rollback();
+                }
+                $this->flash('O estudante não pôde ser salvo. Erro: ' . $e->getMessage(), 'error');
+            }
+        }
+        
+        return $this->render('Students/add');
+    }
+
+    public function edit($id = null)
+    {
+        // Verificar se o usuário é administrador
+        $this->requireAdmin();
+        
+        if (!$id) {
+            $this->flash('ID do estudante não fornecido.', 'error');
+            return $this->redirect(['action' => 'index']);
+        }
+
+        if ($this->isPost()) {
+            $data = $this->getPostData();
+            
+            try {
+                $pdo = $this->getDbConnection();
+                
+                // Verificar se o estudante existe
+                $stmt = $pdo->prepare("SELECT * FROM students WHERE id = ?");
+                $stmt->execute([$id]);
+                $student = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if (!$student) {
+                    $this->flash('Estudante não encontrado.', 'error');
+                    return $this->redirect(['action' => 'index']);
+                }
+                
+                // Verificar se o email já existe em outro estudante
+                $stmt = $pdo->prepare("SELECT id FROM students WHERE email = ? AND id != ?");
+                $stmt->execute([$data['email'], $id]);
+                if ($stmt->fetch()) {
+                    $this->flash('Este email já está cadastrado para outro estudante.', 'error');
+                    // Buscar dados do usuário para reexibir o formulário
+                    $stmt = $pdo->prepare("SELECT * FROM users WHERE student_id = ?");
+                    $stmt->execute([$id]);
+                    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                    return $this->render('Students/edit', ['student' => $student, 'user' => $user]);
+                }
+                
+                // Verificar se o username já existe em outro usuário (se fornecido)
+                if (!empty($data['username'])) {
+                    $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? AND student_id != ?");
+                    $stmt->execute([$data['username'], $id]);
+                    if ($stmt->fetch()) {
+                        $this->flash('Este username já está em uso por outro usuário.', 'error');
+                        // Buscar dados do usuário para reexibir o formulário
+                        $stmt = $pdo->prepare("SELECT * FROM users WHERE student_id = ?");
+                        $stmt->execute([$id]);
+                        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                        return $this->render('Students/edit', ['student' => $student, 'user' => $user]);
+                    }
+                }
+                
+                // Iniciar transação
+                $pdo->beginTransaction();
+                
+                // Atualizar estudante
+                $stmt = $pdo->prepare("UPDATE students SET name = ?, email = ?, modified = NOW() WHERE id = ?");
+                $stmt->execute([$data['name'], $data['email'], $id]);
+                
+                // Buscar usuário associado
+                $stmt = $pdo->prepare("SELECT * FROM users WHERE student_id = ?");
+                $stmt->execute([$id]);
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($user) {
+                    // Atualizar usuário existente
+                    $updateFields = [];
+                    $updateValues = [];
+                    
+                    // Username
+                    if (!empty($data['username'])) {
+                        $updateFields[] = "username = ?";
+                        $updateValues[] = $data['username'];
+                    }
+                    
+                    // Email
+                    $updateFields[] = "email = ?";
+                    $updateValues[] = $data['email'];
+                    
+                    // Role
+                    if (!empty($data['role']) && in_array($data['role'], ['student', 'admin'])) {
+                        $updateFields[] = "role = ?";
+                        $updateValues[] = $data['role'];
+                    }
+                    
+                    // Active status
+                    $active = isset($data['active']) && $data['active'] == '1' ? 1 : 0;
+                    $updateFields[] = "active = ?";
+                    $updateValues[] = $active;
+                    
+                    // Currency
+                    if (!empty($data['currency']) && in_array($data['currency'], ['BRL', 'USD'])) {
+                        $updateFields[] = "currency = ?";
+                        $updateValues[] = $data['currency'];
+                    }
+                    
+                    // Password (se fornecida)
+                    if (!empty($data['new_password'])) {
+                        $updateFields[] = "password = ?";
+                        $updateValues[] = password_hash($data['new_password'], PASSWORD_DEFAULT);
+                    }
+                    
+                    // Modified timestamp
+                    $updateFields[] = "modified = NOW()";
+                    $updateValues[] = $id; // Para o WHERE
+                    
+                    $sql = "UPDATE users SET " . implode(", ", $updateFields) . " WHERE student_id = ?";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute($updateValues);
+                    
+                } else {
+                    // Criar novo usuário se não existir
+                    $username = !empty($data['username']) ? $data['username'] : strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $data['name']));
+                    $role = !empty($data['role']) && in_array($data['role'], ['student', 'admin']) ? $data['role'] : 'student';
+                    $active = isset($data['active']) && $data['active'] == '1' ? 1 : 0;
+                    $currency = !empty($data['currency']) && in_array($data['currency'], ['BRL', 'USD']) ? $data['currency'] : 'BRL';
+                    
+                    // Verificar se o username já existe e adicionar número se necessário
+                    $originalUsername = $username;
+                    $counter = 1;
+                    while (true) {
+                        $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
+                        $stmt->execute([$username]);
+                        if (!$stmt->fetch()) {
+                            break;
+                        }
+                        $username = $originalUsername . $counter;
+                        $counter++;
+                    }
+                    
+                    // Gerar senha (fornecida ou temporária)
+                    $password = !empty($data['new_password']) ? $data['new_password'] : 'temp123';
+                    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                    
+                    // Inserir novo usuário
+                    $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, student_id, active, currency, created, modified) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+                    $stmt->execute([$username, $data['email'], $hashedPassword, $role, $id, $active, $currency]);
+                    
+                    $this->flash("Usuário criado com sucesso! Username: {$username}", 'info');
+                }
+                
+                // Confirmar transação
+                $pdo->commit();
+                
+                $this->flash('Estudante e dados de acesso atualizados com sucesso!', 'success');
+                return $this->redirect(['action' => 'index']);
+            } catch (Exception $e) {
+                // Reverter transação em caso de erro
+                if ($pdo->inTransaction()) {
+                    $pdo->rollback();
+                }
+                $this->flash('O estudante não pôde ser atualizado. Erro: ' . $e->getMessage(), 'error');
+            }
+        }
+        
+        // Buscar dados do estudante e usuário para exibir no formulário
+        try {
+            $pdo = $this->getDbConnection();
+            
+            // Buscar estudante
+            $stmt = $pdo->prepare("SELECT * FROM students WHERE id = ?");
+            $stmt->execute([$id]);
+            $student = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$student) {
+                $this->flash('Estudante não encontrado.', 'error');
+                return $this->redirect(['action' => 'index']);
+            }
+            
+            // Buscar usuário associado
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE student_id = ?");
+            $stmt->execute([$id]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            return $this->render('Students/edit', ['student' => $student, 'user' => $user]);
+        } catch (Exception $e) {
+            $this->flash('Erro ao carregar dados do estudante: ' . $e->getMessage(), 'error');
+            return $this->redirect(['action' => 'index']);
+        }
+    }
+
+    public function delete($id = null)
+    {
+        // Verificar se o usuário é administrador
+        $this->requireAdmin();
+        
+        if (!$this->isPost()) {
+            $this->flash('Método não permitido.', 'error');
+            return $this->redirect(['action' => 'index']);
+        }
+        
+        try {
+            $pdo = $this->getDbConnection();
+            
+            // Verificar se o estudante existe e buscar dados do usuário associado
+            $stmt = $pdo->prepare("
+                SELECT s.*, u.currency, u.username, u.role, u.active 
+                FROM students s 
+                LEFT JOIN users u ON s.id = u.student_id 
+                WHERE s.id = ?
+            ");
+            $stmt->execute([$id]);
+            $student = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$student) {
+                $this->flash('Estudante não encontrado.', 'error');
+                return $this->redirect(['action' => 'index']);
+            }
+            
+            // Verificar se há estudos associados
+            $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM studies WHERE student_id = ?");
+            $stmt->execute([$id]);
+            $studiesCount = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
+            
+            if ($studiesCount > 0) {
+                $this->flash("Não é possível excluir o estudante {$student['name']} pois há {$studiesCount} estudo(s) associado(s).", 'error');
+                return $this->redirect(['action' => 'index']);
+            }
+            
+            // Iniciar transação
+            $pdo->beginTransaction();
+            
+            // Excluir usuário associado primeiro (se existir)
+            $stmt = $pdo->prepare("DELETE FROM users WHERE student_id = ?");
+            $stmt->execute([$id]);
+            
+            // Excluir estudante
+            $stmt = $pdo->prepare("DELETE FROM students WHERE id = ?");
+            $stmt->execute([$id]);
+            
+            // Confirmar transação
+            $pdo->commit();
+            
+            $this->flash("Estudante {$student['name']} e seu usuário foram excluídos com sucesso.", 'success');
+        } catch (Exception $e) {
+            // Reverter transação em caso de erro
+            if ($pdo->inTransaction()) {
+                $pdo->rollback();
+            }
+            $this->flash('O estudante não pôde ser excluído. Erro: ' . $e->getMessage(), 'error');
+        }
+        
+        return $this->redirect(['action' => 'index']);
+    }
+
+    public function metrics($id = null)
+    {
+        try {
+            $pdo = $this->getDbConnection();
+            
+            // Buscar estudante com dados do usuário associado
+            $stmt = $pdo->prepare("
+                SELECT s.*, u.currency, u.username, u.role, u.active 
+                FROM students s 
+                LEFT JOIN users u ON s.id = u.student_id 
+                WHERE s.id = ?
+            ");
+            $stmt->execute([$id]);
+            $student = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$student) {
+                $this->flash('Estudante não encontrado.', 'error');
+                return $this->redirect(['action' => 'index']);
+            }
+        
+            // Get current date parameters
+            $currentDate = $this->request->getQuery('date', date('Y-m-d'));
+            $currentYear = (int)$this->request->getQuery('year', date('Y'));
+            $currentMonth = (int)$this->request->getQuery('month', date('n'));
+
+            // Get daily metrics
+            $dailyMetrics = $this->Students->getDailyMetrics($id, $currentDate);
+
+            // Get monthly metrics
+            $monthlyMetrics = $this->Students->getMonthlyMetrics($id, $currentYear, $currentMonth);
+
+            // Get recent studies for context
+            $recentStudies = $this->Students->Studies->find()
+                ->where(['student_id' => $id])
+                ->orderDesc('study_date')
+                ->limit(10)
+                ->toArray();
+
+            // Calculate overall statistics
+            $allStudies = $this->Students->Studies->find()
+                ->where(['student_id' => $id])
+                ->toArray();
+
+            $overallStats = [
+                'total_studies' => count($allStudies),
+                'total_wins' => array_sum(array_column($allStudies, 'wins')),
+                'total_losses' => array_sum(array_column($allStudies, 'losses')),
+                'total_profit_loss' => array_sum(array_column($allStudies, 'profit_loss'))
+            ];
+        } catch (Exception $e) {
+            $this->flash('Erro ao carregar métricas: ' . $e->getMessage(), 'error');
+            return $this->redirect(['action' => 'index']);
+        }
+
+        $overallStats['total_trades'] = $overallStats['total_wins'] + $overallStats['total_losses'];
+        $overallStats['overall_win_rate'] = $overallStats['total_trades'] > 0 
+            ? round(($overallStats['total_wins'] / $overallStats['total_trades']) * 100, 2) 
+            : 0;
+
+        $this->set(compact(
+            'student', 
+            'dailyMetrics', 
+            'monthlyMetrics', 
+            'recentStudies', 
+            'overallStats',
+            'currentDate',
+            'currentYear',
+            'currentMonth'
+        ));
+    }
+
+    public function dashboard($id = null)
+    {
+        try {
+            // Se não foi passado ID, pegar o estudante atual (se for estudante logado)
+            if (!$id) {
+                $currentUser = $this->getCurrentUser();
+                if ($currentUser && $currentUser['role'] === 'student') {
+                    $id = $currentUser['student_id'];
+                } else {
+                    $this->flash('Por favor, selecione um estudante para visualizar o dashboard.', 'error');
+                    return $this->redirect(['action' => 'index']);
+                }
+            }
+
+            $pdo = $this->getDbConnection();
+            
+            // Buscar estudante com dados do usuário associado (incluindo moeda)
+            $stmt = $pdo->prepare("
+                SELECT s.*, u.currency, u.username, u.role, u.active 
+                FROM students s 
+                LEFT JOIN users u ON s.id = u.student_id 
+                WHERE s.id = ?
+            ");
+            $stmt->execute([$id]);
+            $student = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$student) {
+                $this->flash('Estudante não encontrado.', 'error');
+                return $this->redirect(['action' => 'index']);
+            }
+
+            // Buscar dados dos estudos agrupados por mês
+            $stmt = $pdo->prepare("
+                SELECT 
+                    YEAR(study_date) as year,
+                    MONTH(study_date) as month,
+                    MONTHNAME(study_date) as month_name,
+                    COUNT(*) as total_studies,
+                    SUM(wins) as total_wins,
+                    SUM(losses) as total_losses,
+                    SUM(wins + losses) as total_trades,
+                    ROUND(AVG(CASE WHEN (wins + losses) > 0 THEN (wins / (wins + losses)) * 100 ELSE 0 END), 2) as avg_win_rate,
+                    SUM(profit_loss) as total_profit_loss,
+                    MIN(study_date) as first_study,
+                    MAX(study_date) as last_study
+                FROM studies 
+                WHERE student_id = ? 
+                GROUP BY YEAR(study_date), MONTH(study_date)
+                ORDER BY year DESC, month DESC
+            ");
+            $stmt->execute([$id]);
+            $monthlyData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Calcular estatísticas gerais
+            $stmt = $pdo->prepare("
+                SELECT 
+                    COUNT(*) as total_studies,
+                    SUM(wins) as total_wins,
+                    SUM(losses) as total_losses,
+                    SUM(profit_loss) as total_profit_loss,
+                    MIN(study_date) as first_study_date,
+                    MAX(study_date) as last_study_date
+                FROM studies 
+                WHERE student_id = ?
+            ");
+            $stmt->execute([$id]);
+            $overallStats = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Calcular métricas adicionais
+            $overallStats['total_trades'] = $overallStats['total_wins'] + $overallStats['total_losses'];
+            $overallStats['overall_win_rate'] = $overallStats['total_trades'] > 0 
+                ? round(($overallStats['total_wins'] / $overallStats['total_trades']) * 100, 2) 
+                : 0;
+
+            // Buscar os últimos 12 meses para gráfico
+            $stmt = $pdo->prepare("
+                SELECT 
+                    DATE_FORMAT(study_date, '%Y-%m') as month_key,
+                    YEAR(study_date) as year,
+                    MONTH(study_date) as month,
+                    SUM(profit_loss) as profit_loss,
+                    SUM(wins) as wins,
+                    SUM(losses) as losses
+                FROM studies 
+                WHERE student_id = ? 
+                    AND study_date >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
+                GROUP BY YEAR(study_date), MONTH(study_date)
+                ORDER BY year, month
+            ");
+            $stmt->execute([$id]);
+            $chartData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Preparar dados para o gráfico
+            $chartLabels = [];
+            $chartProfitLoss = [];
+            $chartWinRate = [];
+            
+            foreach ($chartData as $data) {
+                $chartLabels[] = date('M Y', mktime(0, 0, 0, $data['month'], 1, $data['year']));
+                $chartProfitLoss[] = (float)$data['profit_loss'];
+                $totalTrades = $data['wins'] + $data['losses'];
+                $chartWinRate[] = $totalTrades > 0 ? round(($data['wins'] / $totalTrades) * 100, 2) : 0;
+            }
+
+            $this->set(compact(
+                'student',
+                'monthlyData',
+                'overallStats',
+                'chartLabels',
+                'chartProfitLoss',
+                'chartWinRate'
+            ));
+            
+            return $this->render('Students/dashboard');
+            
+        } catch (Exception $e) {
+            $this->flash('Erro ao carregar dashboard: ' . $e->getMessage(), 'error');
+            return $this->redirect(['action' => 'index']);
+        }
+    }
+}
