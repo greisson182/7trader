@@ -150,7 +150,7 @@ class StudiesController extends AppController
             
             if (!$study) {
                 $this->flash('Study not found.', 'error');
-                return $this->redirect('/studies');
+                return $this->redirect('/admin/studies');
             }
             
             // Verificar se estudante pode acessar este estudo
@@ -158,7 +158,7 @@ class StudiesController extends AppController
                 $studentId = $this->getCurrentStudentId();
                 if ($study['student_id'] != $studentId) {
                     $this->flash('Acesso negado. Você só pode visualizar seus próprios estudos.', 'error');
-                    return $this->redirect('/studies');
+                    return $this->redirect('/admin/studies');
                 }
             }
             
@@ -166,7 +166,7 @@ class StudiesController extends AppController
             return $this->render('Admin/Studies/view');
         } catch (Exception $e) {
             $this->flash('Error loading study: ' . $e->getMessage(), 'error');
-            return $this->redirect('/studies');
+            return $this->redirect('/admin/studies');
         }
     }
 
@@ -193,7 +193,7 @@ class StudiesController extends AppController
                     $data['notes'] ?? ''
                 ]);
                 
-                $this->flash('Estudo atualizado com sucesso!', 'success');
+                $this->flash('Estudo criado com sucesso!', 'success');
                 return $this->redirect('/admin/studies');
             } catch (Exception $e) {
                 $this->flash('The study could not be saved. Please, try again.', 'error');
@@ -251,8 +251,8 @@ class StudiesController extends AppController
                 $study = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 if (!$study) {
-                    $this->flash('Estudo não encontrado.', 'error');
-                    return $this->redirect('/studies');
+                    $this->flash('Study not found.', 'error');
+                    return $this->redirect('/admin/studies');
                 }
                 
                 // Security validation
@@ -263,14 +263,14 @@ class StudiesController extends AppController
                 }
                 
                 if ($this->isStudent()) {
-                    $currentStudentId = $this->getCurrentStudentId();
-                    if ($study['student_id'] != $currentStudentId) {
-                        $this->flash('Acesso negado. Você só pode editar seus próprios estudos.', 'error');
-                        return $this->redirect('/studies');
-                    }
-                    // Force the student_id to be the current student's ID to prevent tampering
-                    $data['student_id'] = $currentStudentId;
-                }
+                     $currentStudentId = $this->getCurrentStudentId();
+                     if ($study['student_id'] != $currentStudentId) {
+                         $this->flash('Acesso negado. Você só pode editar seus próprios estudos.', 'error');
+                         return $this->redirect('/admin/studies');
+                     }
+                     // Force the student_id to be the current student's ID to prevent tampering
+                     $data['student_id'] = $currentStudentId;
+                 }
                 
                 $stmt = $pdo->prepare("UPDATE studies SET student_id = ?, market_id = ?, study_date = ?, wins = ?, losses = ?, profit_loss = ?, notes = ?, modified = NOW() WHERE id = ?");
                 $stmt->execute([
@@ -284,8 +284,8 @@ class StudiesController extends AppController
                     $id
                 ]);
                 
-                $this->flash('O estudo foi atualizado com sucesso.', 'success');
-                return $this->redirect('/studies');
+                $this->flash('Estudo atualizado com sucesso!', 'success');
+                return $this->redirect('/admin/studies');
             } catch (Exception $e) {
                 $this->flash('O estudo não pôde ser atualizado. Tente novamente.', 'error');
             }
@@ -300,7 +300,7 @@ class StudiesController extends AppController
             
             if (!$study) {
                 $this->flash('Study not found.', 'error');
-                return $this->redirect('/studies');
+                return $this->redirect('/admin/studies');
             }
             
             // Security check: Only allow editing if user is logged in and owns the study
@@ -312,12 +312,12 @@ class StudiesController extends AppController
             
             // If user is a student, they can only edit their own studies
             if ($this->isStudent()) {
-                $currentStudentId = $this->getCurrentStudentId();
-                if ($study['student_id'] != $currentStudentId) {
-                    $this->flash('Acesso negado. Você só pode editar seus próprios estudos.', 'error');
-                    return $this->redirect('/studies');
-                }
-            }
+                 $currentStudentId = $this->getCurrentStudentId();
+                 if ($study['student_id'] != $currentStudentId) {
+                     $this->flash('Acesso negado. Você só pode editar seus próprios estudos.', 'error');
+                     return $this->redirect('/admin/studies');
+                 }
+             }
             // Admins can edit any study (no additional check needed)
             
             // Calculate additional fields for display
@@ -330,9 +330,9 @@ class StudiesController extends AppController
             $this->set('study', $study);
             $this->set('studentName', $study['student_name']);
         } catch (Exception $e) {
-            $this->flash('Error loading study: ' . $e->getMessage(), 'error');
-            return $this->redirect('/studies');
-        }
+             $this->flash('Error loading study: ' . $e->getMessage(), 'error');
+             return $this->redirect('/admin/studies');
+         }
         
         // Get students for dropdown
         try {
@@ -371,12 +371,12 @@ class StudiesController extends AppController
             $stmt = $pdo->prepare("DELETE FROM studies WHERE id = ?");
             $stmt->execute([$id]);
             
-            $this->flash('The study has been deleted.', 'success');
+            $this->flash('Estudo excluído com sucesso!', 'success');
         } catch (Exception $e) {
             $this->flash('The study could not be deleted. Please, try again.', 'error');
         }
         
-        return $this->redirect('/studies');
+        return $this->redirect('/admin/studies');
     }
 
     public function byStudent($studentId = null)

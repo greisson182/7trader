@@ -11,10 +11,7 @@ class ProfileController extends AppController
 {
     public function edit()
     {
-        // Verificar se o usuário está logado
-        $currentUser = $this->getCurrentUser();
-        if (!$currentUser) {
-            $this->flash('Você precisa estar logado para editar seu perfil.', 'error');
+        if (!$this->isLoggedIn()) {
             return $this->redirect('/login');
         }
 
@@ -95,7 +92,8 @@ class ProfileController extends AppController
                 return $this->redirect('/admin/profile/edit');
                 
             } catch (Exception $e) {
-                $this->flash('O perfil não pôde ser atualizado. Erro: ' . $e->getMessage(), 'error');
+                $this->flash('Erro ao atualizar perfil: ' . $e->getMessage(), 'error');
+                return $this->redirect('/admin/');
             }
         }
         

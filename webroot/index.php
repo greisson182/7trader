@@ -167,5 +167,5 @@ try {
     http_response_code(404);
     echo "<h1>Error</h1>";
     echo "<p>" . htmlspecialchars($e->getMessage()) . "</p>";
-    echo "<p><a href='/'>Go Home</a></p>";
+    echo "<p><a href='/admin/'>Go Home</a></p>";
 }
