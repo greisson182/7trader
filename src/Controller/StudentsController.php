@@ -524,7 +524,14 @@ class StudentsController extends AppController
                 return $this->redirect(['action' => 'index']);
             }
 
-            // Buscar dados dos estudos agrupados por mês
+            // Buscar mercados ativos para o filtro
+            $stmt = $pdo->query("SELECT id, name, code FROM markets WHERE active = 1 ORDER BY name");
+            $markets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Obter ano selecionado do parâmetro GET
+            $selectedYear = isset($_GET['year']) ? (int)$_GET['year'] : (int)date('Y');
+
+            // Buscar dados dos estudos agrupados por mês (filtrado por ano)
             $stmt = $pdo->prepare("
                 SELECT 
                     YEAR(study_date) as year,
@@ -537,16 +544,17 @@ class StudentsController extends AppController
                     ROUND(AVG(CASE WHEN (wins + losses) > 0 THEN (wins / (wins + losses)) * 100 ELSE 0 END), 2) as avg_win_rate,
                     SUM(profit_loss) as total_profit_loss,
                     MIN(study_date) as first_study,
-                    MAX(study_date) as last_study
-                FROM studies 
-                WHERE student_id = ? 
+                    MAX(study_date) as last_study,
+                    GROUP_CONCAT(DISTINCT s.market_id) as market_ids
+                FROM studies s
+                WHERE student_id = ? AND YEAR(study_date) = ?
                 GROUP BY YEAR(study_date), MONTH(study_date)
                 ORDER BY year DESC, month DESC
             ");
-            $stmt->execute([$id]);
+            $stmt->execute([$id, $selectedYear]);
             $monthlyData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // Calcular estatísticas gerais
+            // Calcular estatísticas gerais (filtrado por ano)
             $stmt = $pdo->prepare("
                 SELECT 
                     COUNT(*) as total_studies,
@@ -556,9 +564,9 @@ class StudentsController extends AppController
                     MIN(study_date) as first_study_date,
                     MAX(study_date) as last_study_date
                 FROM studies 
-                WHERE student_id = ?
+                WHERE student_id = ? AND YEAR(study_date) = ?
             ");
-            $stmt->execute([$id]);
+            $stmt->execute([$id, $selectedYear]);
             $overallStats = $stmt->fetch(PDO::FETCH_ASSOC);
 
             // Calcular métricas adicionais
@@ -567,34 +575,73 @@ class StudentsController extends AppController
                 ? round(($overallStats['total_wins'] / $overallStats['total_trades']) * 100, 2) 
                 : 0;
 
-            // Buscar os últimos 12 meses para gráfico
+            // Buscar dados para gráfico do ano selecionado (12 meses do ano)
             $stmt = $pdo->prepare("
                 SELECT 
-                    DATE_FORMAT(study_date, '%Y-%m') as month_key,
-                    YEAR(study_date) as year,
-                    MONTH(study_date) as month,
-                    SUM(profit_loss) as profit_loss,
-                    SUM(wins) as wins,
-                    SUM(losses) as losses
-                FROM studies 
-                WHERE student_id = ? 
-                    AND study_date >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
-                GROUP BY YEAR(study_date), MONTH(study_date)
-                ORDER BY year, month
+                    DATE_FORMAT(s.study_date, '%Y-%m') as month_key,
+                    YEAR(s.study_date) as year,
+                    MONTH(s.study_date) as month,
+                    SUM(s.profit_loss) as profit_loss,
+                    SUM(s.wins) as wins,
+                    SUM(s.losses) as losses,
+                    s.market_id,
+                    m.currency,
+                    m.name as market_name,
+                    m.code as market_code
+                FROM studies s
+                LEFT JOIN markets m ON s.market_id = m.id
+                WHERE s.student_id = ? AND YEAR(s.study_date) = ?
+                GROUP BY YEAR(s.study_date), MONTH(s.study_date), s.market_id
+                ORDER BY year, month, market_name
             ");
-            $stmt->execute([$id]);
-            $chartData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->execute([$id, $selectedYear]);
+            $chartDataRaw = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Preparar dados para o gráfico - agregados por mês
+            $chartDataByMonth = [];
+            foreach ($chartDataRaw as $data) {
+                $monthKey = $data['month_key'];
+                if (!isset($chartDataByMonth[$monthKey])) {
+                    $chartDataByMonth[$monthKey] = [
+                        'year' => $data['year'],
+                        'month' => $data['month'],
+                        'profit_loss' => 0,
+                        'wins' => 0,
+                        'losses' => 0,
+                        'markets' => []
+                    ];
+                }
+                $chartDataByMonth[$monthKey]['profit_loss'] += $data['profit_loss'];
+                $chartDataByMonth[$monthKey]['wins'] += $data['wins'];
+                $chartDataByMonth[$monthKey]['losses'] += $data['losses'];
+                $chartDataByMonth[$monthKey]['markets'][] = [
+                    'market_id' => $data['market_id'],
+                    'currency' => $data['currency'],
+                    'market_name' => $data['market_name'],
+                    'market_code' => $data['market_code'],
+                    'profit_loss' => $data['profit_loss'],
+                    'wins' => $data['wins'],
+                    'losses' => $data['losses']
+                ];
+            }
 
             // Preparar dados para o gráfico
             $chartLabels = [];
             $chartProfitLoss = [];
             $chartWinRate = [];
+            $chartDataDetailed = [];
             
-            foreach ($chartData as $data) {
+            foreach ($chartDataByMonth as $monthKey => $data) {
                 $chartLabels[] = date('M Y', mktime(0, 0, 0, $data['month'], 1, $data['year']));
                 $chartProfitLoss[] = (float)$data['profit_loss'];
                 $totalTrades = $data['wins'] + $data['losses'];
                 $chartWinRate[] = $totalTrades > 0 ? round(($data['wins'] / $totalTrades) * 100, 2) : 0;
+                $chartDataDetailed[] = [
+                    'month_key' => $monthKey,
+                    'year' => $data['year'],
+                    'month' => $data['month'],
+                    'markets' => $data['markets']
+                ];
             }
 
             $this->set(compact(
@@ -602,8 +649,12 @@ class StudentsController extends AppController
                 'monthlyData',
                 'overallStats',
                 'chartLabels',
+                'chartDataByMonth',
                 'chartProfitLoss',
-                'chartWinRate'
+                'chartWinRate',
+                'chartDataDetailed',
+                'markets',
+                'selectedYear'
             ));
             
             return $this->render('Students/dashboard');

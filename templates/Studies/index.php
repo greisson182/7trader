@@ -12,6 +12,34 @@ use App\Helper\CurrencyHelper;
         </a>
     </div>
 
+    <!-- Filtro por Mercado -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <label for="marketFilter" class="form-label mb-2">
+                        <i class="fas fa-filter me-2"></i>Filtrar por Mercado
+                    </label>
+                </div>
+                <div class="col-md-6">
+                    <select id="marketFilter" class="form-select">
+                        <option value="">Todos os mercados</option>
+                        <?php if (!empty($markets)): ?>
+                            <?php foreach ($markets as $market): ?>
+                                <option value="<?= h($market['id']) ?>"><?= h($market['name']) ?> (<?= h($market['code']) ?>)</option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button id="clearFilter" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-2"></i>Limpar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <?php if (!empty($studiesByMonth)): ?>
         <?php foreach ($studiesByMonth as $monthKey => $monthData): ?>
             <div class="card month-card mb-4" data-month="<?= h($monthKey) ?>">
@@ -87,7 +115,10 @@ use App\Helper\CurrencyHelper;
                             </thead>
                             <tbody>
                                 <?php foreach ($monthData['studies'] as $study): ?>
-                                <tr class="clickable-row" data-study-id="<?= h($study['id']) ?>" style="cursor: pointer;">
+                                <tr class="clickable-row study-row" 
+                                    data-study-id="<?= h($study['id']) ?>" 
+                                    data-market-id="<?= h($study['market_id'] ?? '') ?>"
+                                    style="cursor: pointer;">
                                     <td><?= h($study['id']) ?></td>
                                     <td><?= isset($study['student_name']) && $study['student_name'] ? '<a href="/students/view/' . h($study['student_id']) . '">' . h($study['student_name']) . '</a>' : 'N/A' ?></td>
                                     <td>
@@ -173,6 +204,78 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.location.href = '/studies/view/' + studyId;
             }
         }
+    });
+
+    // Funcionalidade de filtro por mercado
+    const marketFilter = document.getElementById('marketFilter');
+    const clearFilter = document.getElementById('clearFilter');
+    
+    function filterStudies() {
+        const selectedMarketId = marketFilter.value;
+        const monthCards = document.querySelectorAll('.month-card');
+        
+        monthCards.forEach(card => {
+            const studyRows = card.querySelectorAll('.study-row');
+            let visibleStudies = 0;
+            let monthStats = {
+                totalStudies: 0,
+                totalWins: 0,
+                totalLosses: 0,
+                totalProfitLoss: 0
+            };
+            
+            studyRows.forEach(row => {
+                const rowMarketId = row.getAttribute('data-market-id');
+                const shouldShow = !selectedMarketId || rowMarketId === selectedMarketId;
+                
+                if (shouldShow) {
+                    row.style.display = '';
+                    visibleStudies++;
+                    
+                    // Recalcular estatísticas (se necessário, pode ser implementado)
+                    monthStats.totalStudies++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Mostrar/ocultar o card do mês baseado se há estudos visíveis
+            if (visibleStudies > 0) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        // Mostrar mensagem se nenhum estudo for encontrado
+        const hasVisibleCards = Array.from(monthCards).some(card => card.style.display !== 'none');
+        let noResultsMessage = document.getElementById('noResultsMessage');
+        
+        if (!hasVisibleCards && selectedMarketId) {
+            if (!noResultsMessage) {
+                noResultsMessage = document.createElement('div');
+                noResultsMessage.id = 'noResultsMessage';
+                noResultsMessage.className = 'card mt-4';
+                noResultsMessage.innerHTML = `
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Nenhum estudo encontrado</h5>
+                        <p class="text-muted">Não há estudos para o mercado selecionado.</p>
+                    </div>
+                `;
+                document.querySelector('.studies.index.content').appendChild(noResultsMessage);
+            }
+            noResultsMessage.style.display = '';
+        } else if (noResultsMessage) {
+            noResultsMessage.style.display = 'none';
+        }
+    }
+    
+    marketFilter.addEventListener('change', filterStudies);
+    
+    clearFilter.addEventListener('click', function() {
+        marketFilter.value = '';
+        filterStudies();
     });
 });
 </script>

@@ -84,8 +84,13 @@ class StudiesController extends AppController
             // Ordenar por mês/ano (mais recente primeiro)
             krsort($studiesByMonth);
             
+            // Buscar mercados para o filtro
+            $marketsStmt = $pdo->query("SELECT id, name, code FROM markets WHERE active = 1 ORDER BY name");
+            $markets = $marketsStmt->fetchAll(PDO::FETCH_ASSOC);
+            
             $this->set('studiesByMonth', $studiesByMonth);
             $this->set('studies', $studies); // Manter compatibilidade
+            $this->set('markets', $markets); // Para o filtro
             return $this->render('Studies/index');
         } catch (Exception $e) {
             $this->flash('Error loading studies: ' . $e->getMessage(), 'error');

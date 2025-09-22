@@ -959,6 +959,7 @@ span.text-danger {
     border-bottom: 1px solid var(--navbar-border);
     box-shadow: 0 4px 32px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
+    height: 85px;
 }
 
 .navbar-brand {

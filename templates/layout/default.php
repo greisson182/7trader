@@ -164,7 +164,7 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="main" style="padding-top: 60px; margin-top: 80px;">
+    <main class="main" style="padding-top: 60px;">
         <div class="container">
             <?php if (isset($flash) && !empty($flash)): ?>
                 <div class="alert alert-info alert-dismissible fade show glass" role="alert">
