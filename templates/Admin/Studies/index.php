@@ -2,7 +2,7 @@
 require_once ROOT . DS . 'src' . DS . 'Helper' . DS . 'CurrencyHelper.php';
 use App\Helper\CurrencyHelper;
 ?>
-<link rel="stylesheet" href="/admin/css/studies.css">
+<link rel="stylesheet" href="/adm/css/studies.css">
 
 <div class="studies index content">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -12,16 +12,14 @@ use App\Helper\CurrencyHelper;
         </a>
     </div>
 
-    <!-- Filtro por Mercado -->
+    <!-- Filtros -->
     <div class="card mb-4">
         <div class="card-body">
             <div class="row align-items-center">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label for="marketFilter" class="form-label mb-2">
-                        <i class="fas fa-filter me-2"></i>Filtrar por Mercado
+                        <i class="fas fa-filter me-2"></i>Mercado
                     </label>
-                </div>
-                <div class="col-md-6">
                     <select id="marketFilter" class="form-select">
                         <option value="">Todos os mercados</option>
                         <?php if (!empty($markets)): ?>
@@ -31,8 +29,32 @@ use App\Helper\CurrencyHelper;
                         <?php endif; ?>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <button id="clearFilter" class="btn btn-outline-secondary">
+                <div class="col-md-2">
+                    <label for="yearFilter" class="form-label mb-2">
+                        <i class="fas fa-calendar me-2"></i>Ano
+                    </label>
+                    <select id="yearFilter" class="form-select">
+                        <option value="">Todos os anos</option>
+                        <?php 
+                        $years = [];
+                        if (!empty($studiesByMonth)) {
+                            foreach ($studiesByMonth as $monthKey => $monthData) {
+                                $year = substr($monthKey, 0, 4);
+                                if (!in_array($year, $years)) {
+                                    $years[] = $year;
+                                }
+                            }
+                            rsort($years); // Mais recente primeiro
+                            foreach ($years as $year) {
+                                echo "<option value=\"$year\">$year</option>";
+                            }
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label mb-2">&nbsp;</label>
+                    <button id="clearFilters" class="btn btn-outline-secondary d-block">
                         <i class="fas fa-times me-2"></i>Limpar
                     </button>
                 </div>
@@ -42,7 +64,7 @@ use App\Helper\CurrencyHelper;
 
     <?php if (!empty($studiesByMonth)): ?>
         <?php foreach ($studiesByMonth as $monthKey => $monthData): ?>
-            <div class="card month-card mb-4" data-month="<?= h($monthKey) ?>">
+            <div class="card month-card mb-4" data-month-key="<?= h($monthKey) ?>">
                 <div class="card-header month-header" style="cursor: pointer;">
                     <div class="row align-items-center">
                         <div class="col-md-3">
@@ -210,42 +232,53 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Funcionalidade de filtro por mercado
     const marketFilter = document.getElementById('marketFilter');
-    const clearFilter = document.getElementById('clearFilter');
+    const yearFilter = document.getElementById('yearFilter');
+    const clearFilters = document.getElementById('clearFilters');
+    const autoUpdate = document.getElementById('autoUpdate');
+    let autoUpdateInterval;
     
     function filterStudies() {
         const selectedMarketId = marketFilter.value;
+        const selectedYear = yearFilter.value;
         const monthCards = document.querySelectorAll('.month-card');
         
         monthCards.forEach(card => {
-            const studyRows = card.querySelectorAll('.study-row');
-            let visibleStudies = 0;
-            let monthStats = {
-                totalStudies: 0,
-                totalWins: 0,
-                totalLosses: 0,
-                totalProfitLoss: 0
-            };
+            const monthKey = card.dataset.monthKey;
+            const cardYear = monthKey ? monthKey.substring(0, 4) : '';
             
-            studyRows.forEach(row => {
-                const rowMarketId = row.getAttribute('data-market-id');
-                const shouldShow = !selectedMarketId || rowMarketId === selectedMarketId;
-                
-                if (shouldShow) {
-                    row.style.display = '';
-                    visibleStudies++;
-                    
-                    // Recalcular estatísticas (se necessário, pode ser implementado)
-                    monthStats.totalStudies++;
-                } else {
-                    row.style.display = 'none';
-                }
-            });
+            // Verificar filtro de ano
+            const yearMatch = !selectedYear || cardYear === selectedYear;
             
-            // Mostrar/ocultar o card do mês baseado se há estudos visíveis
-            if (visibleStudies > 0) {
+            // Verificar filtro de mercado
+            let marketMatch = true;
+            if (selectedMarketId) {
+                const studyRows = card.querySelectorAll('.study-row');
+                marketMatch = Array.from(studyRows).some(row => 
+                    row.dataset.marketId === selectedMarketId
+                );
+            }
+            
+            if (yearMatch && marketMatch) {
                 card.style.display = '';
+                
+                // Se há filtro de mercado, mostrar apenas os estudos correspondentes
+                if (selectedMarketId) {
+                    const studyRows = card.querySelectorAll('.study-row');
+                    studyRows.forEach(row => {
+                        if (row.dataset.marketId === selectedMarketId) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                } else {
+                    // Mostrar todos os estudos se não há filtro de mercado
+                    const studyRows = card.querySelectorAll('.study-row');
+                    studyRows.forEach(row => {
+                        row.style.display = '';
+                    });
+                }
             } else {
                 card.style.display = 'none';
             }
@@ -255,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const hasVisibleCards = Array.from(monthCards).some(card => card.style.display !== 'none');
         let noResultsMessage = document.getElementById('noResultsMessage');
         
-        if (!hasVisibleCards && selectedMarketId) {
+        if (!hasVisibleCards && (selectedMarketId || selectedYear)) {
             if (!noResultsMessage) {
                 noResultsMessage = document.createElement('div');
                 noResultsMessage.id = 'noResultsMessage';
@@ -264,7 +297,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="card-body text-center py-5">
                         <i class="fas fa-search fa-3x text-muted mb-3"></i>
                         <h5 class="text-muted">Nenhum estudo encontrado</h5>
-                        <p class="text-muted">Não há estudos para o mercado selecionado.</p>
+                        <p class="text-muted">Não há estudos para os filtros selecionados.</p>
                     </div>
                 `;
                 document.querySelector('.studies.index.content').appendChild(noResultsMessage);
@@ -275,11 +308,82 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    marketFilter.addEventListener('change', filterStudies);
+    function startAutoUpdate() {
+        if (autoUpdate.checked) {
+            autoUpdateInterval = setInterval(() => {
+                // Recarregar a página mantendo os filtros atuais
+                const currentMarket = marketFilter.value;
+                const currentYear = yearFilter.value;
+                const url = new URL(window.location);
+                
+                if (currentMarket) {
+                    url.searchParams.set('market', currentMarket);
+                } else {
+                    url.searchParams.delete('market');
+                }
+                
+                if (currentYear) {
+                    url.searchParams.set('year', currentYear);
+                } else {
+                    url.searchParams.delete('year');
+                }
+                
+                window.location.href = url.toString();
+            }, 30000); // Atualizar a cada 30 segundos
+        }
+    }
     
-    clearFilter.addEventListener('click', function() {
-        marketFilter.value = '';
-        filterStudies();
-    });
+    function stopAutoUpdate() {
+        if (autoUpdateInterval) {
+            clearInterval(autoUpdateInterval);
+            autoUpdateInterval = null;
+        }
+    }
+    
+    // Event listeners
+    if (marketFilter) {
+        marketFilter.addEventListener('change', filterStudies);
+    }
+    if (yearFilter) {
+        yearFilter.addEventListener('change', filterStudies);
+    }
+    
+    if (clearFilters) {
+        clearFilters.addEventListener('click', function() {
+            if (marketFilter) marketFilter.value = '';
+            if (yearFilter) yearFilter.value = '';
+            filterStudies();
+        });
+    }
+    
+    if (autoUpdate) {
+        autoUpdate.addEventListener('change', function() {
+            if (this.checked) {
+                startAutoUpdate();
+            } else {
+                stopAutoUpdate();
+            }
+        });
+    }
+    
+    // Inicializar atualização automática se estiver habilitada
+    if (autoUpdate && autoUpdate.checked) {
+        startAutoUpdate();
+    }
+    
+    // Aplicar filtros baseados nos parâmetros da URL ao carregar
+    const urlParams = new URLSearchParams(window.location.search);
+    const marketParam = urlParams.get('market');
+    const yearParam = urlParams.get('year');
+    
+    if (marketParam && marketFilter) {
+        marketFilter.value = marketParam;
+    }
+    if (yearParam && yearFilter) {
+        yearFilter.value = yearParam;
+    }
+    
+    // Aplicar filtros iniciais
+    filterStudies();
 });
 </script>

@@ -30,6 +30,13 @@ if ($path === 'login' || $path === 'auth/login') {
     $controller = 'Profile';
     $action = 'edit';
     $id = null;
+} elseif (preg_match('/^admin\/students\/(\d+)\/monthly-studies\/(\d+)\/(\d+)$/', $path, $matches)) {
+    // Handle monthly studies route: /admin/students/{id}/monthly-studies/{year}/{month}
+    $controller = 'Admin/Students';
+    $action = 'monthlyStudies';
+    $id = $matches[1]; // student id
+    $year = $matches[2];
+    $month = $matches[3];
 } elseif (preg_match('/^students\/(\d+)\/monthly-studies\/(\d+)\/(\d+)$/', $path, $matches)) {
     // Handle monthly studies route: /students/{id}/monthly-studies/{year}/{month}
     $controller = 'Students';
@@ -97,9 +104,13 @@ if ($path === 'login' || $path === 'auth/login') {
                     exit;
                 }
             }
+        } else {
+            // Not logged in, redirect to login
+            header('Location: /login');
+            exit;
         }
         
-        // Home page for non-logged users
+        // This should never be reached, but keeping as fallback
         $controller = 'Site/Home';
         $action = 'index';
         $id = null;

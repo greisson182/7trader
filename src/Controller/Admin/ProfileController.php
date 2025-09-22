@@ -15,6 +15,11 @@ class ProfileController extends AppController
             return $this->redirect('/login');
         }
 
+        $currentUser = $this->getCurrentUser();
+        if (!$currentUser) {
+            return $this->redirect('/login');
+        }
+
         if ($this->isPost()) {
             $data = $this->getPostData();
             

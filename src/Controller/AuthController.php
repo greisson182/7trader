@@ -30,6 +30,7 @@ class AuthController extends AppController
         
         if ($this->isPost()) {
             $data = $this->getPostData();
+
             $username = $data['username'] ?? '';
             $password = $data['password'] ?? '';
             
@@ -37,6 +38,7 @@ class AuthController extends AppController
                 $this->flash('Por favor, preencha todos os campos.', 'error');
             } else {
                 if ($this->login($username, $password)) {
+                 
                     $this->flash('Login realizado com sucesso!', 'success');
                     $this->redirect('/admin');
                 } else {

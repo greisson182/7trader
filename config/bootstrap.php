@@ -42,6 +42,12 @@ if (!defined('SECURITY_SALT')) {
     define('SECURITY_SALT', 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');
 }
 
+function pr($data=[]){
+    echo '<pre>';
+    print_r($data);
+    echo '</pre>';
+}
+
 // Load configuration
 $config = [];
 if (file_exists(CONFIG . 'app.php')) {

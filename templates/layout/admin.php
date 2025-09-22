@@ -62,12 +62,7 @@
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
-                                    <li>
-                                        <h6 class="dropdown-header">
-                                            <i class="bi bi-person-gear me-1"></i>
-                                            Selecionar Alunos
-                                        </h6>
-                                    </li>
+
                                     <li><a class="dropdown-item" href="/admin/students">
                                             <i class="bi bi-list-ul me-2"></i>
                                             Ver Todos os Alunos
@@ -100,7 +95,7 @@
                                 <span class="badge bg-primary ms-2"><?= ucfirst($currentUser['role']) ?></span>
                             </a>
                             <ul class="dropdown-menu glass dropdown-menu-end">
-                                <li><a class="dropdown-item" href="/admin/profile/edit">
+                                <li><a class="dropdown-item" href="/admin/profile/edit<?= isset($currentUser['id']) ? '/' . $currentUser['id'] : '' ?>">
                                         <i class="bi bi-person-gear me-2"></i>
                                         Editar Perfil
                                     </a></li>

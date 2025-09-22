@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../src/Helper/CurrencyHelper.php';
+require_once ROOT . DS . 'src' . DS . 'Helper' . DS . 'CurrencyHelper.php';
 use App\Helper\CurrencyHelper;
 ?>
 

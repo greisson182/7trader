@@ -776,7 +776,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const studentId = <?= json_encode($student['id']) ?>;
             
             // Navigate to monthly studies page
-            window.location.href = `/students/${studentId}/monthly-studies/${year}/${month}`;
+            window.location.href = `/admin/students/${studentId}/monthly-studies/${year}/${month}`;
         });
         
         // Add hover effect

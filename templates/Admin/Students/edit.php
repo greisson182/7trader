@@ -30,7 +30,7 @@
                     <h5><i class="fas fa-user"></i> Informações do Estudante</h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="/students/edit/<?= isset($student['id']) ? $student['id'] : '' ?>" class="needs-validation" novalidate>
+                    <form method="POST" action="/admin/students/edit/<?= isset($student['id']) ? $student['id'] : '' ?>" class="needs-validation" novalidate>
                         <div class="mb-3">
                             <label for="name" class="form-label">Nome</label>
                             <input type="text" class="form-control" id="name" name="name" 
