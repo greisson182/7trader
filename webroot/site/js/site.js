@@ -350,15 +350,16 @@ class MarketSimulator {
 // Instância do simulador
 const marketSim = new MarketSimulator();
 
+
 // Função para criar candlesticks estáticos
 function createStaticFooterCandlesticks() {
     const container = document.getElementById('footerCandlesticks');
     if (!container) return;
 
     // Criar candlesticks estáticos para decoração
-    const candlestickPositions = [10, 20, 30, 40, 50, 60, 70, 80, 90];
-    const candlestickTypes = [true, false, true, false, true, true, false, true, false]; // true = green, false = red
-    const candlestickHeights = [22, 28, 20, 32, 24, 30, 26, 18, 25];
+    const candlestickPositions = [15, 25, 35, 45, 55, 65, 75, 85, 95, 105];
+    const candlestickTypes = [true, false, true, true, false, true, false, true, false, true]; // true = green, false = red
+    const candlestickHeights = [20, 25, 35, 50, 22, 28, 24, 26, 28, 30];
 
     candlestickPositions.forEach((position, index) => {
         const candlestick = document.createElement('div');

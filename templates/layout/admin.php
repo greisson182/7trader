@@ -54,7 +54,7 @@
                                     <i class="bi bi-speedometer2 me-1"></i>
                                     Painel
                                 </a>
-                                <ul class="dropdown-menu glass">
+                                <ul class="dropdown-menu glass sub-menu">
                                     <li><a class="dropdown-item" href="/admin/students">
                                             <i class="bi bi-graph-up-arrow me-2"></i>
                                             Dashboard Administrativo

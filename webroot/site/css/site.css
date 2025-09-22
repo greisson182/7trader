@@ -192,7 +192,7 @@ body {
 
 
 .img-banner {
-    box-shadow: none!important;
+    box-shadow: none !important;
 }
 
 .section-subtitle {
@@ -205,13 +205,6 @@ body {
     margin-right: auto;
 }
 
-padding-top: 100px;
-/* Compensar navbar fixa com ticker */
-background: var(--gradient-light);
-min-height: 100vh;
-}
-
-/* Trading Navbar */
 .trading-navbar {
     background: var(--bg-dark) !important;
     box-shadow: var(--shadow-xl);
@@ -1998,7 +1991,6 @@ footer h5 {
 
 /* Financial Features Background */
 .financial-features-bg {
-    background: linear-gradient(135deg, #1a1a1a 0%, #000000 50%, #1a1a1a 100%);
     position: relative;
 }
 
@@ -2496,5 +2488,106 @@ footer h5 {
 
     .footer-stats .d-flex {
         justify-content: center !important;
+    }
+}
+
+.trading-chart-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    padding: 2rem;
+    position: relative;
+}
+
+.trading-chart-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(0, 233, 68, 0.1) 0%, transparent 70%);
+    border-radius: 20px;
+    z-index: 1;
+    animation: neonPulse 3s ease-in-out infinite alternate;
+}
+
+.img-banner {
+    max-width: 100%;
+    height: auto;
+    border-radius: 15px;
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
+
+    /* Efeitos de saturação e neon */
+    filter:
+        saturate(1.8) contrast(1.2) brightness(1.1) drop-shadow(0 0 20px rgba(0, 233, 68, 0.6)) drop-shadow(0 0 40px rgba(0, 233, 68, 0.4)) drop-shadow(0 0 60px rgba(0, 233, 68, 0.3));
+
+    /* Borda neon */
+    box-shadow:
+        0 0 20px rgba(0, 233, 68, 0.8),
+        0 0 40px rgba(0, 233, 68, 0.6),
+        0 0 60px rgba(0, 233, 68, 0.4),
+        inset 0 0 20px rgba(255, 255, 255, 0.1);
+
+    animation: neonGlow 2s ease-in-out infinite alternate;
+}
+
+.img-banner:hover {
+    transform: scale(1.05);
+    filter:
+        saturate(2.2) contrast(1.4) brightness(1.3) drop-shadow(0 0 30px rgba(0, 233, 68, 0.8)) drop-shadow(0 0 50px rgba(0, 233, 68, 0.6)) drop-shadow(0 0 70px rgba(0, 233, 68, 0.5));
+
+    box-shadow:
+        0 0 30px rgba(0, 233, 68, 1),
+        0 0 50px rgba(0, 233, 68, 0.8),
+        0 0 70px rgba(0, 233, 68, 0.6),
+        inset 0 0 30px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes neonGlow {
+    0% {
+        filter:
+            saturate(1.8) contrast(1.2) brightness(1.1) drop-shadow(0 0 20px rgba(0, 233, 68, 0.6)) drop-shadow(0 0 40px rgba(0, 233, 68, 0.4)) drop-shadow(0 0 60px rgba(0, 233, 68, 0.3));
+
+        box-shadow:
+            0 0 20px rgba(0, 233, 68, 0.8),
+            0 0 40px rgba(0, 233, 68, 0.6),
+            0 0 60px rgba(0, 233, 68, 0.4),
+            inset 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+
+    100% {
+        filter:
+            saturate(1.8) contrast(1.0) brightness(1.1) drop-shadow(0 0 20px rgba(0, 233, 68, 0.02)) drop-shadow(0 0 40px rgba(0, 233, 68, 0.50)) drop-shadow(0 0 60px rgba(0, 233, 68, 0.01)); box-shadow: 0 0 25px rgba(0, 233, 68, 1),
+            0 0 45px rgba(0, 233, 68, 0.8),
+            0 0 65px rgba(0, 233, 68, 0.6),
+            inset 0 0 25px rgba(255, 255, 255, 0.15);
+    }
+}
+
+@keyframes neonPulse {
+    0% {
+        background: radial-gradient(circle at center, rgba(0, 233, 68, 0.1) 0%, transparent 70%);
+        transform: scale(1);
+    }
+
+    100% {
+        background: radial-gradient(circle at center, rgba(0, 233, 68, 0.15) 0%, transparent 80%);
+        transform: scale(1.02);
+    }
+}
+
+@media (max-width: 768px) {
+    .trading-chart-image {
+        min-height: 300px;
+        padding: 1rem;
+    }
+
+    .img-banner {
+        filter:
+            saturate(1.6) contrast(1.1) brightness(1.05) drop-shadow(0 0 15px rgba(0, 233, 68, 0.5)) drop-shadow(0 0 30px rgba(0, 233, 68, 0.3)) drop-shadow(0 0 45px rgba(0, 233, 68, 0.2));
     }
 }
