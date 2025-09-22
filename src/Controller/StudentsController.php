@@ -447,7 +447,7 @@ class StudentsController extends AppController
                 'total_studies' => count($allStudies),
                 'total_wins' => array_sum(array_column($allStudies, 'wins')),
                 'total_losses' => array_sum(array_column($allStudies, 'losses')),
-                'total_profit_loss' => array_sum(array_column($allStudies, 'profit_loss'))
+                'total_profit_loss' => array_sum(array_map('floatval', array_column($allStudies, 'profit_loss')))
             ];
         } catch (Exception $e) {
             $this->flash('Erro ao carregar métricas: ' . $e->getMessage(), 'error');
@@ -589,6 +589,173 @@ class StudentsController extends AppController
         } catch (Exception $e) {
             $this->flash('Erro ao carregar dashboard: ' . $e->getMessage(), 'error');
             return $this->redirect(['action' => 'index']);
+        }
+    }
+
+    public function admin_dashboard()
+    {
+        // Verificar se é admin
+        $this->requireAdmin();
+        
+        try {
+            // Estatísticas gerais
+            $totalStudents = $this->db->query("SELECT COUNT(*) FROM students")->fetchColumn();
+            $activeStudents = $this->db->query("SELECT COUNT(*) FROM students s JOIN users u ON s.id = u.student_id WHERE u.active = 1")->fetchColumn();
+            $totalStudies = $this->db->query("SELECT COUNT(*) FROM studies")->fetchColumn();
+            
+            // Estatísticas de performance
+            $totalTrades = $this->db->query("SELECT SUM(wins + losses) FROM studies")->fetchColumn() ?: 0;
+            $totalWins = $this->db->query("SELECT SUM(wins) FROM studies")->fetchColumn() ?: 0;
+            $totalProfitLoss = $this->db->query("SELECT SUM(profit_loss) FROM studies")->fetchColumn() ?: 0;
+            $overallWinRate = $totalTrades > 0 ? round(($totalWins / $totalTrades) * 100, 2) : 0;
+            
+            // Top 5 estudantes por profit/loss
+            $topStudents = $this->db->query("
+                SELECT s.name, s.id, u.currency, SUM(st.profit_loss) as total_profit_loss, 
+                       COUNT(st.id) as total_studies,
+                       SUM(st.wins) as total_wins,
+                       SUM(st.losses) as total_losses
+                FROM students s 
+                LEFT JOIN studies st ON s.id = st.student_id 
+                LEFT JOIN users u ON s.id = u.student_id
+                WHERE u.active = 1
+                GROUP BY s.id, s.name, u.currency 
+                ORDER BY total_profit_loss DESC 
+                LIMIT 5
+            ")->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Estudantes com pior performance
+            $worstStudents = $this->db->query("
+                SELECT s.name, s.id, u.currency, SUM(st.profit_loss) as total_profit_loss, 
+                       COUNT(st.id) as total_studies,
+                       SUM(st.wins) as total_wins,
+                       SUM(st.losses) as total_losses
+                FROM students s 
+                LEFT JOIN studies st ON s.id = st.student_id 
+                LEFT JOIN users u ON s.id = u.student_id
+                WHERE u.active = 1
+                GROUP BY s.id, s.name, u.currency 
+                ORDER BY total_profit_loss ASC 
+                LIMIT 5
+            ")->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Atividade recente (últimos 10 estudos)
+            $recentActivity = $this->db->query("
+                SELECT st.*, s.name as student_name, u.currency
+                FROM studies st 
+                JOIN students s ON st.student_id = s.id 
+                LEFT JOIN users u ON s.id = u.student_id
+                ORDER BY st.study_date DESC, st.created DESC 
+                LIMIT 10
+            ")->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Dados para gráficos - estudos por mês
+            $monthlyData = $this->db->query("
+                SELECT 
+                    YEAR(study_date) as year,
+                    MONTH(study_date) as month,
+                    COUNT(*) as total_studies,
+                    SUM(wins) as total_wins,
+                    SUM(losses) as total_losses,
+                    SUM(profit_loss) as total_profit_loss
+                FROM studies 
+                WHERE study_date >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                GROUP BY YEAR(study_date), MONTH(study_date)
+                ORDER BY year, month
+            ")->fetchAll(PDO::FETCH_ASSOC);
+            
+            $this->set(compact(
+                'totalStudents',
+                'activeStudents', 
+                'totalStudies',
+                'totalTrades',
+                'totalWins',
+                'totalProfitLoss',
+                'overallWinRate',
+                'topStudents',
+                'worstStudents',
+                'recentActivity',
+                'monthlyData'
+            ));
+            
+            return $this->render('Students/admin_dashboard');
+            
+        } catch (Exception $e) {
+            $this->flash('Erro ao carregar dashboard administrativo: ' . $e->getMessage(), 'error');
+            return $this->redirect(['action' => 'index']);
+        }
+    }
+
+    public function monthlyStudies($studentId = null, $year = null, $month = null)
+    {
+        try {
+            $pdo = $this->getDbConnection();
+            
+            // Verificar se estudante pode acessar este registro
+            if ($this->isStudent()) {
+                $currentStudentId = $this->getCurrentStudentId();
+                if ($currentStudentId != $studentId) {
+                    $this->flash('Acesso negado. Você só pode visualizar seus próprios dados.', 'error');
+                    return $this->redirect('/students');
+                }
+            }
+            
+            // Buscar dados do estudante
+            $stmt = $pdo->prepare("SELECT * FROM students WHERE id = ?");
+            $stmt->execute([$studentId]);
+            $student = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$student) {
+                $this->flash('Estudante não encontrado.', 'error');
+                return $this->redirect('/students');
+            }
+            
+            // Buscar estudos do mês específico
+            $stmt = $pdo->prepare("
+                SELECT * FROM studies 
+                WHERE student_id = ? 
+                AND YEAR(study_date) = ? 
+                AND MONTH(study_date) = ?
+                ORDER BY study_date DESC
+            ");
+            $stmt->execute([$studentId, $year, $month]);
+            $studies = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Calcular estatísticas do mês
+            $totalStudies = count($studies);
+            $totalWins = array_sum(array_column($studies, 'wins'));
+            $totalLosses = array_sum(array_column($studies, 'losses'));
+            $totalTrades = $totalWins + $totalLosses;
+            $totalProfitLoss = array_sum(array_column($studies, 'profit_loss'));
+            $winRate = $totalTrades > 0 ? ($totalWins / $totalTrades) * 100 : 0;
+            
+            // Nome do mês em português
+            $monthNames = [
+                1 => 'Janeiro', 2 => 'Fevereiro', 3 => 'Março', 4 => 'Abril',
+                5 => 'Maio', 6 => 'Junho', 7 => 'Julho', 8 => 'Agosto',
+                9 => 'Setembro', 10 => 'Outubro', 11 => 'Novembro', 12 => 'Dezembro'
+            ];
+            $monthName = $monthNames[(int)$month] ?? 'Mês';
+            
+            $this->set(compact(
+                'student',
+                'studies',
+                'year',
+                'month',
+                'monthName',
+                'totalStudies',
+                'totalWins',
+                'totalLosses',
+                'totalTrades',
+                'totalProfitLoss',
+                'winRate'
+            ));
+            
+            return $this->render('Students/monthly_studies');
+            
+        } catch (Exception $e) {
+            $this->flash('Erro ao carregar estudos mensais: ' . $e->getMessage(), 'error');
+            return $this->redirect('/students');
         }
     }
 }

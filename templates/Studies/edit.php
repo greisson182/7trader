@@ -1,18 +1,24 @@
 <div class="row">
     <aside class="column">
         <div class="side-nav">
-            <h4 class="heading">Actions</h4>
-            <form method="post" action="/studies/delete/<?= h($study['id']) ?>" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete # <?= h($study['id']) ?>?');">
-                <button type="submit" class="btn btn-danger mb-2">Delete</button>
+            <h4 class="heading">Ações</h4>
+            <form method="post" action="/studies/delete/<?= h($study['id']) ?>" style="display: inline;" onsubmit="return confirm('Tem certeza que deseja excluir # <?= h($study['id']) ?>?');">
+                <button type="submit" class="btn btn-danger btn-with-icon mb-2">
+                    <i class="fas fa-trash"></i>
+                    <span>Excluir</span>
+                </button>
             </form>
-            <a href="/studies" class="btn btn-secondary mb-2">List Studies</a>
+            <a href="/studies" class="btn btn-secondary btn-with-icon mb-2">
+                <i class="fas fa-list"></i>
+                <span>Listar Estudos</span>
+            </a>
         </div>
     </aside>
     <div class="column-responsive column-80">
         <div class="studies form content">
             <div class="card">
                 <div class="card-header">
-                    <h4><i class="fas fa-edit"></i> Edit Market Replay Study</h4>
+                    <h4><i class="fas fa-edit"></i> Editar Estudo de Market Replay</h4>
                 </div>
                 <div class="card-body">
                     <form method="post" action="/studies/edit/<?= h($study['id']) ?>" class="needs-validation" novalidate>
@@ -20,20 +26,36 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="student_id" class="form-label">Student</label>
-                                    <select name="student_id" id="student_id" class="form-select" required>
-                                        <option value="">Select a student</option>
-                                        <?php foreach ($students as $id => $name): ?>
-                                            <option value="<?= h($id) ?>" <?= $study['student_id'] == $id ? 'selected' : '' ?>><?= h($name) ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
+                                    <label class="form-label">Estudante</label>
+                                    <input type="text" class="form-control" value="<?= h($studentName) ?>" readonly>
+                                    <div class="form-text">Estudante proprietário do estudo</div>
+                                    <input type="hidden" name="student_id" value="<?= h($study['student_id']) ?>">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="study_date" class="form-label">Study Date</label>
+                                    <label for="market_id" class="form-label">Mercado</label>
+                                    <select class="form-select" id="market_id" name="market_id" required>
+                                        <option value="">Selecione um mercado</option>
+                                        <?php if (!empty($markets)): ?>
+                                            <?php foreach ($markets as $market): ?>
+                                                <option value="<?= $market['id'] ?>" <?= ($study['market_id'] == $market['id']) ? 'selected' : '' ?>>
+                                                    <?= htmlspecialchars($market['name']) ?> (<?= htmlspecialchars($market['code']) ?>)
+                                                </option>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </select>
+                                    <div class="form-text">Mercado associado ao estudo</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="study_date" class="form-label">Data do Estudo</label>
                                     <input type="date" name="study_date" id="study_date" class="form-control" value="<?= h($study['study_date']) ?>" required>
-                                    <div class="form-text">The date when the study was conducted</div>
+                                    <div class="form-text">A data em que o estudo foi realizado</div>
                                 </div>
                             </div>
                         </div>
@@ -41,33 +63,49 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label for="wins" class="form-label">Wins</label>
+                                    <label for="wins" class="form-label">Gain</label>
                                     <input type="number" name="wins" id="wins" class="form-control" value="<?= h($study['wins']) ?>" min="0" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label for="losses" class="form-label">Losses</label>
+                                    <label for="losses" class="form-label">Loss</label>
                                     <input type="number" name="losses" id="losses" class="form-control" value="<?= h($study['losses']) ?>" min="0" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label for="profit_loss" class="form-label">Profit/Loss ($)</label>
+                                    <label for="profit_loss" class="form-label">Lucro/Prejuízo (R$)</label>
                                     <input type="number" name="profit_loss" id="profit_loss" class="form-control" value="<?= h($study['profit_loss']) ?>" step="0.01" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="notes" class="form-label">Notas</label>
+                                    <textarea class="form-control" id="notes" name="notes" rows="4" placeholder="Adicione suas observações sobre este estudo..."><?= h($study['notes'] ?? '') ?></textarea>
+                                    <div class="form-text">Campo opcional para anotações e observações sobre o estudo.</div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle"></i>
-                            <strong>Current Win Rate:</strong> <?= h($study['win_rate']) ?>% 
-                            (<?= h($study['wins']) ?> wins out of <?= h($study['total_trades']) ?> total trades)
+                            <strong>Taxa de Acerto Atual:</strong> <?= isset($study['win_rate']) ? h($study['win_rate']) : '0' ?>% 
+                            (<?= isset($study['wins']) ? h($study['wins']) : '0' ?> vitórias de <?= isset($study['total_trades']) ? h($study['total_trades']) : '0' ?> operações totais)
                         </div>
                     </fieldset>
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="/studies" class="btn btn-secondary me-md-2">Cancel</a>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                    <div class="form-actions">
+                        <a href="/studies" class="btn btn-secondary btn-with-icon">
+                            <i class="fas fa-times"></i>
+                            <span>Cancelar</span>
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-with-icon">
+                            <i class="fas fa-save"></i>
+                            <span>Salvar</span>
+                        </button>
                     </div>
                     </form>
                 </div>
@@ -96,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
             lossesInput.parentNode.appendChild(winRateDisplay);
         }
         
-        winRateDisplay.innerHTML = `<strong>Updated Win Rate: ${winRate}%</strong> (${wins} wins out of ${total} total trades)`;
+        winRateDisplay.innerHTML = `<strong>Taxa de Acerto Atualizada: ${winRate}%</strong> (${wins} vitórias de ${total} operações totais)`;
     }
     
     winsInput.addEventListener('input', updateWinRate);

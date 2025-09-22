@@ -10,14 +10,14 @@
         <div>
             <h1 class="display-6 fw-bold mb-2">
                 <i class="bi bi-people-fill me-3" style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
-                Students
+                Estudantes
             </h1>
-            <p class="text-muted mb-0">Manage and track student progress</p>
+            <p class="text-muted mb-0">Gerenciar e acompanhar o progresso dos estudantes</p>
         </div>
         <?php if (isset($currentUser) && $currentUser['role'] === 'admin'): ?>
             <a href="/students/add" class="btn btn-primary btn-lg">
                 <i class="bi bi-person-plus me-2"></i>
-                New Student
+                Novo Estudante
             </a>
         <?php endif; ?>
     </div>
@@ -51,8 +51,8 @@
                                     <div class="col-6">
                                         <div class="info-item">
                                             <i class="bi bi-calendar-plus text-success"></i>
-                                            <span class="small text-muted">Joined</span>
-                                            <div class="fw-semibold small"><?= date('M d, Y', strtotime($student['created'])) ?></div>
+                                            <span class="small text-muted">Cadastrado</span>
+                                            <div class="fw-semibold small"><?= date('d/m/Y', strtotime($student['created'])) ?></div>
                                         </div>
                                     </div>
                                 </div>
@@ -63,24 +63,24 @@
                                 <div class="d-grid gap-2">
                                     <a href="/students/dashboard/<?= $student['id'] ?>" class="btn btn-primary">
                                         <i class="bi bi-speedometer2 me-2"></i>
-                                        Dashboard
+                                        Painel
                                     </a>
                                     
                                     <div class="btn-group" role="group">
                                         <a href="/students/view/<?= $student['id'] ?>" class="btn btn-outline-primary btn-sm">
                                             <i class="bi bi-eye me-1"></i>
-                                            View
+                                            Ver
                                         </a>
                                         <?php if (isset($currentUser) && $currentUser['role'] === 'admin'): ?>
                                             <a href="/students/edit/<?= $student['id'] ?>" class="btn btn-outline-warning btn-sm">
                                                 <i class="bi bi-pencil me-1"></i>
-                                                Edit
+                                                Editar
                                             </a>
                                             <a href="/students/delete/<?= $student['id'] ?>" 
                                                class="btn btn-outline-danger btn-sm" 
-                                               onclick="return confirm('Are you sure you want to delete this student?')">
+                                               onclick="return confirm('Tem certeza que deseja excluir este estudante?')">
                                                 <i class="bi bi-trash me-1"></i>
-                                                Delete
+                                                Excluir
                                             </a>
                                         <?php endif; ?>
                                     </div>
@@ -102,21 +102,21 @@
                                 <div class="stat-item">
                                     <i class="bi bi-people-fill display-4 text-primary mb-2"></i>
                                     <h3 class="fw-bold"><?= count($students) ?></h3>
-                                    <p class="text-muted mb-0">Total Students</p>
+                                    <p class="text-muted mb-0">Total de Estudantes</p>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="stat-item">
                                     <i class="bi bi-graph-up display-4 text-success mb-2"></i>
-                                    <h3 class="fw-bold">Active</h3>
-                                    <p class="text-muted mb-0">Learning Progress</p>
+                                    <h3 class="fw-bold">Ativo</h3>
+                                    <p class="text-muted mb-0">Progresso de Aprendizado</p>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="stat-item">
                                     <i class="bi bi-award display-4 text-warning mb-2"></i>
-                                    <h3 class="fw-bold">Growing</h3>
-                                    <p class="text-muted mb-0">Skills Development</p>
+                                    <h3 class="fw-bold">Crescendo</h3>
+                                    <p class="text-muted mb-0">Desenvolvimento de Habilidades</p>
                                 </div>
                             </div>
                         </div>
@@ -133,17 +133,17 @@
                     <div class="card-body py-5">
                         <div class="empty-state">
                             <i class="bi bi-people display-1 text-muted mb-4"></i>
-                            <h3 class="fw-bold mb-3">No Students Yet</h3>
+                            <h3 class="fw-bold mb-3">Nenhum Estudante Ainda</h3>
                             <p class="text-muted mb-4">
-                                Get started by adding your first student to begin tracking their progress.
+                                Comece adicionando seu primeiro estudante para começar a acompanhar o progresso.
                             </p>
                             <?php if (isset($currentUser) && $currentUser['role'] === 'admin'): ?>
                                 <a href="/students/add" class="btn btn-primary btn-lg">
                                     <i class="bi bi-person-plus me-2"></i>
-                                    Add First Student
+                                    Adicionar Primeiro Estudante
                                 </a>
                             <?php else: ?>
-                                <p class="text-muted small">Contact your administrator to add students.</p>
+                                <p class="text-muted small">Entre em contato com seu administrador para adicionar estudantes.</p>
                             <?php endif; ?>
                         </div>
                     </div>

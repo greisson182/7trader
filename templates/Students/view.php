@@ -74,19 +74,16 @@ use App\Helper\CurrencyHelper;
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>Market Date</th>
                                     <th>Study Date</th>
-                                    <th>Wins</th>
-                                    <th>Losses</th>
-                                    <th>Win Rate</th>
-                                    <th>Profit/Loss</th>
-                                    <th class="actions">Actions</th>
+                                <th>Wins</th>
+                                <th>Losses</th>
+                                <th>Profit/Loss</th>
+                                <th class="actions">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach (array_slice($student['studies'], -10) as $study): ?>
                                 <tr>
-                                    <td><?= date('Y-m-d', strtotime($study['market_date'])) ?></td>
                                     <td><?= date('Y-m-d', strtotime($study['study_date'])) ?></td>
                                     <td><span class="badge bg-success"><?= $study['wins'] ?></span></td>
                                     <td><span class="badge bg-danger"><?= $study['losses'] ?></span></td>

@@ -6,12 +6,18 @@
 ?>
 <div class="students form content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3><i class="fas fa-user-edit"></i> Edit Student</h3>
+        <h3><i class="fas fa-user-edit"></i> Editar Estudante</h3>
         <div>
-            <a href="/students" class="btn btn-secondary me-2">List Students</a>
+            <a href="/students" class="btn btn-secondary me-2 btn-with-icon">
+                <i class="fas fa-list"></i>
+                <span>Listar Estudantes</span>
+            </a>
             <form method="POST" action="/students/delete/<?= isset($student['id']) ? $student['id'] : '' ?>" style="display: inline;" 
-                  onsubmit="return confirm('Are you sure you want to delete this student?')">
-                <button type="submit" class="btn btn-danger">Delete</button>
+                  onsubmit="return confirm('Tem certeza que deseja excluir este estudante?')">
+                <button type="submit" class="btn btn-danger btn-with-icon">
+                    <i class="fas fa-trash"></i>
+                    <span>Excluir</span>
+                </button>
             </form>
         </div>
     </div>
@@ -21,16 +27,16 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h5><i class="fas fa-user"></i> Student Information</h5>
+                    <h5><i class="fas fa-user"></i> Informações do Estudante</h5>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="/students/edit/<?= isset($student['id']) ? $student['id'] : '' ?>" class="needs-validation" novalidate>
                         <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
+                            <label for="name" class="form-label">Nome</label>
                             <input type="text" class="form-control" id="name" name="name" 
                                    value="<?= isset($student['name']) ? htmlspecialchars($student['name']) : '' ?>" required>
                             <div class="invalid-feedback">
-                                Please provide a valid name.
+                                Por favor, forneça um nome válido.
                             </div>
                         </div>
                         <div class="mb-3">
@@ -38,7 +44,7 @@
                             <input type="email" class="form-control" id="email" name="email" 
                                    value="<?= isset($student['email']) ? htmlspecialchars($student['email']) : '' ?>" required>
                             <div class="invalid-feedback">
-                                Please provide a valid email.
+                                Por favor, forneça um email válido.
                             </div>
                         </div>
                         
@@ -90,8 +96,14 @@
                         </div>
                         
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="/students" class="btn btn-secondary me-md-2">Cancel</a>
-                            <button type="submit" class="btn btn-primary">Update Student & User</button>
+                            <a href="/students" class="btn btn-secondary me-md-2 btn-with-icon">
+                                <i class="fas fa-times"></i>
+                                <span>Cancel</span>
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-with-icon">
+                                <i class="fas fa-save"></i>
+                                <span>Update Student & User</span>
+                            </button>
                         </div>
                     </form>
                 </div>

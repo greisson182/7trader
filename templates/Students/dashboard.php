@@ -19,19 +19,9 @@ use App\Helper\CurrencyHelper;
         <div>
             <h1 class="display-5 fw-bold mb-2">
                 <i class="bi bi-speedometer2 me-3" style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
-                Dashboard
+                Painel
             </h1>
-            <p class="text-muted mb-0">Performance analytics for <span class="fw-semibold text-primary"><?= h($student['name']) ?></span></p>
-        </div>
-        <div class="d-flex gap-2">
-            <a href="/students" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left me-2"></i>
-                Back
-            </a>
-            <a href="/students/view/<?= $student['id'] ?>" class="btn btn-primary">
-                <i class="bi bi-person me-2"></i>
-                Profile
-            </a>
+            <p class="text-muted mb-0">Análise de desempenho para <span class="fw-semibold text-primary"><?= h($student['name']) ?></span></p>
         </div>
     </div>
 
@@ -44,10 +34,10 @@ use App\Helper\CurrencyHelper;
                         <i class="bi bi-journal-text"></i>
                     </div>
                     <h3 class="stat-number mb-2"><?= number_format($overallStats['total_studies']) ?></h3>
-                    <p class="stat-label mb-0">Total Studies</p>
+                    <p class="stat-label mb-0">Total de Estudos</p>
                     <div class="stat-trend">
                         <i class="bi bi-graph-up text-success"></i>
-                        <small class="text-success">Active</small>
+                        <small class="text-success">Ativo</small>
                     </div>
                 </div>
             </div>
@@ -60,11 +50,11 @@ use App\Helper\CurrencyHelper;
                         <i class="bi bi-percent"></i>
                     </div>
                     <h3 class="stat-number mb-2 text-success"><?= $overallStats['overall_win_rate'] ?>%</h3>
-                    <p class="stat-label mb-0">Win Rate</p>
+                    <p class="stat-label mb-0">Taxa de Acerto</p>
                     <div class="stat-trend">
                         <i class="bi bi-<?= $overallStats['overall_win_rate'] >= 50 ? 'graph-up text-success' : 'graph-down text-warning' ?>"></i>
                         <small class="<?= $overallStats['overall_win_rate'] >= 50 ? 'text-success' : 'text-warning' ?>">
-                            <?= $overallStats['overall_win_rate'] >= 50 ? 'Good' : 'Needs Improvement' ?>
+                            <?= $overallStats['overall_win_rate'] >= 50 ? 'Bom' : 'Precisa Melhorar' ?>
                         </small>
                     </div>
                 </div>
@@ -77,11 +67,11 @@ use App\Helper\CurrencyHelper;
                     <div class="stat-icon mb-3 text-info">
                         <i class="bi bi-bar-chart"></i>
                     </div>
-                    <h3 class="stat-number mb-2 text-info"><?= number_format($overallStats['total_trades']) ?></h3>
-                    <p class="stat-label mb-0">Total Trades</p>
+                    <h3 class="stat-number mb-2"><?= number_format($overallStats['total_trades']) ?></h3>
+                    <p class="stat-label mb-0">Total de Operações</p>
                     <div class="stat-trend">
-                        <i class="bi bi-activity text-info"></i>
-                        <small class="text-info">Volume</small>
+                        <i class="bi bi-graph-up text-info"></i>
+                        <small class="text-info">Ativo</small>
                     </div>
                 </div>
             </div>
@@ -96,11 +86,11 @@ use App\Helper\CurrencyHelper;
                     <h3 class="stat-number mb-2 <?= $overallStats['total_profit_loss'] >= 0 ? 'text-success' : 'text-danger' ?>">
                         <?= CurrencyHelper::formatForUser($overallStats['total_profit_loss'], $student['currency'] ?? 'BRL') ?>
                     </h3>
-                    <p class="stat-label mb-0">Total P&L</p>
+                    <p class="stat-label mb-0">P&L Total</p>
                     <div class="stat-trend">
                         <i class="bi bi-<?= $overallStats['total_profit_loss'] >= 0 ? 'graph-up text-success' : 'graph-down text-danger' ?>"></i>
                         <small class="<?= $overallStats['total_profit_loss'] >= 0 ? 'text-success' : 'text-danger' ?>">
-                            <?= $overallStats['total_profit_loss'] >= 0 ? 'Profit' : 'Loss' ?>
+                            <?= $overallStats['total_profit_loss'] >= 0 ? 'Lucro' : 'Prejuízo' ?>
                         </small>
                     </div>
                 </div>
@@ -117,9 +107,9 @@ use App\Helper\CurrencyHelper;
                         <div>
                             <h5 class="card-title mb-1">
                                 <i class="bi bi-graph-up me-2"></i>
-                                P&L Evolution
+                                Evolução P&L
                             </h5>
-                            <p class="text-muted small mb-0">Last 12 months performance</p>
+                            <p class="text-muted small mb-0">Desempenho dos últimos 12 meses</p>
                         </div>
                         <div class="chart-controls">
                             <button class="btn btn-sm btn-outline-primary active" data-chart="line">
@@ -142,9 +132,9 @@ use App\Helper\CurrencyHelper;
                 <div class="card-header border-0 pb-0">
                     <h5 class="card-title mb-1">
                         <i class="bi bi-pie-chart me-2"></i>
-                        Win Rate Trend
+                        Tendência Taxa de Acerto
                     </h5>
-                    <p class="text-muted small mb-0">Monthly performance</p>
+                    <p class="text-muted small mb-0">Desempenho mensal</p>
                 </div>
                 <div class="card-body">
                     <canvas id="winRateChart" height="300"></canvas>
@@ -160,14 +150,14 @@ use App\Helper\CurrencyHelper;
                 <div>
                     <h5 class="card-title mb-1">
                         <i class="bi bi-calendar3 me-2"></i>
-                        Monthly Performance
+                        Desempenho Mensal
                     </h5>
-                    <p class="text-muted small mb-0">Detailed breakdown by month</p>
+                    <p class="text-muted small mb-0">Detalhamento por mês</p>
                 </div>
                 <div class="table-controls">
                     <button class="btn btn-sm btn-outline-primary">
                         <i class="bi bi-download me-1"></i>
-                        Export
+                        Exportar
                     </button>
                 </div>
             </div>
@@ -180,27 +170,27 @@ use App\Helper\CurrencyHelper;
                             <tr>
                                 <th class="border-0">
                                     <i class="bi bi-calendar me-1"></i>
-                                    Period
+                                    Período
                                 </th>
                                 <th class="border-0 text-center">
                                     <i class="bi bi-journal me-1"></i>
-                                    Studies
+                                    Estudos
                                 </th>
                                 <th class="border-0 text-center">
                                     <i class="bi bi-check-circle me-1"></i>
-                                    Wins
+                                    Vitórias
                                 </th>
                                 <th class="border-0 text-center">
                                     <i class="bi bi-x-circle me-1"></i>
-                                    Losses
+                                    Derrotas
                                 </th>
                                 <th class="border-0 text-center">
                                     <i class="bi bi-bar-chart me-1"></i>
-                                    Trades
+                                    Operações
                                 </th>
                                 <th class="border-0 text-center">
                                     <i class="bi bi-percent me-1"></i>
-                                    Win Rate
+                                    Taxa de Acerto
                                 </th>
                                 <th class="border-0 text-center">
                                     <i class="bi bi-currency-dollar me-1"></i>
@@ -208,13 +198,13 @@ use App\Helper\CurrencyHelper;
                                 </th>
                                 <th class="border-0 text-center">
                                     <i class="bi bi-calendar-event me-1"></i>
-                                    Period
+                                    Período
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($monthlyData as $data): ?>
-                            <tr class="table-row-hover">
+                            <tr class="table-row-hover clickable-row" data-year="<?= h($data['year']) ?>" data-month="<?= h($data['month']) ?>" style="cursor: pointer;">
                                 <td class="fw-semibold">
                                     <div class="d-flex align-items-center">
                                         <div class="month-indicator me-2"></div>
@@ -263,11 +253,11 @@ use App\Helper\CurrencyHelper;
                     <div class="empty-icon mb-4">
                         <i class="bi bi-graph-up"></i>
                     </div>
-                    <h4 class="text-muted mb-3">No Studies Found</h4>
-                    <p class="text-muted mb-4">Start adding studies to see your performance analytics here.</p>
+                    <h4 class="text-muted mb-3">Nenhum Estudo Encontrado</h4>
+                    <p class="text-muted mb-4">Comece adicionando estudos para ver suas análises de desempenho aqui.</p>
                     <a href="/studies/add" class="btn btn-primary btn-lg">
                         <i class="bi bi-plus-circle me-2"></i>
-                        Add First Study
+                        Adicionar Primeiro Estudo
                     </a>
                 </div>
             <?php endif; ?>
@@ -637,9 +627,59 @@ setTimeout(function() {
     }
 
     // Add smooth animations
+    // Get user currency from PHP
+    const userCurrency = '<?= $student['currency'] ?? 'BRL' ?>';
+    
+    // Function to format currency based on user preference
+    function formatCurrency(value, currency) {
+        if (currency === 'BRL') {
+            return 'R$ ' + value.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        } else {
+            return '$' + value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+    }
+    
     // Animate stat numbers
     document.querySelectorAll('.stat-number').forEach(el => {
-        const finalValue = parseInt(el.textContent.replace(/[^0-9.-]/g, ''));
+        const originalText = el.textContent;
+        // Improved parsing for Brazilian currency format (R$ 1.468,00)
+        let finalValue;
+        if (originalText.includes('R$')) {
+            // Remove R$ and spaces, then handle Brazilian number format
+            let cleanValue = originalText.replace(/R\$\s*/g, '').trim();
+            
+            // Handle Brazilian number format properly for all value ranges
+            if (cleanValue.includes(',')) {
+                // Brazilian format uses comma as decimal separator
+                const parts = cleanValue.split(',');
+                if (parts.length === 2) {
+                    // Remove all dots from the integer part (thousands separators)
+                    const integerPart = parts[0].replace(/\./g, '');
+                    const decimalPart = parts[1];
+                    cleanValue = integerPart + '.' + decimalPart;
+                } else {
+                    // No decimal part, just remove dots (thousands separators)
+                    cleanValue = cleanValue.replace(/\./g, '').replace(',', '');
+                }
+            } else if (cleanValue.includes('.')) {
+                // Check if it's thousands separator or decimal separator
+                const dotCount = (cleanValue.match(/\./g) || []).length;
+                if (dotCount === 1 && cleanValue.split('.')[1].length <= 2) {
+                    // Single dot with 1-2 digits after = decimal separator, keep as is
+                    // This handles cases like "1500.50"
+                } else {
+                    // Multiple dots or more than 2 digits after = thousands separators
+                    // Remove all dots: "1.000.000" -> "1000000"
+                    cleanValue = cleanValue.replace(/\./g, '');
+                }
+            }
+            
+            finalValue = parseFloat(cleanValue) || 0;
+        } else {
+            // For other values (percentages, counts)
+            finalValue = parseFloat(originalText.replace(/[^0-9.,-]/g, '').replace(',', '.')) || 0;
+        }
+        
         let currentValue = 0;
         const increment = finalValue / 50;
         const timer = setInterval(() => {
@@ -648,10 +688,41 @@ setTimeout(function() {
                 currentValue = finalValue;
                 clearInterval(timer);
             }
-            el.textContent = el.textContent.includes('$') ? 
-                '$' + Math.floor(currentValue).toLocaleString() :
-                Math.floor(currentValue).toLocaleString() + (el.textContent.includes('%') ? '%' : '');
+            
+            // Check if this element contains currency
+            if (originalText.includes('$') || originalText.includes('R$')) {
+                el.textContent = formatCurrency(currentValue, userCurrency);
+            } else if (originalText.includes('%')) {
+                el.textContent = Math.floor(currentValue).toLocaleString() + '%';
+            } else {
+                el.textContent = Math.floor(currentValue).toLocaleString();
+            }
         }, 30);
     });
 }, 1000); // Wait 1 second for everything to load
+
+// Add click functionality to table rows
+document.addEventListener('DOMContentLoaded', function() {
+    const clickableRows = document.querySelectorAll('.clickable-row');
+    
+    clickableRows.forEach(row => {
+        row.addEventListener('click', function() {
+            const year = this.getAttribute('data-year');
+            const month = this.getAttribute('data-month');
+            const studentId = <?= json_encode($student['id']) ?>;
+            
+            // Navigate to monthly studies page
+            window.location.href = `/students/${studentId}/monthly-studies/${year}/${month}`;
+        });
+        
+        // Add hover effect
+        row.addEventListener('mouseenter', function() {
+            this.style.backgroundColor = 'rgba(var(--bs-primary-rgb), 0.1)';
+        });
+        
+        row.addEventListener('mouseleave', function() {
+            this.style.backgroundColor = '';
+        });
+    });
+});
 </script>

@@ -191,11 +191,10 @@ use App\Helper\CurrencyHelper;
                         <thead>
                             <tr>
                                 <th>Study Date</th>
-                                <th>Market Date</th>
                                 <th>Wins</th>
                                 <th>Losses</th>
                                 <th>Win Rate</th>
-                                <th>P&L</th>
+                                <th>Profit/Loss</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -203,7 +202,6 @@ use App\Helper\CurrencyHelper;
                             <?php foreach ($recentStudies as $study): ?>
                             <tr>
                                 <td><?= h($study->study_date->format('Y-m-d')) ?></td>
-                                <td><?= h($study->market_date->format('Y-m-d')) ?></td>
                                 <td><span class="badge bg-success"><?= $study->wins ?></span></td>
                                 <td><span class="badge bg-danger"><?= $study->losses ?></span></td>
                                 <td><?= $study->win_rate ?>%</td>

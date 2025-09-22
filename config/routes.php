@@ -30,6 +30,13 @@ return static function (RouteBuilder $routes) {
         // Metrics routes
         $builder->connect('/students/metrics/*', ['controller' => 'Students', 'action' => 'metrics']);
         
+        // Dashboard routes
+        $builder->connect('/students/dashboard/*', ['controller' => 'Students', 'action' => 'dashboard']);
+        $builder->connect('/students/admin-dashboard', ['controller' => 'Students', 'action' => 'admin_dashboard']);
+        
+        // Monthly studies route
+        $builder->connect('/students/*/monthly-studies/*/*', ['controller' => 'Students', 'action' => 'monthlyStudies']);
+        
         $builder->fallbacks();
     });
 };

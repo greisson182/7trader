@@ -79,6 +79,9 @@ if (!function_exists('env')) {
 
 if (!function_exists('h')) {
     function h($text, $double = true, $charset = null) {
+        if ($text === null) {
+            return '';
+        }
         return htmlspecialchars($text, $double ? ENT_QUOTES | ENT_SUBSTITUTE : ENT_NOQUOTES, $charset ?: 'UTF-8');
     }
 }

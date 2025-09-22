@@ -42,6 +42,7 @@ class ThemeManager {
                 e.preventDefault();
                 console.log('Clique no botão de tema detectado, alternando...');
                 this.toggleTheme();
+
             });
             
             console.log('Theme toggle initialized successfully');

@@ -28,7 +28,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg glass fixed-top">
         <div class="container">
-            <a href="/students" class="navbar-brand">
+            <a href="/students/dashboard" class="navbar-brand">
                 <img src="/images/logo-dark.png" alt="7Trader" class="logo logo-dark">
                 <img src="/images/logo-light.png" alt="7Trader" class="logo logo-light">
             </a>
@@ -45,24 +45,28 @@
                             <li class="nav-item">
                                 <a href="/students/dashboard" class="nav-link">
                                     <i class="bi bi-speedometer2 me-1"></i>
-                                    Dashboard
+                                    Painel
                                 </a>
                             </li>
                         <?php elseif ($currentUser['role'] === 'admin'): ?>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="dashboardDropdown" role="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-speedometer2 me-1"></i>
-                                    Dashboard
+                                    Painel
                                 </a>
                                 <ul class="dropdown-menu glass">
+                                    <li><a class="dropdown-item" href="/students/admin-dashboard">
+                                            <i class="bi bi-graph-up-arrow me-2"></i>
+                                            Dashboard Administrativo
+                                        </a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
                                     <li>
                                         <h6 class="dropdown-header">
                                             <i class="bi bi-person-gear me-1"></i>
                                             Selecionar Estudante
                                         </h6>
-                                    </li>
-                                    <li>
-                                        <hr class="dropdown-divider">
                                     </li>
                                     <li><a class="dropdown-item" href="/students">
                                             <i class="bi bi-list-ul me-2"></i>
@@ -72,7 +76,7 @@
                             <li class="nav-item">
                                 <a href="/students" class="nav-link">
                                     <i class="bi bi-people me-1"></i>
-                                    Students
+                                    Estudantes
                                 </a>
                             </li>
                             </li>
@@ -82,7 +86,7 @@
                     <li class="nav-item">
                         <a href="/studies" class="nav-link">
                             <i class="bi bi-journal-text me-1"></i>
-                            Studies
+                            Estudos
                         </a>
                     </li>
                 </ul>
@@ -93,13 +97,13 @@
                         <li class="nav-item">
                             <a href="/students/add" class="nav-link">
                                 <i class="bi bi-person-plus me-1"></i>
-                                Add Student
+                                Adicionar Estudante
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="/studies/add" class="nav-link">
                                 <i class="bi bi-journal-plus me-1"></i>
-                                Add Study
+                                Adicionar Estudo
                             </a>
                         </li>
                     <?php endif; ?>
@@ -119,7 +123,7 @@
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="/logout">
                                         <i class="bi bi-box-arrow-right me-2"></i>
-                                        Logout
+                                        Sair
                                     </a></li>
                             </ul>
                         </li>
@@ -127,7 +131,7 @@
                         <li class="nav-item">
                             <a href="/login" class="nav-link">
                                 <i class="bi bi-box-arrow-in-right me-1"></i>
-                                Login
+                                Entrar
                             </a>
                         </li>
                     <?php endif; ?>
@@ -215,9 +219,45 @@
             form.addEventListener('submit', function() {
                 const submitBtn = this.querySelector('button[type="submit"]');
                 if (submitBtn) {
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+                    submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Processando...';
                     submitBtn.disabled = true;
+                    submitBtn.classList.add('loading');
                 }
+            });
+        });
+
+        // Add ripple effect to buttons
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.classList.add('btn-ripple');
+        });
+
+        // Add slide-in animation to buttons when they appear
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('btn-slide-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.btn').forEach(btn => {
+            observer.observe(btn);
+        });
+
+        // Add success animation to primary buttons after successful actions
+        document.querySelectorAll('.btn-primary').forEach(btn => {
+            btn.addEventListener('click', function() {
+                setTimeout(() => {
+                    this.classList.add('btn-success-pulse');
+                    setTimeout(() => {
+                        this.classList.remove('btn-success-pulse');
+                    }, 600);
+                }, 100);
             });
         });
     </script>

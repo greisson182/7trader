@@ -21,9 +21,10 @@ class StudiesController extends AppController
                     return $this->render('Studies/index');
                 }
                 $stmt = $pdo->prepare("
-                    SELECT s.*, st.name as student_name, u.currency, u.username, u.role, u.active 
+                    SELECT s.*, st.name as student_name, m.name as market_name, u.currency, u.username, u.role, u.active 
                     FROM studies s 
                     LEFT JOIN students st ON s.student_id = st.id 
+                    LEFT JOIN markets m ON s.market_id = m.id
                     LEFT JOIN users u ON st.id = u.student_id 
                     WHERE s.student_id = ? 
                     ORDER BY s.study_date DESC
@@ -32,9 +33,10 @@ class StudiesController extends AppController
             } else {
                 // Admin vê todos os estudos
                 $stmt = $pdo->query("
-                    SELECT s.*, st.name as student_name, u.currency, u.username, u.role, u.active 
+                    SELECT s.*, st.name as student_name, m.name as market_name, u.currency, u.username, u.role, u.active 
                     FROM studies s 
                     LEFT JOIN students st ON s.student_id = st.id 
+                    LEFT JOIN markets m ON s.market_id = m.id
                     LEFT JOIN users u ON st.id = u.student_id 
                     ORDER BY s.study_date DESC
                 ");
@@ -96,9 +98,12 @@ class StudiesController extends AppController
         try {
             $pdo = $this->getDbConnection();
             $stmt = $pdo->prepare("
-                SELECT s.*, st.name as student_name, u.currency, u.username, u.role, u.active 
+                SELECT s.*, st.name as student_name, st.email as student_email, 
+                       m.name as market_name, m.code as market_code, m.description as market_description,
+                       u.username, u.role, u.active 
                 FROM studies s 
                 LEFT JOIN students st ON s.student_id = st.id 
+                LEFT JOIN markets m ON s.market_id = m.id
                 LEFT JOIN users u ON st.id = u.student_id 
                 WHERE s.id = ?
             ");
@@ -108,11 +113,33 @@ class StudiesController extends AppController
             if ($study) {
                 // Adicionar dados do usuário ao array do study para compatibilidade com o template
                 $study['user'] = [
-                    'currency' => $study['currency'] ?? 'BRL',
+                    'currency' => 'BRL', // Valor padrão já que currency não existe na tabela
                     'username' => $study['username'],
                     'role' => $study['role'],
                     'active' => $study['active']
                 ];
+                
+                // Adicionar dados do estudante ao array do study para compatibilidade com o template
+                $study['student'] = [
+                    'id' => $study['student_id'],
+                    'name' => $study['student_name'],
+                    'email' => $study['student_email'] ?? $study['username'] // Usar email do estudante ou username como fallback
+                ];
+                
+                // Adicionar dados do mercado ao array do study
+                if ($study['market_name']) {
+                    $study['market'] = [
+                        'name' => $study['market_name'],
+                        'code' => $study['market_code'],
+                        'description' => $study['market_description']
+                    ];
+                } else {
+                    $study['market'] = null;
+                }
+                
+                // Calcular campos derivados
+                $study['total_trades'] = $study['wins'] + $study['losses'];
+                $study['win_rate'] = $study['total_trades'] > 0 ? ($study['wins'] / $study['total_trades']) * 100 : 0;
             }
             
             if (!$study) {
@@ -149,9 +176,10 @@ class StudiesController extends AppController
             
             try {
                 $pdo = $this->getDbConnection();
-                $stmt = $pdo->prepare("INSERT INTO studies (student_id, study_date, wins, losses, profit_loss, notes, created, modified) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
+                $stmt = $pdo->prepare("INSERT INTO studies (student_id, market_id, study_date, wins, losses, profit_loss, notes, created, modified) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
                 $stmt->execute([
                     $data['student_id'],
+                    $data['market_id'],
                     $data['study_date'],
                     $data['wins'],
                     $data['losses'],
@@ -166,19 +194,39 @@ class StudiesController extends AppController
             }
         }
         
-        // Get students for dropdown
+        // Get students for dropdown - Not needed anymore since we removed the dropdown
+        // Keeping this commented for reference
+        /*
         try {
             $pdo = $this->getDbConnection();
             $stmt = $pdo->query("SELECT id, name FROM students ORDER BY name");
-            $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $studentsData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Convert to associative array with id as key and name as value
+            $students = [];
+            foreach ($studentsData as $student) {
+                $students[$student['id']] = $student['name'];
+            }
+            
             $this->set('students', $students);
         } catch (Exception $e) {
             $this->set('students', []);
         }
+        */
         
         // Se for estudante, passar o ID do estudante atual para o template
         if ($this->isStudent()) {
             $this->set('currentStudentId', $this->getCurrentStudentId());
+        }
+        
+        // Carregar mercados para o dropdown
+        try {
+            $pdo = $this->getDbConnection();
+            $stmt = $pdo->query("SELECT id, name, code FROM markets WHERE active = 1 ORDER BY name");
+            $markets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $this->set('markets', $markets);
+        } catch (Exception $e) {
+            $this->set('markets', []);
         }
         
         return $this->render('Studies/add');
@@ -189,11 +237,39 @@ class StudiesController extends AppController
         if ($this->isPost()) {
             $data = $this->getPostData();
             
+            // Security check for POST request: verify ownership before updating
             try {
                 $pdo = $this->getDbConnection();
-                $stmt = $pdo->prepare("UPDATE studies SET student_id = ?, study_date = ?, wins = ?, losses = ?, profit_loss = ?, notes = ?, modified = NOW() WHERE id = ?");
+                $stmt = $pdo->prepare("SELECT student_id FROM studies WHERE id = ?");
+                $stmt->execute([$id]);
+                $study = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if (!$study) {
+                    $this->flash('Estudo não encontrado.', 'error');
+                    return $this->redirect('/studies');
+                }
+                
+                // Security validation
+                $currentUser = $this->getCurrentUser();
+                if (!$currentUser) {
+                    $this->flash('Acesso negado. Faça login para continuar.', 'error');
+                    return $this->redirect('/login');
+                }
+                
+                if ($this->isStudent()) {
+                    $currentStudentId = $this->getCurrentStudentId();
+                    if ($study['student_id'] != $currentStudentId) {
+                        $this->flash('Acesso negado. Você só pode editar seus próprios estudos.', 'error');
+                        return $this->redirect('/studies');
+                    }
+                    // Force the student_id to be the current student's ID to prevent tampering
+                    $data['student_id'] = $currentStudentId;
+                }
+                
+                $stmt = $pdo->prepare("UPDATE studies SET student_id = ?, market_id = ?, study_date = ?, wins = ?, losses = ?, profit_loss = ?, notes = ?, modified = NOW() WHERE id = ?");
                 $stmt->execute([
                     $data['student_id'],
+                    $data['market_id'],
                     $data['study_date'],
                     $data['wins'],
                     $data['losses'],
@@ -202,17 +278,17 @@ class StudiesController extends AppController
                     $id
                 ]);
                 
-                $this->flash('The study has been updated.', 'success');
+                $this->flash('O estudo foi atualizado com sucesso.', 'success');
                 return $this->redirect('/studies');
             } catch (Exception $e) {
-                $this->flash('The study could not be updated. Please, try again.', 'error');
+                $this->flash('O estudo não pôde ser atualizado. Tente novamente.', 'error');
             }
         }
         
         // Get current study data
         try {
             $pdo = $this->getDbConnection();
-            $stmt = $pdo->prepare("SELECT * FROM studies WHERE id = ?");
+            $stmt = $pdo->prepare("SELECT s.*, st.name as student_name FROM studies s JOIN students st ON s.student_id = st.id WHERE s.id = ?");
             $stmt->execute([$id]);
             $study = $stmt->fetch(PDO::FETCH_ASSOC);
             
@@ -221,7 +297,32 @@ class StudiesController extends AppController
                 return $this->redirect('/studies');
             }
             
+            // Security check: Only allow editing if user is logged in and owns the study
+            $currentUser = $this->getCurrentUser();
+            if (!$currentUser) {
+                $this->flash('Acesso negado. Faça login para continuar.', 'error');
+                return $this->redirect('/login');
+            }
+            
+            // If user is a student, they can only edit their own studies
+            if ($this->isStudent()) {
+                $currentStudentId = $this->getCurrentStudentId();
+                if ($study['student_id'] != $currentStudentId) {
+                    $this->flash('Acesso negado. Você só pode editar seus próprios estudos.', 'error');
+                    return $this->redirect('/studies');
+                }
+            }
+            // Admins can edit any study (no additional check needed)
+            
+            // Calculate additional fields for display
+            $totalTrades = ($study['wins'] ?? 0) + ($study['losses'] ?? 0);
+            $winRate = $totalTrades > 0 ? round(($study['wins'] / $totalTrades) * 100, 2) : 0;
+            
+            $study['total_trades'] = $totalTrades;
+            $study['win_rate'] = $winRate;
+            
             $this->set('study', $study);
+            $this->set('studentName', $study['student_name']);
         } catch (Exception $e) {
             $this->flash('Error loading study: ' . $e->getMessage(), 'error');
             return $this->redirect('/studies');
@@ -231,10 +332,27 @@ class StudiesController extends AppController
         try {
             $pdo = $this->getDbConnection();
             $stmt = $pdo->query("SELECT id, name FROM students ORDER BY name");
-            $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $studentsData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Convert to associative array with id as key and name as value
+            $students = [];
+            foreach ($studentsData as $student) {
+                $students[$student['id']] = $student['name'];
+            }
+            
             $this->set('students', $students);
         } catch (Exception $e) {
             $this->set('students', []);
+        }
+        
+        // Carregar mercados para o dropdown
+        try {
+            $pdo = $this->getDbConnection();
+            $stmt = $pdo->query("SELECT id, name, code FROM markets WHERE active = 1 ORDER BY name");
+            $markets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $this->set('markets', $markets);
+        } catch (Exception $e) {
+            $this->set('markets', []);
         }
         
         return $this->render('Studies/edit');

@@ -30,11 +30,45 @@ if ($path === 'login') {
     $controller = 'Profile';
     $action = 'edit';
     $id = null;
+} elseif (preg_match('/^students\/(\d+)\/monthly-studies\/(\d+)\/(\d+)$/', $path, $matches)) {
+    // Handle monthly studies route: /students/{id}/monthly-studies/{year}/{month}
+    $controller = 'Students';
+    $action = 'monthlyStudies';
+    $id = $matches[1]; // student id
+    $year = $matches[2];
+    $month = $matches[3];
 } else {
+    // Check if user is logged in and redirect based on role
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    if (isset($_SESSION['user_id']) && empty($segments[0])) {
+        // Get user role from database
+        $db = getDbConnection();
+        $stmt = $db->prepare("SELECT role, student_id FROM users WHERE id = ? AND active = 1");
+        $stmt->execute([$_SESSION['user_id']]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($user) {
+            if ($user['role'] === 'student') {
+                // Redirect students to their dashboard
+                header('Location: /students/dashboard/' . $user['student_id']);
+                exit;
+            } elseif ($user['role'] === 'admin') {
+                // Redirect admins to admin dashboard
+                header('Location: /students/admin-dashboard');
+                exit;
+            }
+        }
+    }
+    
     // Default routing logic
     $controller = !empty($segments[0]) ? ucfirst($segments[0]) : 'Students';
     $action = !empty($segments[1]) ? $segments[1] : 'index';
     $id = !empty($segments[2]) ? $segments[2] : null;
+    
+    // Convert kebab-case to snake_case for action names
+    $action = str_replace('-', '_', $action);
 }
 
 // Database connection
@@ -107,7 +141,12 @@ try {
     
     // Call the action
     if ($id !== null) {
-        echo $controllerInstance->$action($id);
+        if (isset($year) && isset($month)) {
+            // For monthly studies route with year and month parameters
+            echo $controllerInstance->$action($id, $year, $month);
+        } else {
+            echo $controllerInstance->$action($id);
+        }
     } else {
         echo $controllerInstance->$action();
     }
