@@ -129,7 +129,7 @@
             <div class="col-12">
                 <h2 class="display-5 fw-bold mb-3 text-white">
                     <i class="fas fa-cogs me-3 text-success"></i>
-                    Ferramentas <span class="text-success glow-text">Profissionais</span>
+                    Plataforma para gerenciamento de  <span class="text-success glow-text">Estudos</span>
                 </h2>
                 <p class="lead text-light opacity-75">Sistema completo para análise e controle de trades</p>
             </div>
@@ -255,12 +255,13 @@
     </div>
 </section>
 
+
 <!-- Services Section -->
 <section class="content-section light py-5" id="servicos">
     <div class="container">
         <div class="row text-center mb-5">
             <div class="col-12">
-                <h2 class="section-title mb-3">Nossos Serviços</h2>
+                <h2 class="section-title mb-3">Aprenda o Price Action</h2>
                 <p class="section-subtitle">Escolha a melhor opção para acelerar seu aprendizado em day trade</p>
             </div>
         </div>

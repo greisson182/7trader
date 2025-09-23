@@ -86,32 +86,14 @@
             <div class="row align-items-center">
                 <div class="col-md-6">
                     <h5 class="footer-title mb-3">
-                       7 <span>Trader</span>
+                       7 <span style="color: #fff;">Trader</span>
                     </h5>
-                    <p class="footer-subtitle mb-0">Aprenda com especialistas em trading e comPlataforma profissional para análise de trading</p>
-                    <p class="footer-description mt-2 mb-0">
-                        Transforme seus dados em insights poderosos para o mercado financeiro
-                    </p>
+                    <p class="footer-subtitle mb-0">Aprenda com especialista em trading.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <div class="footer-stats mb-3">
-                        <div class="d-flex justify-content-md-end justify-content-start gap-4 flex-wrap">
-                            <div class="stat-item">
-                                <div class="stat-value text-success">📈</div>
-                                <div class="stat-label">Trading</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value text-warning">📊</div>
-                                <div class="stat-label">Analytics</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value text-info">🎯</div>
-                                <div class="stat-label">Results</div>
-                            </div>
-                        </div>
-                    </div>
+
                     <p class="footer-copyright mb-0">
-                        &copy; <?= date('Y') ?> BackTest. Todos os direitos reservados.
+                        &copy; <?= date('Y') ?> 7 trader. Todos os direitos reservados.
                     </p>
                 </div>
             </div>
