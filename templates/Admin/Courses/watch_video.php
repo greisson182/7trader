@@ -40,11 +40,12 @@
                             <div class="video-container mb-4">
                                 <?php if (isset($video['video_type']) && $video['video_type'] === 'youtube'): ?>
                                     <?php
-                                    // Extrair ID do YouTube da URL
+                                    // Extrair ID do YouTube da URL com regex mais robusta
                                     $videoUrl = $video['video_url'];
                                     $videoId = '';
                                     
-                                    if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $videoUrl, $matches)) {
+                                    // Regex mais robusta para URLs do YouTube
+                                    if (preg_match('/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $videoUrl, $matches)) {
                                         $videoId = $matches[1];
                                     }
                                     ?>
@@ -52,14 +53,23 @@
                                     <?php if ($videoId): ?>
                                         <div class="embed-responsive embed-responsive-16by9">
                                             <iframe class="embed-responsive-item" 
-                                                    src="https://www.youtube.com/embed/<?= $videoId ?>?rel=0&showinfo=0" 
+                                                    src="https://www.youtube.com/embed/<?= $videoId ?>?rel=0&showinfo=0&modestbranding=1" 
                                                     allowfullscreen>
                                             </iframe>
                                         </div>
+                                        
+        
                                     <?php else: ?>
                                         <div class="alert alert-warning">
                                             <i class="fas fa-exclamation-triangle"></i>
-                                            URL do YouTube inválida. 
+                                            <strong>URL do YouTube inválida.</strong><br>
+                                            <small>URL fornecida: <code><?= htmlspecialchars($video['video_url']) ?></code></small><br>
+                                            <small>Formatos aceitos:</small>
+                                            <ul class="small mb-2">
+                                                <li><code>https://www.youtube.com/watch?v=VIDEO_ID</code></li>
+                                                <li><code>https://youtu.be/VIDEO_ID</code></li>
+                                                <li><code>https://www.youtube.com/embed/VIDEO_ID</code></li>
+                                            </ul>
                                             <a href="<?= htmlspecialchars($video['video_url']) ?>" target="_blank" class="btn btn-sm btn-primary ml-2">
                                                 Abrir no YouTube
                                             </a>
@@ -68,11 +78,12 @@
                                     
                                 <?php elseif (isset($video['video_type']) && $video['video_type'] === 'vimeo'): ?>
                                     <?php
-                                    // Extrair ID do Vimeo da URL
+                                    // Extrair ID do Vimeo da URL com regex mais robusta
                                     $videoUrl = $video['video_url'];
                                     $videoId = '';
                                     
-                                    if (preg_match('/vimeo\.com\/(\d+)/', $videoUrl, $matches)) {
+                                    // Regex mais robusta para URLs do Vimeo
+                                    if (preg_match('/(?:https?:\/\/)?(?:www\.)?vimeo\.com\/(?:video\/)?(\d+)(?:\?.*)?/', $videoUrl, $matches)) {
                                         $videoId = $matches[1];
                                     }
                                     ?>
@@ -80,14 +91,17 @@
                                     <?php if ($videoId): ?>
                                         <div class="embed-responsive embed-responsive-16by9">
                                             <iframe class="embed-responsive-item" 
-                                                    src="https://player.vimeo.com/video/<?= $videoId ?>" 
+                                                    src="https://player.vimeo.com/video/<?= $videoId ?>?title=0&byline=0&portrait=0" 
                                                     allowfullscreen>
                                             </iframe>
                                         </div>
+                                        
                                     <?php else: ?>
                                         <div class="alert alert-warning">
                                             <i class="fas fa-exclamation-triangle"></i>
-                                            URL do Vimeo inválida.
+                                            <strong>URL do Vimeo inválida.</strong><br>
+                                            <small>URL fornecida: <code><?= htmlspecialchars($video['video_url']) ?></code></small><br>
+                                            <small>Formato esperado: <code>https://vimeo.com/123456789</code></small>
                                             <a href="<?= htmlspecialchars($video['video_url']) ?>" target="_blank" class="btn btn-sm btn-primary ml-2">
                                                 Abrir no Vimeo
                                             </a>

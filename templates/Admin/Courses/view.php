@@ -161,7 +161,7 @@
                                     </div>
                                 </div>
                                 <div class="d-flex gap-1">
-                                    <a href="<?= h($video['video_url']) ?>" target="_blank" 
+                                    <a href="/admin/courses/watch-video/<?= h($video['id']) ?>" target="_blank" 
                                        class="btn btn-outline-primary btn-sm" title="Assistir">
                                         <i class="bi bi-play"></i>
                                     </a>
