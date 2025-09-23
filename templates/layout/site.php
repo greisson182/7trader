@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title ?? 'BackTest - Sistema de Análise de Trading' ?></title>
+    <title><?= $title ?? '7 Trader - Aprenda a operar no mercado financeiro' ?></title>
     <meta name="description" content="<?= $description ?? 'Plataforma profissional para análise e acompanhamento de resultados de trading' ?>">
     
     <!-- Bootstrap CSS -->
