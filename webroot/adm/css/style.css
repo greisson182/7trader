@@ -1326,7 +1326,8 @@ span.text-danger {
 }
 
 [data-theme="dark"] .the-video {
-  background-color: #020704;
+  background-color: rgba(255, 255, 255, 0.03);
+  color: #000 !important;
 }
 
 [data-theme="dark"] .table tbody tr {
