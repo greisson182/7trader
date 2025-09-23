@@ -134,7 +134,7 @@
                     <?php else: ?>
                         <div class="list-group list-group-flush">
                             <?php foreach ($videos as $video): ?>
-                            <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="list-group-item d-flex justify-content-between align-items-start the-video">
                                 <div class="ms-2 me-auto">
                                     <div class="d-flex align-items-center mb-2">
                                         <span class="badge bg-secondary me-2"><?= h($video['order_position']) ?></span>
