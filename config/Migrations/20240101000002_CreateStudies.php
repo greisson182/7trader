@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use Migrations\AbstractMigration;
@@ -12,10 +13,19 @@ class CreateStudies extends AbstractMigration
             'default' => null,
             'null' => false,
         ]);
-        $table->addColumn('market_date', 'date', [
-            'default' => null,
-            'null' => false,
-            'comment' => 'The date of the market being studied'
+        $table->addColumn('market_id', 'integer', [
+            'null' => true,
+            'comment' => 'ID do mercado associado ao estudo',
+            'after' => 'student_id'
+        ])  
+        ->addForeignKey('market_id', 'markets', 'id', [
+            'delete' => 'SET_NULL',
+            'update' => 'CASCADE'
+        ]);
+        $table->addColumn('account_id', 'integer', [
+            'null' => true,
+            'comment' => 'ID do tipo de estudo',
+            'after' => 'market_id'
         ]);
         $table->addColumn('study_date', 'date', [
             'default' => null,
@@ -47,6 +57,7 @@ class CreateStudies extends AbstractMigration
             'default' => null,
             'null' => false,
         ]);
+
         $table->addIndex(['student_id']);
         $table->addIndex(['market_date']);
         $table->addIndex(['study_date']);

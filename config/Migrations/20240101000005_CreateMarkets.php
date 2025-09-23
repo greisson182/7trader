@@ -47,6 +47,13 @@ final class CreateMarkets extends AbstractMigration
             'update' => 'CURRENT_TIMESTAMP',
             'null' => false
         ])
+        ->addColumn('currency', 'string', [
+            'limit' => 3,
+            'null' => false,
+            'default' => 'BRL',
+            'comment' => 'Moeda do mercado (BRL, USD, EUR, etc.)',
+            'after' => 'description'
+        ])
         ->addIndex(['code'], ['unique' => true])
         ->create();
 
