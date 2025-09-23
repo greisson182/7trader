@@ -80,10 +80,10 @@ class CoursesController extends AppController
 
     public function add()
     {
-        if ($this->request->getMethod() === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 $pdo = $this->getDbConnection();
-                $data = $this->request->getData();
+                $data = $_POST;
                 
                 // Validações básicas
                 if (empty($data['title'])) {
@@ -141,8 +141,8 @@ class CoursesController extends AppController
                 return $this->redirect(['action' => 'index']);
             }
             
-            if ($this->request->getMethod() === 'POST') {
-                $data = $this->request->getData();
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $data = $_POST;
                 
                 // Validações básicas
                 if (empty($data['title'])) {
@@ -270,8 +270,8 @@ class CoursesController extends AppController
                 return $this->redirect(['action' => 'index']);
             }
             
-            if ($this->request->getMethod() === 'POST') {
-                $data = $this->request->getData();
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $data = $_POST;
                 
                 // Validações básicas
                 if (empty($data['title']) || empty($data['video_url'])) {
@@ -409,6 +409,431 @@ class CoursesController extends AppController
             
         } catch (Exception $e) {
             $this->flash('Erro ao carregar vídeo: ' . $e->getMessage(), 'error');
+            return $this->redirect(['action' => 'index']);
+        }
+    }
+
+        /**
+     * Lista todos os cursos disponíveis para estudantes
+     */
+    public function indexStudents()
+    {
+        try {
+            $pdo = $this->getDbConnection();
+            
+            // Buscar cursos ativos
+            $stmt = $pdo->prepare("
+                SELECT c.*, 
+                       COUNT(cv.id) as video_count,
+                       SUM(cv.duration_seconds) as total_duration
+                FROM courses c
+                LEFT JOIN course_videos cv ON c.id = cv.course_id AND cv.is_active = 1
+                WHERE c.is_active = 1
+                GROUP BY c.id
+                ORDER BY c.order_position ASC, c.created DESC
+            ");
+            $stmt->execute();
+            $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Se for estudante, verificar inscrições
+            $enrollments = [];
+            if ($this->isStudent()) {
+                $studentId = $this->getCurrentStudentId();
+                $stmt = $pdo->prepare("
+                    SELECT course_id, enrolled_at, completed_at 
+                    FROM course_enrollments 
+                    WHERE student_id = ?
+                ");
+                $stmt->execute([$studentId]);
+                $enrollmentData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                
+                foreach ($enrollmentData as $enrollment) {
+                    $enrollments[$enrollment['course_id']] = $enrollment;
+                }
+            }
+
+            $this->set('courses', $courses);
+            $this->set('enrollments', $enrollments);
+            return $this->render('Admin/Courses/index_students');
+        } catch (Exception $e) {
+            $this->flash('Erro ao carregar cursos: ' . $e->getMessage(), 'error');
+            return $this->redirect('/');
+        }
+    }
+
+    /**
+     * Visualizar detalhes de um curso
+     */
+    public function viewStudents($courseId = null)
+    {
+        try {
+            $pdo = $this->getDbConnection();
+            
+            // Buscar curso
+            $stmt = $pdo->prepare("
+                SELECT c.*, 
+                       COUNT(cv.id) as video_count,
+                       SUM(cv.duration_seconds) as total_duration
+                FROM courses c
+                LEFT JOIN course_videos cv ON c.id = cv.course_id AND cv.is_active = 1
+                WHERE c.id = ? AND c.is_active = 1
+                GROUP BY c.id
+            ");
+            $stmt->execute([$courseId]);
+            $course = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$course) {
+                $this->flash('Curso não encontrado.', 'error');
+                return $this->redirect(['action' => 'index']);
+            }
+
+            // Verificar se estudante está inscrito
+            $isEnrolled = false;
+            $enrollment = null;
+            $progress = [];
+            
+            if ($this->isStudent()) {
+                $studentId = $this->getCurrentStudentId();
+                
+                // Verificar inscrição
+                $stmt = $pdo->prepare("
+                    SELECT * FROM course_enrollments 
+                    WHERE student_id = ? AND course_id = ?
+                ");
+                $stmt->execute([$studentId, $courseId]);
+                $enrollment = $stmt->fetch(PDO::FETCH_ASSOC);
+                $isEnrolled = (bool)$enrollment;
+
+                // Se inscrito, buscar progresso
+                if ($isEnrolled) {
+                    $stmt = $pdo->prepare("
+                        SELECT video_id, watched_at, completed_at, watch_time_seconds
+                        FROM student_progress 
+                        WHERE student_id = ? AND course_id = ?
+                    ");
+                    $stmt->execute([$studentId, $courseId]);
+                    $progressData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    
+                    foreach ($progressData as $p) {
+                        $progress[$p['video_id']] = $p;
+                    }
+                }
+            }
+
+            // Buscar vídeos do curso
+            $videoQuery = "
+                SELECT * FROM course_videos 
+                WHERE course_id = ? AND is_active = 1
+            ";
+            
+            // Se não inscrito e curso pago, mostrar apenas previews
+            if (!$isEnrolled && !$course['is_free']) {
+                $videoQuery .= " AND is_preview = 1";
+            }
+            
+            $videoQuery .= " ORDER BY order_position ASC, created ASC";
+            
+            $stmt = $pdo->prepare($videoQuery);
+            $stmt->execute([$courseId]);
+            $videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $this->set('course', $course);
+            $this->set('videos', $videos);
+            $this->set('isEnrolled', $isEnrolled);
+            $this->set('enrollment', $enrollment);
+            $this->set('progress', $progress);
+            return $this->render('Admin/Courses/view_students');
+        } catch (Exception $e) {
+            $this->flash('Erro ao carregar curso: ' . $e->getMessage(), 'error');
+            return $this->redirect(['action' => 'index']);
+        }
+    }
+
+    /**
+     * Assistir um vídeo específico do curso
+     */
+    public function watchStudents($courseId = null, $videoId = null)
+    {
+        try {
+            $pdo = $this->getDbConnection();
+            
+            // Verificar se é estudante
+            if (!$this->isStudent()) {
+                $this->flash('Apenas estudantes podem assistir vídeos.', 'error');
+                return $this->redirect(['action' => 'index']);
+            }
+
+            $studentId = $this->getCurrentStudentId();
+
+            // Buscar curso
+            $stmt = $pdo->prepare("SELECT * FROM courses WHERE id = ? AND is_active = 1");
+            $stmt->execute([$courseId]);
+            $course = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$course) {
+                $this->flash('Curso não encontrado.', 'error');
+                return $this->redirect(['action' => 'index']);
+            }
+
+            // Buscar vídeo
+            $stmt = $pdo->prepare("
+                SELECT * FROM course_videos 
+                WHERE id = ? AND course_id = ? AND is_active = 1
+            ");
+            $stmt->execute([$videoId, $courseId]);
+            $video = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$video) {
+                $this->flash('Vídeo não encontrado.', 'error');
+                return $this->redirect(['action' => 'view', $courseId]);
+            }
+
+            // Verificar permissão para assistir
+            $canWatch = false;
+            
+            // Curso gratuito ou vídeo de preview
+            if ($course['is_free'] || $video['is_preview']) {
+                $canWatch = true;
+            } else {
+                // Verificar se está inscrito
+                $stmt = $pdo->prepare("
+                    SELECT * FROM course_enrollments 
+                    WHERE student_id = ? AND course_id = ?
+                ");
+                $stmt->execute([$studentId, $courseId]);
+                $enrollment = $stmt->fetch(PDO::FETCH_ASSOC);
+                $canWatch = (bool)$enrollment;
+            }
+
+            if (!$canWatch) {
+                $this->flash('Você precisa se inscrever neste curso para assistir este vídeo.', 'error');
+                return $this->redirect(['action' => 'view', $courseId]);
+            }
+
+            // Buscar todos os vídeos do curso para navegação
+            $stmt = $pdo->prepare("
+                SELECT id, title, order_position, is_preview, duration_seconds
+                FROM course_videos 
+                WHERE course_id = ? AND is_active = 1
+                ORDER BY order_position ASC, created ASC
+            ");
+            $stmt->execute([$courseId]);
+            $allVideos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Buscar progresso do estudante
+            $stmt = $pdo->prepare("
+                SELECT * FROM student_progress 
+                WHERE student_id = ? AND course_id = ? AND video_id = ?
+            ");
+            $stmt->execute([$studentId, $courseId, $videoId]);
+            $progress = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Registrar que começou a assistir (se ainda não registrou)
+            if (!$progress) {
+                $stmt = $pdo->prepare("
+                    INSERT INTO student_progress (student_id, course_id, video_id, watched_at)
+                    VALUES (?, ?, ?, NOW())
+                ");
+                $stmt->execute([$studentId, $courseId, $videoId]);
+            } else {
+                // Atualizar última visualização
+                $stmt = $pdo->prepare("
+                    UPDATE student_progress 
+                    SET watched_at = NOW() 
+                    WHERE student_id = ? AND course_id = ? AND video_id = ?
+                ");
+                $stmt->execute([$studentId, $courseId, $videoId]);
+            }
+
+            $this->set('course', $course);
+            $this->set('video', $video);
+            $this->set('allVideos', $allVideos);
+            $this->set('progress', $progress);
+            return $this->render('Admin/Courses/watch_students');
+        } catch (Exception $e) {
+            $this->flash('Erro ao carregar vídeo: ' . $e->getMessage(), 'error');
+            return $this->redirect(['action' => 'view', $courseId]);
+        }
+    }
+
+    /**
+     * Inscrever-se em um curso
+     */
+    public function enroll($courseId = null)
+    {
+        try {
+            if (!$this->isStudent()) {
+                $this->flash('Apenas estudantes podem se inscrever em cursos.', 'error');
+                return $this->redirect(['action' => 'index']);
+            }
+
+            $pdo = $this->getDbConnection();
+            $studentId = $this->getCurrentStudentId();
+
+            // Verificar se curso existe e está ativo
+            $stmt = $pdo->prepare("SELECT * FROM courses WHERE id = ? AND is_active = 1");
+            $stmt->execute([$courseId]);
+            $course = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$course) {
+                $this->flash('Curso não encontrado.', 'error');
+                return $this->redirect(['action' => 'index']);
+            }
+
+            // Verificar se já está inscrito
+            $stmt = $pdo->prepare("
+                SELECT * FROM course_enrollments 
+                WHERE student_id = ? AND course_id = ?
+            ");
+            $stmt->execute([$studentId, $courseId]);
+            $existingEnrollment = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($existingEnrollment) {
+                $this->flash('Você já está inscrito neste curso.', 'info');
+                return $this->redirect(['action' => 'view', $courseId]);
+            }
+
+            // Para cursos pagos, redirecionar para página de pagamento
+            if (!$course['is_free']) {
+                $this->flash('Redirecionando para o pagamento...', 'info');
+                return $this->redirect(['action' => 'purchase', $courseId]);
+            }
+
+            // Inscrever no curso
+            $stmt = $pdo->prepare("
+                INSERT INTO course_enrollments (student_id, course_id, enrolled_at)
+                VALUES (?, ?, NOW())
+            ");
+            $stmt->execute([$studentId, $courseId]);
+
+            $this->flash('Inscrição realizada com sucesso! Agora você pode assistir aos vídeos.', 'success');
+            return $this->redirect(['action' => 'view', $courseId]);
+        } catch (Exception $e) {
+            $this->flash('Erro ao realizar inscrição: ' . $e->getMessage(), 'error');
+            return $this->redirect(['action' => 'view', $courseId]);
+        }
+    }
+
+    /**
+     * Atualizar progresso do vídeo
+     */
+    public function updateProgress()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->withStatus(405);
+        }
+
+        try {
+            if (!$this->isStudent()) {
+                return $this->response->withType('application/json')
+                    ->withStringBody(json_encode(['success' => false, 'message' => 'Acesso negado']));
+            }
+
+            $pdo = $this->getDbConnection();
+            $studentId = $this->getCurrentStudentId();
+            $data = $this->request->getData();
+
+            $videoId = $data['video_id'] ?? null;
+            $courseId = $data['course_id'] ?? null;
+            $watchTime = $data['watch_time'] ?? 0;
+            $completed = $data['completed'] ?? false;
+
+            if (!$videoId || !$courseId) {
+                return $this->response->withType('application/json')
+                    ->withStringBody(json_encode(['success' => false, 'message' => 'Dados inválidos']));
+            }
+
+            // Atualizar ou inserir progresso
+            $stmt = $pdo->prepare("
+                INSERT INTO student_progress (student_id, course_id, video_id, watch_time_seconds, completed_at, watched_at)
+                VALUES (?, ?, ?, ?, ?, NOW())
+                ON DUPLICATE KEY UPDATE
+                    watch_time_seconds = VALUES(watch_time_seconds),
+                    completed_at = CASE 
+                        WHEN ? = 1 THEN NOW() 
+                        ELSE completed_at 
+                    END,
+                    watched_at = NOW()
+            ");
+
+            $stmt->execute([
+                $studentId,
+                $courseId,
+                $videoId,
+                $watchTime,
+                $completed ? date('Y-m-d H:i:s') : null,
+                $completed ? 1 : 0
+            ]);
+
+            return $this->response->withType('application/json')
+                ->withStringBody(json_encode(['success' => true]));
+
+        } catch (Exception $e) {
+            return $this->response->withType('application/json')
+                ->withStringBody(json_encode(['success' => false, 'message' => $e->getMessage()]));
+        }
+    }
+
+    /**
+     * Página de compra do curso
+     */
+    public function purchaseStudents($courseId = null)
+    {
+        try {
+            if (!$this->isStudent()) {
+                $this->flash('Apenas estudantes podem comprar cursos.', 'error');
+                return $this->redirect(['action' => 'index']);
+            }
+
+            $pdo = $this->getDbConnection();
+            $studentId = $this->getCurrentStudentId();
+
+            // Verificar se curso existe e está ativo
+            $stmt = $pdo->prepare("SELECT * FROM courses WHERE id = ? AND is_active = 1");
+            $stmt->execute([$courseId]);
+            $course = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$course) {
+                $this->flash('Curso não encontrado.', 'error');
+                return $this->redirect(['action' => 'index']);
+            }
+
+            // Verificar se já está inscrito
+            $stmt = $pdo->prepare("
+                SELECT * FROM course_enrollments 
+                WHERE student_id = ? AND course_id = ?
+            ");
+            $stmt->execute([$studentId, $courseId]);
+            $existingEnrollment = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($existingEnrollment) {
+                $this->flash('Você já possui acesso a este curso.', 'info');
+                return $this->redirect(['action' => 'view', $courseId]);
+            }
+
+            // Se for curso gratuito, redirecionar para inscrição
+            if ($course['is_free']) {
+                return $this->redirect(['action' => 'enroll', $courseId]);
+            }
+
+            // Para desenvolvimento, simular compra automática
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                // Simular processamento de pagamento
+                $stmt = $pdo->prepare("
+                    INSERT INTO course_enrollments (student_id, course_id, enrolled_at)
+                    VALUES (?, ?, NOW())
+                ");
+                $stmt->execute([$studentId, $courseId]);
+
+                $this->flash('Compra realizada com sucesso! Agora você tem acesso ao curso.', 'success');
+                return $this->redirect(['action' => 'view', $courseId]);
+            }
+
+            $this->set('course', $course);
+            return $this->render('Admin/Courses/purchase_students');
+
+        } catch (Exception $e) {
+            $this->flash('Erro ao processar compra: ' . $e->getMessage(), 'error');
             return $this->redirect(['action' => 'index']);
         }
     }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller\Admin;
@@ -13,7 +14,7 @@ class StudentsController extends AppController
     {
         try {
             $pdo = $this->getDbConnection();
-            
+
             // Se for estudante, mostrar apenas seus próprios dados
             if ($this->isStudent()) {
                 $studentId = $this->getCurrentStudentId();
@@ -29,7 +30,7 @@ class StudentsController extends AppController
                 $stmt = $pdo->query("SELECT * FROM students ORDER BY created DESC");
                 $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
             }
-            
+
             $this->set('students', $students);
             return $this->render('Admin/Students/index');
         } catch (Exception $e) {
@@ -42,7 +43,7 @@ class StudentsController extends AppController
     {
         try {
             $pdo = $this->getDbConnection();
-            
+
             // Verificar se estudante pode acessar este registro
             if ($this->isStudent()) {
                 $studentId = $this->getCurrentStudentId();
@@ -51,7 +52,7 @@ class StudentsController extends AppController
                     return $this->redirect('/admin/students');
                 }
             }
-            
+
             $stmt = $pdo->prepare("
                 SELECT s.*, u.username, u.role, u.active 
                 FROM students s 
@@ -60,17 +61,17 @@ class StudentsController extends AppController
             ");
             $stmt->execute([$id]);
             $student = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
             if (!$student) {
                 $this->flash('Student not found.', 'error');
                 return $this->redirect(['action' => 'index']);
             }
-            
+
             // Get related studies
             $stmt = $pdo->prepare("SELECT * FROM studies WHERE student_id = ? ORDER BY created DESC");
             $stmt->execute([$id]);
             $studies = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
+
             $this->set('student', $student);
             $this->set('studies', $studies);
             return $this->render('Admin/Students/view');
@@ -84,13 +85,13 @@ class StudentsController extends AppController
     {
         // Verificar se o usuário é administrador
         $this->requireAdmin();
-        
+
         if ($this->isPost()) {
             $data = $this->getPostData();
-            
+
             try {
                 $pdo = $this->getDbConnection();
-                
+
                 // Verificar se o email já existe na tabela students
                 $stmt = $pdo->prepare("SELECT id FROM students WHERE email = ?");
                 $stmt->execute([$data['email']]);
@@ -98,7 +99,7 @@ class StudentsController extends AppController
                     $this->flash('Este email já está cadastrado para outro estudante.', 'error');
                     return $this->render('Admin/Students/add');
                 }
-                
+
                 // Verificar se o email já existe na tabela users
                 $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
                 $stmt->execute([$data['email']]);
@@ -106,7 +107,7 @@ class StudentsController extends AppController
                     $this->flash('Este email já está cadastrado como usuário.', 'error');
                     return $this->render('Admin/Students/add');
                 }
-                
+
                 // Verificar se username foi fornecido e se já existe
                 if (!empty($data['username'])) {
                     $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
@@ -116,22 +117,22 @@ class StudentsController extends AppController
                         return $this->render('Admin/Students/add');
                     }
                 }
-                
+
                 // Iniciar transação
                 $pdo->beginTransaction();
-                
+
                 // Inserir estudante
                 $stmt = $pdo->prepare("INSERT INTO students (name, email, created, modified) VALUES (?, ?, NOW(), NOW())");
                 $stmt->execute([$data['name'], $data['email']]);
                 $studentId = $pdo->lastInsertId();
-                
+
                 // Processar username
                 if (!empty($data['username'])) {
                     $username = $data['username'];
                 } else {
                     // Criar username baseado no nome (remover espaços e caracteres especiais)
                     $username = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $data['name']));
-                    
+
                     // Verificar se o username já existe e adicionar número se necessário
                     $originalUsername = $username;
                     $counter = 1;
@@ -145,7 +146,7 @@ class StudentsController extends AppController
                         $counter++;
                     }
                 }
-                
+
                 // Processar senha
                 if (!empty($data['password'])) {
                     $password = $data['password'];
@@ -154,18 +155,18 @@ class StudentsController extends AppController
                     $password = strtolower(substr(preg_replace('/[^a-zA-Z]/', '', $data['name']), 0, 6)) . '123';
                 }
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-                
+
                 // Processar outros campos do usuário
                 $role = $data['role'] ?? 'student';
                 $active = isset($data['active']) ? 1 : 0;
-                
+
                 // Inserir usuário
                 $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, student_id, active, created, modified) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
                 $stmt->execute([$username, $data['email'], $hashedPassword, $role, $studentId, $active]);
-                
+
                 // Confirmar transação
                 $pdo->commit();
-                
+
                 // Mensagem de sucesso personalizada
                 $successMessage = "Estudante criado com sucesso! Username: {$username}";
                 if (empty($data['password'])) {
@@ -181,7 +182,7 @@ class StudentsController extends AppController
                 $this->flash('O estudante não pôde ser salvo. Erro: ' . $e->getMessage(), 'error');
             }
         }
-        
+
         return $this->render('Admin/Students/add');
     }
 
@@ -189,7 +190,7 @@ class StudentsController extends AppController
     {
         // Verificar se o usuário é administrador
         $this->requireAdmin();
-        
+
         if (!$id) {
             $this->flash('ID do estudante não fornecido.', 'error');
             return $this->redirect(['action' => 'index']);
@@ -197,20 +198,20 @@ class StudentsController extends AppController
 
         if ($this->isPost()) {
             $data = $this->getPostData();
-            
+
             try {
                 $pdo = $this->getDbConnection();
-                
+
                 // Verificar se o estudante existe
                 $stmt = $pdo->prepare("SELECT * FROM students WHERE id = ?");
                 $stmt->execute([$id]);
                 $student = $stmt->fetch(PDO::FETCH_ASSOC);
-                
+
                 if (!$student) {
                     $this->flash('Estudante não encontrado.', 'error');
                     return $this->redirect(['action' => 'index']);
                 }
-                
+
                 // Verificar se o email já existe em outro estudante
                 $stmt = $pdo->prepare("SELECT id FROM students WHERE email = ? AND id != ?");
                 $stmt->execute([$data['email'], $id]);
@@ -222,7 +223,7 @@ class StudentsController extends AppController
                     $user = $stmt->fetch(PDO::FETCH_ASSOC);
                     return $this->render('Admin/Students/edit', ['student' => $student, 'user' => $user]);
                 }
-                
+
                 // Verificar se o username já existe em outro usuário (se fornecido)
                 if (!empty($data['username'])) {
                     $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? AND student_id != ?");
@@ -236,65 +237,64 @@ class StudentsController extends AppController
                         return $this->render('Admin/Students/edit', ['student' => $student, 'user' => $user]);
                     }
                 }
-                
+
                 // Iniciar transação
                 $pdo->beginTransaction();
-                
+
                 // Atualizar estudante
                 $stmt = $pdo->prepare("UPDATE students SET name = ?, email = ?, modified = NOW() WHERE id = ?");
                 $stmt->execute([$data['name'], $data['email'], $id]);
-                
+
                 // Buscar usuário associado
                 $stmt = $pdo->prepare("SELECT * FROM users WHERE student_id = ?");
                 $stmt->execute([$id]);
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
-                
+
                 if ($user) {
                     // Atualizar usuário existente
                     $updateFields = [];
                     $updateValues = [];
-                    
+
                     // Username
                     if (!empty($data['username'])) {
                         $updateFields[] = "username = ?";
                         $updateValues[] = $data['username'];
                     }
-                    
+
                     // Email
                     $updateFields[] = "email = ?";
                     $updateValues[] = $data['email'];
-                    
+
                     // Role
                     if (!empty($data['role']) && in_array($data['role'], ['student', 'admin'])) {
                         $updateFields[] = "role = ?";
                         $updateValues[] = $data['role'];
                     }
-                    
+
                     // Active status
                     $active = isset($data['active']) && $data['active'] == '1' ? 1 : 0;
                     $updateFields[] = "active = ?";
                     $updateValues[] = $active;
-                    
+
                     // Password (se fornecida)
                     if (!empty($data['new_password'])) {
                         $updateFields[] = "password = ?";
                         $updateValues[] = password_hash($data['new_password'], PASSWORD_DEFAULT);
                     }
-                    
+
                     // Modified timestamp
                     $updateFields[] = "modified = NOW()";
                     $updateValues[] = $id; // Para o WHERE
-                    
+
                     $sql = "UPDATE users SET " . implode(", ", $updateFields) . " WHERE student_id = ?";
                     $stmt = $pdo->prepare($sql);
                     $stmt->execute($updateValues);
-                    
                 } else {
                     // Criar novo usuário se não existir
                     $username = !empty($data['username']) ? $data['username'] : strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $data['name']));
                     $role = !empty($data['role']) && in_array($data['role'], ['student', 'admin']) ? $data['role'] : 'student';
                     $active = isset($data['active']) && $data['active'] == '1' ? 1 : 0;
-                    
+
                     // Verificar se o username já existe e adicionar número se necessário
                     $originalUsername = $username;
                     $counter = 1;
@@ -307,21 +307,21 @@ class StudentsController extends AppController
                         $username = $originalUsername . $counter;
                         $counter++;
                     }
-                    
+
                     // Gerar senha (fornecida ou temporária)
                     $password = !empty($data['new_password']) ? $data['new_password'] : 'temp123';
                     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-                    
+
                     // Inserir novo usuário
                     $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, student_id, active, created, modified) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
                     $stmt->execute([$username, $data['email'], $hashedPassword, $role, $id, $active]);
-                    
+
                     $this->flash("Usuário criado com sucesso! Username: {$username}", 'info');
                 }
-                
+
                 // Confirmar transação
                 $pdo->commit();
-                
+
                 $this->flash('Estudante e dados de acesso atualizados com sucesso!', 'success');
                 return $this->redirect(['action' => 'index']);
             } catch (Exception $e) {
@@ -332,26 +332,26 @@ class StudentsController extends AppController
                 $this->flash('O estudante não pôde ser atualizado. Erro: ' . $e->getMessage(), 'error');
             }
         }
-        
+
         // Buscar dados do estudante e usuário para exibir no formulário
         try {
             $pdo = $this->getDbConnection();
-            
+
             // Buscar estudante
             $stmt = $pdo->prepare("SELECT * FROM students WHERE id = ?");
             $stmt->execute([$id]);
             $student = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
             if (!$student) {
                 $this->flash('Estudante não encontrado.', 'error');
                 return $this->redirect(['action' => 'index']);
             }
-            
+
             // Buscar usuário associado
             $stmt = $pdo->prepare("SELECT * FROM users WHERE student_id = ?");
             $stmt->execute([$id]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
             return $this->render('Admin/Students/edit', ['student' => $student, 'user' => $user]);
         } catch (Exception $e) {
             $this->flash('Erro ao carregar dados do estudante: ' . $e->getMessage(), 'error');
@@ -363,15 +363,15 @@ class StudentsController extends AppController
     {
         // Verificar se o usuário é administrador
         $this->requireAdmin();
-        
+
         if (!$this->isPost()) {
             $this->flash('Método não permitido.', 'error');
             return $this->redirect(['action' => 'index']);
         }
-        
+
         try {
             $pdo = $this->getDbConnection();
-            
+
             // Verificar se o estudante existe e buscar dados do usuário associado
             $stmt = $pdo->prepare("
                 SELECT s.*, u.username, u.role, u.active 
@@ -381,36 +381,36 @@ class StudentsController extends AppController
             ");
             $stmt->execute([$id]);
             $student = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
             if (!$student) {
                 $this->flash('Estudante não encontrado.', 'error');
                 return $this->redirect(['action' => 'index']);
             }
-            
+
             // Verificar se há estudos associados
             $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM studies WHERE student_id = ?");
             $stmt->execute([$id]);
             $studiesCount = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
-            
+
             if ($studiesCount > 0) {
                 $this->flash("Não é possível excluir o estudante {$student['name']} pois há {$studiesCount} estudo(s) associado(s).", 'error');
                 return $this->redirect(['action' => 'index']);
             }
-            
+
             // Iniciar transação
             $pdo->beginTransaction();
-            
+
             // Excluir usuário associado primeiro (se existir)
             $stmt = $pdo->prepare("DELETE FROM users WHERE student_id = ?");
             $stmt->execute([$id]);
-            
+
             // Excluir estudante
             $stmt = $pdo->prepare("DELETE FROM students WHERE id = ?");
             $stmt->execute([$id]);
-            
+
             // Confirmar transação
             $pdo->commit();
-            
+
             $this->flash("Estudante {$student['name']} e seu usuário foram excluídos com sucesso.", 'success');
         } catch (Exception $e) {
             // Reverter transação em caso de erro
@@ -419,7 +419,7 @@ class StudentsController extends AppController
             }
             $this->flash('O estudante não pôde ser excluído. Erro: ' . $e->getMessage(), 'error');
         }
-        
+
         return $this->redirect(['action' => 'index']);
     }
 
@@ -427,7 +427,7 @@ class StudentsController extends AppController
     {
         try {
             $pdo = $this->getDbConnection();
-            
+
             // Buscar estudante com dados do usuário associado
             $stmt = $pdo->prepare("
                 SELECT s.*, u.username, u.role, u.active 
@@ -437,16 +437,16 @@ class StudentsController extends AppController
             ");
             $stmt->execute([$id]);
             $student = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
             if (!$student) {
                 $this->flash('Estudante não encontrado.', 'error');
                 return $this->redirect(['action' => 'index']);
             }
-        
+
             // Get current date parameters
-            $currentDate = $this->request->getQuery('date', date('Y-m-d'));
-            $currentYear = (int)$this->request->getQuery('year', date('Y'));
-            $currentMonth = (int)$this->request->getQuery('month', date('n'));
+            $currentDate = $_GET['date'] ?? date('Y-m-d');
+            $currentYear = (int)($_GET['year'] ?? date('Y'));
+            $currentMonth = (int)($_GET['month'] ?? date('n'));
 
             // Get daily metrics
             $dailyMetrics = $this->Students->getDailyMetrics($id, $currentDate);
@@ -478,15 +478,15 @@ class StudentsController extends AppController
         }
 
         $overallStats['total_trades'] = $overallStats['total_wins'] + $overallStats['total_losses'];
-        $overallStats['overall_win_rate'] = $overallStats['total_trades'] > 0 
-            ? round(($overallStats['total_wins'] / $overallStats['total_trades']) * 100, 2) 
+        $overallStats['overall_win_rate'] = $overallStats['total_trades'] > 0
+            ? round(($overallStats['total_wins'] / $overallStats['total_trades']) * 100, 2)
             : 0;
 
         $this->set(compact(
-            'student', 
-            'dailyMetrics', 
-            'monthlyMetrics', 
-            'recentStudies', 
+            'student',
+            'dailyMetrics',
+            'monthlyMetrics',
+            'recentStudies',
             'overallStats',
             'currentDate',
             'currentYear',
@@ -509,7 +509,7 @@ class StudentsController extends AppController
             }
 
             $pdo = $this->getDbConnection();
-            
+
             // Buscar estudante com dados do usuário associado
             $stmt = $pdo->prepare("
                 SELECT s.*, u.username, u.role, u.active 
@@ -519,7 +519,7 @@ class StudentsController extends AppController
             ");
             $stmt->execute([$id]);
             $student = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
             if (!$student) {
                 $this->flash('Estudante não encontrado.', 'error');
                 return $this->redirect(['action' => 'index']);
@@ -572,8 +572,8 @@ class StudentsController extends AppController
 
             // Calcular métricas adicionais
             $overallStats['total_trades'] = $overallStats['total_wins'] + $overallStats['total_losses'];
-            $overallStats['overall_win_rate'] = $overallStats['total_trades'] > 0 
-                ? round(($overallStats['total_wins'] / $overallStats['total_trades']) * 100, 2) 
+            $overallStats['overall_win_rate'] = $overallStats['total_trades'] > 0
+                ? round(($overallStats['total_wins'] / $overallStats['total_trades']) * 100, 2)
                 : 0;
 
             // Buscar dados para gráfico do ano selecionado (12 meses do ano)
@@ -631,7 +631,7 @@ class StudentsController extends AppController
             $chartProfitLoss = [];
             $chartWinRate = [];
             $chartDataDetailed = [];
-            
+
             foreach ($chartDataByMonth as $monthKey => $data) {
                 $chartLabels[] = date('M Y', mktime(0, 0, 0, $data['month'], 1, $data['year']));
                 $chartProfitLoss[] = (float)$data['profit_loss'];
@@ -657,9 +657,8 @@ class StudentsController extends AppController
                 'markets',
                 'selectedYear'
             ));
-            
+
             return $this->render('Admin/Students/dashboard');
-            
         } catch (Exception $e) {
             $this->flash('Erro ao carregar dashboard: ' . $e->getMessage(), 'error');
             return $this->redirect(['action' => 'index']);
@@ -670,19 +669,19 @@ class StudentsController extends AppController
     {
         // Verificar se é admin
         $this->requireAdmin();
-        
+
         try {
             // Estatísticas gerais
             $totalStudents = $this->db->query("SELECT COUNT(*) FROM students")->fetchColumn();
             $activeStudents = $this->db->query("SELECT COUNT(*) FROM students s JOIN users u ON s.id = u.student_id WHERE u.active = 1")->fetchColumn();
             $totalStudies = $this->db->query("SELECT COUNT(*) FROM studies")->fetchColumn();
-            
+
             // Estatísticas de performance
             $totalTrades = $this->db->query("SELECT SUM(wins + losses) FROM studies")->fetchColumn() ?: 0;
             $totalWins = $this->db->query("SELECT SUM(wins) FROM studies")->fetchColumn() ?: 0;
             $totalProfitLoss = $this->db->query("SELECT SUM(profit_loss) FROM studies")->fetchColumn() ?: 0;
             $overallWinRate = $totalTrades > 0 ? round(($totalWins / $totalTrades) * 100, 2) : 0;
-            
+
             // Top 5 estudantes por profit/loss
             $topStudents = $this->db->query("
                 SELECT s.name, s.id, SUM(st.profit_loss) as total_profit_loss, 
@@ -697,7 +696,7 @@ class StudentsController extends AppController
                 ORDER BY total_profit_loss DESC 
                 LIMIT 5
             ")->fetchAll(PDO::FETCH_ASSOC);
-            
+
             // Estudantes com pior performance
             $worstStudents = $this->db->query("
                 SELECT s.name, s.id, SUM(st.profit_loss) as total_profit_loss, 
@@ -712,7 +711,7 @@ class StudentsController extends AppController
                 ORDER BY total_profit_loss ASC 
                 LIMIT 5
             ")->fetchAll(PDO::FETCH_ASSOC);
-            
+
             // Atividade recente (últimos 10 estudos)
             $recentActivity = $this->db->query("
                 SELECT st.*, s.name as student_name
@@ -722,7 +721,7 @@ class StudentsController extends AppController
                 ORDER BY st.study_date DESC, st.created DESC 
                 LIMIT 10
             ")->fetchAll(PDO::FETCH_ASSOC);
-            
+
             // Dados para gráficos - estudos por mês
             $monthlyData = $this->db->query("
                 SELECT 
@@ -737,10 +736,10 @@ class StudentsController extends AppController
                 GROUP BY YEAR(study_date), MONTH(study_date)
                 ORDER BY year, month
             ")->fetchAll(PDO::FETCH_ASSOC);
-            
+
             $this->set(compact(
                 'totalStudents',
-                'activeStudents', 
+                'activeStudents',
                 'totalStudies',
                 'totalTrades',
                 'totalWins',
@@ -751,9 +750,8 @@ class StudentsController extends AppController
                 'recentActivity',
                 'monthlyData'
             ));
-            
+
             return $this->render('Admin/Students/admin_dashboard');
-            
         } catch (Exception $e) {
             $this->flash('Erro ao carregar dashboard administrativo: ' . $e->getMessage(), 'error');
             return $this->redirect(['action' => 'index']);
@@ -764,7 +762,7 @@ class StudentsController extends AppController
     {
         try {
             $pdo = $this->getDbConnection();
-            
+
             // Verificar se estudante pode acessar este registro
             if ($this->isStudent()) {
                 $currentStudentId = $this->getCurrentStudentId();
@@ -773,17 +771,17 @@ class StudentsController extends AppController
                     return $this->redirect('/admin/students');
                 }
             }
-            
+
             // Buscar dados do estudante
             $stmt = $pdo->prepare("SELECT * FROM students WHERE id = ?");
             $stmt->execute([$studentId]);
             $student = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
             if (!$student) {
                 $this->flash('Estudante não encontrado.', 'error');
                 return $this->redirect('/admin/students');
             }
-            
+
             // Buscar estudos do mês específico
             $stmt = $pdo->prepare("
                 SELECT * FROM studies 
@@ -794,7 +792,7 @@ class StudentsController extends AppController
             ");
             $stmt->execute([$studentId, $year, $month]);
             $studies = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
+
             // Calcular estatísticas do mês
             $totalStudies = count($studies);
             $totalWins = array_sum(array_column($studies, 'wins'));
@@ -802,15 +800,24 @@ class StudentsController extends AppController
             $totalTrades = $totalWins + $totalLosses;
             $totalProfitLoss = array_sum(array_column($studies, 'profit_loss'));
             $winRate = $totalTrades > 0 ? ($totalWins / $totalTrades) * 100 : 0;
-            
+
             // Nome do mês em português
             $monthNames = [
-                1 => 'Janeiro', 2 => 'Fevereiro', 3 => 'Março', 4 => 'Abril',
-                5 => 'Maio', 6 => 'Junho', 7 => 'Julho', 8 => 'Agosto',
-                9 => 'Setembro', 10 => 'Outubro', 11 => 'Novembro', 12 => 'Dezembro'
+                1 => 'Janeiro',
+                2 => 'Fevereiro',
+                3 => 'Março',
+                4 => 'Abril',
+                5 => 'Maio',
+                6 => 'Junho',
+                7 => 'Julho',
+                8 => 'Agosto',
+                9 => 'Setembro',
+                10 => 'Outubro',
+                11 => 'Novembro',
+                12 => 'Dezembro'
             ];
             $monthName = $monthNames[(int)$month] ?? 'Mês';
-            
+
             $this->set(compact(
                 'student',
                 'studies',
@@ -824,9 +831,8 @@ class StudentsController extends AppController
                 'totalProfitLoss',
                 'winRate'
             ));
-            
+
             return $this->render('Admin/Students/monthly_studies');
-            
         } catch (Exception $e) {
             $this->flash('Erro ao carregar estudos mensais: ' . $e->getMessage(), 'error');
             return $this->redirect('/admin/students');

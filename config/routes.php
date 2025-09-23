@@ -1,4 +1,5 @@
 <?php
+
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
 
@@ -13,7 +14,7 @@ return static function (RouteBuilder $routes) {
         $builder->connect('/', ['controller' => 'Site/Home', 'action' => 'index']);
         $builder->connect('/sobre', ['controller' => 'Site/Home', 'action' => 'about']);
         $builder->connect('/contato', ['controller' => 'Site/Home', 'action' => 'contact']);
-        
+
         // Auth routes (public)
         $builder->connect('/login', ['controller' => 'Auth', 'action' => 'login']);
         $builder->connect('/logout', ['controller' => 'Auth', 'action' => 'logout']);
@@ -28,6 +29,7 @@ return static function (RouteBuilder $routes) {
         $builder->connect('/courses/view/*', ['controller' => 'Site/Courses', 'action' => 'view']);
         $builder->connect('/courses/watch/*/*', ['controller' => 'Site/Courses', 'action' => 'watch']);
         $builder->connect('/courses/enroll/*', ['controller' => 'Site/Courses', 'action' => 'enroll']);
+        $builder->connect('/courses/purchase/*', ['controller' => 'Site/Courses', 'action' => 'purchase']);
         $builder->connect('/courses/updateProgress', ['controller' => 'Site/Courses', 'action' => 'updateProgress']);
     });
 
@@ -38,34 +40,34 @@ return static function (RouteBuilder $routes) {
         // Dashboard administrativo
         $builder->connect('/', ['controller' => 'Admin/Students', 'action' => 'admin_dashboard']);
         $builder->connect('/dashboard/:student_id', ['controller' => 'Admin/Students', 'action' => 'dashboard']);
-        
+
         // Students routes (admin)
         $builder->connect('/students', ['controller' => 'Admin/Students', 'action' => 'index']);
         $builder->connect('/students/add', ['controller' => 'Admin/Students', 'action' => 'add']);
         $builder->connect('/students/edit/*', ['controller' => 'Admin/Students', 'action' => 'edit']);
         $builder->connect('/students/delete/*', ['controller' => 'Admin/Students', 'action' => 'delete']);
-        
+
         // Manter rotas originais para compatibilidade (serão migradas gradualmente)
         $builder->connect('/students-old', ['controller' => 'Students', 'action' => 'index']);
         $builder->connect('/students-old/add', ['controller' => 'Students', 'action' => 'add']);
         $builder->connect('/students-old/view/*', ['controller' => 'Students', 'action' => 'view']);
         $builder->connect('/students-old/edit/*', ['controller' => 'Students', 'action' => 'edit']);
         $builder->connect('/students-old/delete/*', ['controller' => 'Students', 'action' => 'delete']);
-        
+
         // Studies routes
         $builder->connect('/studies', ['controller' => 'Admin/Studies', 'action' => 'index']);
         $builder->connect('/studies/add', ['controller' => 'Admin/Studies', 'action' => 'add']);
         $builder->connect('/studies/view/*', ['controller' => 'Admin/Studies', 'action' => 'view']);
         $builder->connect('/studies/edit/*', ['controller' => 'Admin/Studies', 'action' => 'edit']);
         $builder->connect('/studies/delete/*', ['controller' => 'Admin/Studies', 'action' => 'delete']);
-        
+
         // Markets routes
         $builder->connect('/markets', ['controller' => 'Admin/Markets', 'action' => 'index']);
         $builder->connect('/markets/add', ['controller' => 'Admin/Markets', 'action' => 'add']);
         $builder->connect('/markets/view/*', ['controller' => 'Admin/Markets', 'action' => 'view']);
         $builder->connect('/markets/edit/*', ['controller' => 'Admin/Markets', 'action' => 'edit']);
         $builder->connect('/markets/delete/*', ['controller' => 'Admin/Markets', 'action' => 'delete']);
-        
+
         // Courses routes (admin)
         $builder->connect('/courses', ['controller' => 'Admin/Courses', 'action' => 'index']);
         $builder->connect('/courses/add', ['controller' => 'Admin/Courses', 'action' => 'add']);
@@ -74,21 +76,28 @@ return static function (RouteBuilder $routes) {
         $builder->connect('/courses/delete/*', ['controller' => 'Admin/Courses', 'action' => 'delete']);
         $builder->connect('/courses/*/videos', ['controller' => 'Admin/Courses', 'action' => 'videos']);
         $builder->connect('/courses/*/add-video', ['controller' => 'Admin/Courses', 'action' => 'addVideo']);
-        
+
+        $builder->connect('/courses-students', ['controller' => 'Admin/Courses', 'action' => 'indexStudents']);
+        $builder->connect('/courses-students/view/*', ['controller' => 'Admin/Courses', 'action' => 'viewStudents']);
+        $builder->connect('/courses-students/watch/*/*', ['controller' => 'Admin/Courses', 'action' => 'watchStudents']);
+        $builder->connect('/courses-students/enroll/*', ['controller' => 'Admin/Courses', 'action' => 'enroll']);
+        $builder->connect('/courses-students/purchase/*', ['controller' => 'Admin/Courses', 'action' => 'purchaseStudents']);
+        $builder->connect('/courses-students/updateProgress', ['controller' => 'Admin/Courses', 'action' => 'updateProgress']);
+
         // Profile routes
         $builder->connect('/profile', ['controller' => 'Admin/Profile', 'action' => 'index']);
         $builder->connect('/profile/edit', ['controller' => 'Admin/Profile', 'action' => 'edit']);
         $builder->connect('/profile/update', ['controller' => 'Admin/Profile', 'action' => 'update']);
-        
+
         // Metrics routes
         $builder->connect('/students/metrics/*', ['controller' => 'Students', 'action' => 'metrics']);
-        
+
         // Dashboard routes (estudantes individuais)
         $builder->connect('/students/dashboard/*', ['controller' => 'Students', 'action' => 'dashboard']);
-        
+
         // Monthly studies route
         $builder->connect('/students/*/monthly-studies/*/*', ['controller' => 'Students', 'action' => 'monthlyStudies']);
-        
+
         $builder->fallbacks();
     });
 };

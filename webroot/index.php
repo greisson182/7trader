@@ -46,6 +46,24 @@ if ($path === 'login' || $path === 'auth/login') {
     $id = $matches[1]; // student id
     $year = $matches[2];
     $month = $matches[3];
+} elseif (strpos($path, 'site') === 0) {
+    // Handle site routes: /site/{controller}/{action}/{id}
+    $siteSegments = array_slice($segments, 1); // Remove 'site' from segments
+    
+    if (empty($siteSegments[0])) {
+        // /site/ - redirect to home
+        header('Location: /');
+        exit;
+    }
+    
+    $controllerName = ucfirst($siteSegments[0]);
+    $controller = 'Site/' . $controllerName;
+    $action = !empty($siteSegments[1]) ? $siteSegments[1] : 'index';
+    $id = !empty($siteSegments[2]) ? $siteSegments[2] : null;
+    
+    // Convert kebab-case to camelCase for action names
+    $action = lcfirst(str_replace('-', '', ucwords($action, '-')));
+    
 } elseif (strpos($path, 'admin') === 0) {
     // Handle admin routes: /admin/{controller}/{action}/{id}
     if ($path === 'admin' || $path === 'admin/') {
@@ -78,7 +96,14 @@ if ($path === 'login' || $path === 'auth/login') {
         $adminSegments = array_slice($segments, 1); // Remove 'admin' from segments
         $controller = 'Admin/' . (!empty($adminSegments[0]) ? ucfirst($adminSegments[0]) : 'Students');
         $rawAction = !empty($adminSegments[1]) ? $adminSegments[1] : 'index';
-        $action = $rawAction === 'index' ? 'index' : lcfirst(str_replace('-', '', ucwords($rawAction, '-')));
+        
+        // Handle special cases for admin routes
+        if ($rawAction === 'courses-students') {
+            $action = 'indexStudents';
+        } else {
+            $action = $rawAction === 'index' ? 'index' : lcfirst(str_replace('-', '', ucwords($rawAction, '-')));
+        }
+        
         $id = !empty($adminSegments[2]) ? $adminSegments[2] : null;
     }
 } else {
@@ -101,6 +126,10 @@ if ($path === 'login' || $path === 'auth/login') {
     } elseif ($path === 'contato') {
         $controller = 'Site/Home';
         $action = 'contact';
+        $id = null;
+    } elseif ($path === 'courses') {
+        $controller = 'Site/Courses';
+        $action = 'index';
         $id = null;
     } else {
         // Default routing logic

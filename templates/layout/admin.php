@@ -85,14 +85,23 @@
                         </a>
                     </li>
                     
-                    <?php if (isset($currentUser) && $currentUser['role'] === 'admin'): ?>
+                    <?php if (isset($currentUser) && $currentUser['role'] === 'admin'){ ?>
                         <li class="nav-item">
                             <a href="/admin/courses" class="nav-link">
                                 <i class="bi bi-play-circle me-1"></i>
                                 Cursos
                             </a>
                         </li>
-                    <?php endif; ?>
+                    <?php } else { ?>
+                        <li class="nav-item">
+                            <a href="/admin/courses/courses-students" class="nav-link">
+                                <i class="bi bi-play-circle me-1"></i>
+                                Cursos
+                            </a>
+                        </li>
+                    <?php } ?>
+
+
                 </ul>
                 <ul class="navbar-nav">
 
