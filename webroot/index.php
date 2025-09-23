@@ -77,7 +77,8 @@ if ($path === 'login' || $path === 'auth/login') {
     } else {
         $adminSegments = array_slice($segments, 1); // Remove 'admin' from segments
         $controller = 'Admin/' . (!empty($adminSegments[0]) ? ucfirst($adminSegments[0]) : 'Students');
-        $action = !empty($adminSegments[1]) ? $adminSegments[1] : 'index';
+        $rawAction = !empty($adminSegments[1]) ? $adminSegments[1] : 'index';
+        $action = $rawAction === 'index' ? 'index' : lcfirst(str_replace('-', '', ucwords($rawAction, '-')));
         $id = !empty($adminSegments[2]) ? $adminSegments[2] : null;
     }
 } else {

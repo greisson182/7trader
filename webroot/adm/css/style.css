@@ -1317,6 +1317,14 @@ span.text-danger {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+[data-theme="dark"] .text-primary {
+  color: #fff !important;
+}
+
+[data-theme="dark"] .text-info {
+  color: #fff !important;
+}
+
 [data-theme="dark"] .table tbody tr {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
@@ -2378,4 +2386,3 @@ footer {
   padding-top: 76px;
   /* Account for fixed navbar */
 }
-

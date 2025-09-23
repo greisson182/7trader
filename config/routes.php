@@ -20,6 +20,18 @@ return static function (RouteBuilder $routes) {
     });
 
     // ===========================================
+    // ÁREA DE CURSOS PARA ESTUDANTES
+    // ===========================================
+    $routes->scope('/site', function (RouteBuilder $builder) {
+        // Courses routes (students)
+        $builder->connect('/courses', ['controller' => 'Site/Courses', 'action' => 'index']);
+        $builder->connect('/courses/view/*', ['controller' => 'Site/Courses', 'action' => 'view']);
+        $builder->connect('/courses/watch/*/*', ['controller' => 'Site/Courses', 'action' => 'watch']);
+        $builder->connect('/courses/enroll/*', ['controller' => 'Site/Courses', 'action' => 'enroll']);
+        $builder->connect('/courses/updateProgress', ['controller' => 'Site/Courses', 'action' => 'updateProgress']);
+    });
+
+    // ===========================================
     // ÁREA ADMINISTRATIVA
     // ===========================================
     $routes->scope('/admin', function (RouteBuilder $builder) {
@@ -53,6 +65,15 @@ return static function (RouteBuilder $routes) {
         $builder->connect('/markets/view/*', ['controller' => 'Admin/Markets', 'action' => 'view']);
         $builder->connect('/markets/edit/*', ['controller' => 'Admin/Markets', 'action' => 'edit']);
         $builder->connect('/markets/delete/*', ['controller' => 'Admin/Markets', 'action' => 'delete']);
+        
+        // Courses routes (admin)
+        $builder->connect('/courses', ['controller' => 'Admin/Courses', 'action' => 'index']);
+        $builder->connect('/courses/add', ['controller' => 'Admin/Courses', 'action' => 'add']);
+        $builder->connect('/courses/view/*', ['controller' => 'Admin/Courses', 'action' => 'view']);
+        $builder->connect('/courses/edit/*', ['controller' => 'Admin/Courses', 'action' => 'edit']);
+        $builder->connect('/courses/delete/*', ['controller' => 'Admin/Courses', 'action' => 'delete']);
+        $builder->connect('/courses/*/videos', ['controller' => 'Admin/Courses', 'action' => 'videos']);
+        $builder->connect('/courses/*/add-video', ['controller' => 'Admin/Courses', 'action' => 'addVideo']);
         
         // Profile routes
         $builder->connect('/profile', ['controller' => 'Admin/Profile', 'action' => 'index']);

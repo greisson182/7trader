@@ -55,7 +55,7 @@
                                     Painel
                                 </a>
                                 <ul class="dropdown-menu glass sub-menu">
-                                    <li><a class="dropdown-item" href="/admin/students">
+                                    <li><a class="dropdown-item" href="/admin/students/admin_dashboard">
                                             <i class="bi bi-graph-up-arrow me-2"></i>
                                             Dashboard Administrativo
                                         </a></li>
@@ -84,6 +84,15 @@
                             Estudos
                         </a>
                     </li>
+                    
+                    <?php if (isset($currentUser) && $currentUser['role'] === 'admin'): ?>
+                        <li class="nav-item">
+                            <a href="/admin/courses" class="nav-link">
+                                <i class="bi bi-play-circle me-1"></i>
+                                Cursos
+                            </a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
                 <ul class="navbar-nav">
 

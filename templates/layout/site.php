@@ -33,6 +33,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link trading-nav-link" href="/site/courses">
+                            <i class="fas fa-graduation-cap me-1"></i>Cursos
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link trading-nav-link" href="/mentoria">
                             <i class="fas fa-handshake me-1"></i>Mentoria
                         </a>
