@@ -30,7 +30,7 @@
     <nav class="navbar navbar-expand-lg glass fixed-top">
         <div class="container">
             <a href="/admin/students/dashboard" class="navbar-brand">
-                <strong class="footer-title-admin">7</strong><span style="color:#fff!important">Trader</span>
+                <strong class="footer-title-admin">7</strong><span style="color:#fff!important; -webkit-text-fill-color: white;">Trader</span>
             </a>
 
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -185,11 +185,7 @@
                     </p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <div class="footer-stats-admin">
-                        <span class="stat-badge">📊 Analytics</span>
-                        <span class="stat-badge">🎯 Performance</span>
-                        <span class="stat-badge">📈 Growth</span>
-                    </div>
+                    
                 </div>
             </div>
         </div>

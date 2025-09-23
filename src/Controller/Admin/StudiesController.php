@@ -54,7 +54,7 @@ class StudiesController extends AppController
             }
 
             unset($study); // <-- quebra a referência aqui
-            
+
             // agrupar estudos por mês/ano
             $studiesByMonth = []; // garantir que começa vazio
             foreach ($studies as $study) {
@@ -90,7 +90,6 @@ class StudiesController extends AppController
                     $studiesByMonth[$monthYear]['total_wins']    += $wins;
                     $studiesByMonth[$monthYear]['total_losses']  += $losses;
                     $studiesByMonth[$monthYear]['total_profit_loss'] += $profitLoss;
-                    
                 } catch (\Exception $e) {
                     error_log("Erro ao processar data do estudo ID {$study['id']}: " . $e->getMessage());
                 }
@@ -199,10 +198,11 @@ class StudiesController extends AppController
 
             try {
                 $pdo = $this->getDbConnection();
-                $stmt = $pdo->prepare("INSERT INTO studies (student_id, market_id, study_date, wins, losses, profit_loss, notes, created, modified) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+                $stmt = $pdo->prepare("INSERT INTO studies (student_id, market_id, account_id, study_date, wins, losses, profit_loss, notes, created, modified) VALUES (?, ?, ?,?, ?, ?, ?, ?, NOW(), NOW())");
                 $stmt->execute([
                     $data['student_id'],
                     $data['market_id'],
+                    $data['account_id'],
                     $data['study_date'],
                     $data['wins'],
                     $data['losses'],
@@ -217,26 +217,6 @@ class StudiesController extends AppController
             }
         }
 
-        // Get students for dropdown - Not needed anymore since we removed the dropdown
-        // Keeping this commented for reference
-        /*
-        try {
-            $pdo = $this->getDbConnection();
-            $stmt = $pdo->query("SELECT id, name FROM students ORDER BY name");
-            $studentsData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            // Convert to associative array with id as key and name as value
-            $students = [];
-            foreach ($studentsData as $student) {
-                $students[$student['id']] = $student['name'];
-            }
-            
-            $this->set('students', $students);
-        } catch (Exception $e) {
-            $this->set('students', []);
-        }
-        */
-
         // Se for estudante, passar o ID do estudante atual para o template
         if ($this->isStudent()) {
             $this->set('currentStudentId', $this->getCurrentStudentId());
@@ -247,8 +227,14 @@ class StudiesController extends AppController
             $pdo = $this->getDbConnection();
             $stmt = $pdo->query("SELECT id, name, code FROM markets WHERE active = 1 ORDER BY name");
             $markets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $stmt = $pdo->query("SELECT id, name FROM accounts ORDER BY name desc");
+            $accounts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $this->set('accounts', $accounts);
             $this->set('markets', $markets);
         } catch (Exception $e) {
+            $this->set('accounts', []);
             $this->set('markets', []);
         }
 
@@ -289,10 +275,11 @@ class StudiesController extends AppController
                     $data['student_id'] = $currentStudentId;
                 }
 
-                $stmt = $pdo->prepare("UPDATE studies SET student_id = ?, market_id = ?, study_date = ?, wins = ?, losses = ?, profit_loss = ?, notes = ?, modified = NOW() WHERE id = ?");
+                $stmt = $pdo->prepare("UPDATE studies SET student_id = ?, market_id = ?, account_id = ?, study_date = ?, wins = ?, losses = ?, profit_loss = ?, notes = ?, modified = NOW() WHERE id = ?");
                 $stmt->execute([
                     $data['student_id'],
                     $data['market_id'],
+                    $data['account_id'],
                     $data['study_date'],
                     $data['wins'],
                     $data['losses'],
@@ -377,6 +364,11 @@ class StudiesController extends AppController
         } catch (Exception $e) {
             $this->set('markets', []);
         }
+
+        $stmt = $pdo->query("SELECT id, name FROM accounts ORDER BY name desc");
+        $accounts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $this->set('accounts', $accounts);
 
         return $this->render('Admin/Studies/edit');
     }

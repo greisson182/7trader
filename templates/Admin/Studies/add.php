@@ -18,16 +18,16 @@
         <div class="card-body">
             <form method="POST" action="/admin/studies/add" class="needs-validation" novalidate>
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="mb-3">
-                            <label for="study_date" class="form-label">Study Date</label>
+                            <label for="study_date" class="form-label">Data do Estudo</label>
                             <input type="date" class="form-control" id="study_date" name="study_date" required>
                             <div class="invalid-feedback">
                                 Please provide a valid study date.
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="mb-3">
                             <label for="market_id" class="form-label">Mercado</label>
                             <select class="form-select" id="market_id" name="market_id" required>
@@ -43,11 +43,26 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="account_id" class="form-label">Tipo de Conta</label>
+                            <select class="form-select" id="account_id" name="account_id" required>
+                                <?php if (!empty($accounts)): ?>
+                                    <?php foreach ($accounts as $account): ?>
+                                        <option value="<?= $account['id'] ?>"><?= htmlspecialchars($account['name']) ?></option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                            <div class="invalid-feedback">
+                                Por favor, selecione um mercado.
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4">
                         <div class="mb-3">
-                            <label for="profit_loss" class="form-label">Profit/Loss ($)</label>
+                            <label for="profit_loss" class="form-label">Lucro/Prejuízo (R$)</label>
                             <input type="number" class="form-control" id="profit_loss" name="profit_loss" step="0.01" required>
                             <div class="invalid-feedback">
                                 Please provide a valid profit/loss amount.
@@ -78,7 +93,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="mb-3">
-                            <label for="notes" class="form-label">Notas</label>
+                            <label for="notes" class="form-label">Diário de Trade</label>
                             <textarea class="form-control" id="notes" name="notes" rows="4" placeholder="Adicione suas observações sobre este estudo..."></textarea>
                             <div class="form-text">Campo opcional para anotações e observações sobre o estudo.</div>
                         </div>
