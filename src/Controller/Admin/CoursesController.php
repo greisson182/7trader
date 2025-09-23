@@ -484,7 +484,7 @@ class CoursesController extends AppController
 
             if (!$course) {
                 $this->flash('Curso não encontrado.', 'error');
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'index-students']);
             }
 
             // Verificar se estudante está inscrito
@@ -545,7 +545,7 @@ class CoursesController extends AppController
             return $this->render('Admin/Courses/view_students');
         } catch (Exception $e) {
             $this->flash('Erro ao carregar curso: ' . $e->getMessage(), 'error');
-            return $this->redirect(['action' => 'index']);
+            return $this->redirect(['action' => 'index-students']);
         }
     }
 
@@ -560,7 +560,7 @@ class CoursesController extends AppController
             // Verificar se é estudante
             if (!$this->isStudent()) {
                 $this->flash('Apenas estudantes podem assistir vídeos.', 'error');
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'index-students']);
             }
 
             $studentId = $this->getCurrentStudentId();
@@ -572,7 +572,7 @@ class CoursesController extends AppController
 
             if (!$course) {
                 $this->flash('Curso não encontrado.', 'error');
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'index-students']);
             }
 
             // Buscar vídeo
@@ -585,7 +585,7 @@ class CoursesController extends AppController
 
             if (!$video) {
                 $this->flash('Vídeo não encontrado.', 'error');
-                return $this->redirect(['action' => 'view', $courseId]);
+                return $this->redirect(['action' => 'view-students', $courseId]);
             }
 
             // Verificar permissão para assistir
@@ -607,7 +607,7 @@ class CoursesController extends AppController
 
             if (!$canWatch) {
                 $this->flash('Você precisa se inscrever neste curso para assistir este vídeo.', 'error');
-                return $this->redirect(['action' => 'view', $courseId]);
+                return $this->redirect(['action' => 'view-students', $courseId]);
             }
 
             // Buscar todos os vídeos do curso para navegação
@@ -652,7 +652,7 @@ class CoursesController extends AppController
             return $this->render('Admin/Courses/watch_students');
         } catch (Exception $e) {
             $this->flash('Erro ao carregar vídeo: ' . $e->getMessage(), 'error');
-            return $this->redirect(['action' => 'view', $courseId]);
+            return $this->redirect(['action' => 'view-students', $courseId]);
         }
     }
 
@@ -664,7 +664,7 @@ class CoursesController extends AppController
         try {
             if (!$this->isStudent()) {
                 $this->flash('Apenas estudantes podem se inscrever em cursos.', 'error');
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'index-students']);
             }
 
             $pdo = $this->getDbConnection();
@@ -677,7 +677,7 @@ class CoursesController extends AppController
 
             if (!$course) {
                 $this->flash('Curso não encontrado.', 'error');
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'index-students']);
             }
 
             // Verificar se já está inscrito
@@ -690,13 +690,13 @@ class CoursesController extends AppController
 
             if ($existingEnrollment) {
                 $this->flash('Você já está inscrito neste curso.', 'info');
-                return $this->redirect(['action' => 'view', $courseId]);
+                return $this->redirect(['action' => 'view-students', $courseId]);
             }
 
             // Para cursos pagos, redirecionar para página de pagamento
             if (!$course['is_free']) {
                 $this->flash('Redirecionando para o pagamento...', 'info');
-                return $this->redirect(['action' => 'purchase', $courseId]);
+                return $this->redirect(['action' => 'purchase-students', $courseId]);
             }
 
             // Inscrever no curso
@@ -707,10 +707,10 @@ class CoursesController extends AppController
             $stmt->execute([$studentId, $courseId]);
 
             $this->flash('Inscrição realizada com sucesso! Agora você pode assistir aos vídeos.', 'success');
-            return $this->redirect(['action' => 'view', $courseId]);
+            return $this->redirect(['action' => 'view-students', $courseId]);
         } catch (Exception $e) {
             $this->flash('Erro ao realizar inscrição: ' . $e->getMessage(), 'error');
-            return $this->redirect(['action' => 'view', $courseId]);
+            return $this->redirect(['action' => 'view-students', $courseId]);
         }
     }
 
@@ -782,7 +782,7 @@ class CoursesController extends AppController
         try {
             if (!$this->isStudent()) {
                 $this->flash('Apenas estudantes podem comprar cursos.', 'error');
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'index-students']);
             }
 
             $pdo = $this->getDbConnection();
@@ -795,7 +795,7 @@ class CoursesController extends AppController
 
             if (!$course) {
                 $this->flash('Curso não encontrado.', 'error');
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'index-students']);
             }
 
             // Verificar se já está inscrito
@@ -808,7 +808,7 @@ class CoursesController extends AppController
 
             if ($existingEnrollment) {
                 $this->flash('Você já possui acesso a este curso.', 'info');
-                return $this->redirect(['action' => 'view', $courseId]);
+                return $this->redirect(['action' => 'view-students', $courseId]);
             }
 
             // Se for curso gratuito, redirecionar para inscrição
@@ -826,7 +826,7 @@ class CoursesController extends AppController
                 $stmt->execute([$studentId, $courseId]);
 
                 $this->flash('Compra realizada com sucesso! Agora você tem acesso ao curso.', 'success');
-                return $this->redirect(['action' => 'view', $courseId]);
+                return $this->redirect(['action' => 'view-students', $courseId]);
             }
 
             $this->set('course', $course);
@@ -834,7 +834,7 @@ class CoursesController extends AppController
 
         } catch (Exception $e) {
             $this->flash('Erro ao processar compra: ' . $e->getMessage(), 'error');
-            return $this->redirect(['action' => 'index']);
+            return $this->redirect(['action' => 'index-students']);
         }
     }
 }

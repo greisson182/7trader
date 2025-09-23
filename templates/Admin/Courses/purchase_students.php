@@ -9,12 +9,12 @@ $description = 'Adquira acesso completo ao curso ' . htmlspecialchars($course['t
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item">
-                    <a href="/site/courses" class="text-success text-decoration-none">
+                    <a href="/admin/courses-students" class="text-success text-decoration-none">
                         <i class="fas fa-graduation-cap me-1"></i>Cursos
                     </a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="/site/courses/view/<?= $course['id'] ?>" class="text-success text-decoration-none">
+                    <a href="/admin/courses/view-students/<?= $course['id'] ?>" class="text-success text-decoration-none">
                         <?= htmlspecialchars($course['title']) ?>
                     </a>
                 </li>
@@ -116,7 +116,7 @@ $description = 'Adquira acesso completo ao curso ' . htmlspecialchars($course['t
                         </div>
 
                         <!-- Payment Form -->
-                        <form method="post" action="/site/courses/purchase/<?= $course['id'] ?>">
+                        <form method="post" action="/admin/courses/purchase-students/<?= $course['id'] ?>">
                             <div class="alert alert-info">
                                 <i class="fas fa-info-circle me-2"></i>
                                 <strong>Modo de Desenvolvimento:</strong> 
@@ -145,7 +145,7 @@ $description = 'Adquira acesso completo ao curso ' . htmlspecialchars($course['t
                             </div>
 
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <a href="/site/courses/view/<?= $course['id'] ?>" class="btn btn-outline-secondary me-md-2">
+                                <a href="/admin/courses/view-students/<?= $course['id'] ?>" class="btn btn-outline-secondary me-md-2">
                                     <i class="fas fa-arrow-left me-2"></i>Voltar
                                 </a>
                                 <button type="submit" class="btn btn-success btn-lg">

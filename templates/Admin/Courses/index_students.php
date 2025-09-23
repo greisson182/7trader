@@ -186,18 +186,18 @@ $description = 'Explore nossa biblioteca de cursos de trading e análise técnic
                                 <!-- Ações -->
                                 <div class="mt-auto">
                                     <?php if ($isEnrolled): ?>
-                                        <a href="/site/courses/view/<?= $course['id'] ?>" 
+                                        <a href="/admin/courses/view-students/<?= $course['id'] ?>" 
                                            class="btn btn-success w-100">
                                             <i class="fas fa-play me-2"></i>Continuar Curso
                                         </a>
                                     <?php else: ?>
                                         <div class="d-grid gap-2">
-                                            <a href="/site/courses/view/<?= $course['id'] ?>" 
+                                            <a href="/admin/courses/view-students/<?= $course['id'] ?>" 
                                                class="btn btn-outline-success">
                                                 <i class="fas fa-eye me-2"></i>Ver Detalhes
                                             </a>
                                             <?php if ($course['is_free']): ?>
-                                                <a href="/site/courses/enroll/<?= $course['id'] ?>" 
+                                                <a href="/admin/courses/enroll/<?= $course['id'] ?>" 
                                                    class="btn btn-success">
                                                     <i class="fas fa-graduation-cap me-2"></i>Inscrever-se Grátis
                                                 </a>
