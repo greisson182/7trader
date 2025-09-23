@@ -951,7 +951,7 @@ span.text-danger {
 .stat-number {
   font-size: 2rem;
   font-weight: 700;
-  color: #00ff88;
+  color: #00ff88 !important;
   text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
   transition: all 0.3s ease;
 }

@@ -1,5 +1,5 @@
 <style>
-        /* Estilos específicos da página de contato */
+        /* Estilos específicos da página de contato - Cores Suaves */
         .hero-section {
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
             position: relative;
@@ -14,63 +14,58 @@
             right: 0;
             bottom: 0;
             background: 
-                radial-gradient(circle at 20% 30%, rgba(0, 233, 68, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(0, 233, 68, 0.08) 0%, transparent 50%),
-                linear-gradient(45deg, transparent 49%, rgba(0, 233, 68, 0.02) 50%, transparent 51%);
-            animation: patternMove 20s linear infinite;
+                radial-gradient(circle at 20% 30%, rgba(0, 233, 68, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(0, 233, 68, 0.03) 0%, transparent 50%),
+                linear-gradient(45deg, transparent 49%, rgba(0, 233, 68, 0.01) 50%, transparent 51%);
+            animation: patternMove 25s linear infinite;
         }
 
         @keyframes patternMove {
             0% { transform: translateX(0) translateY(0); }
-            25% { transform: translateX(-10px) translateY(-5px); }
-            50% { transform: translateX(10px) translateY(5px); }
-            75% { transform: translateX(-5px) translateY(10px); }
+            25% { transform: translateX(-5px) translateY(-3px); }
+            50% { transform: translateX(5px) translateY(3px); }
+            75% { transform: translateX(-3px) translateY(5px); }
             100% { transform: translateX(0) translateY(0); }
         }
 
         .market-status {
-            background: linear-gradient(135deg, rgba(0, 233, 68, 0.2), rgba(0, 233, 68, 0.1));
-            border: 1px solid rgba(0, 233, 68, 0.3);
-            color: #00e944;
+            background: linear-gradient(135deg, rgba(0, 233, 68, 0.08), rgba(0, 233, 68, 0.05));
+            border: 1px solid rgba(0, 233, 68, 0.15);
+            color: rgba(0, 233, 68, 0.9);
             padding: 8px 20px;
             border-radius: 25px;
             font-size: 0.9rem;
-            font-weight: 600;
+            font-weight: 500;
             display: inline-block;
             margin-bottom: 20px;
-            animation: statusPulse 3s ease-in-out infinite;
+            animation: statusPulse 4s ease-in-out infinite;
         }
 
         @keyframes statusPulse {
-            0%, 100% { box-shadow: 0 0 10px rgba(0, 233, 68, 0.3); }
-            50% { box-shadow: 0 0 20px rgba(0, 233, 68, 0.5); }
+            0%, 100% { box-shadow: 0 0 8px rgba(0, 233, 68, 0.15); }
+            50% { box-shadow: 0 0 15px rgba(0, 233, 68, 0.25); }
         }
 
         .section-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ffffff 0%, #00e944 50%, #ffffff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 30px rgba(0, 233, 68, 0.5);
+            font-size: 3.2rem;
+            font-weight: 700;
             margin-bottom: 20px;
-            animation: titleGlow 4s ease-in-out infinite;
+            animation: titleGlow 5s ease-in-out infinite;
         }
 
         @keyframes titleGlow {
             0%, 100% { 
-                filter: drop-shadow(0 0 10px rgba(0, 233, 68, 0.3));
+                filter: drop-shadow(0 0 8px rgba(0, 233, 68, 0.15));
             }
             50% { 
-                filter: drop-shadow(0 0 25px rgba(0, 233, 68, 0.6));
+                filter: drop-shadow(0 0 15px rgba(0, 233, 68, 0.3));
             }
         }
 
         .section-subtitle {
-            font-size: 1.3rem;
-            color: #b8b8b8;
-            font-weight: 400;
+            font-size: 1.2rem;
+            color: #c8c8c8;
+            font-weight: 300;
             line-height: 1.6;
             max-width: 600px;
             margin: 0 auto;
@@ -90,107 +85,168 @@
             right: 0;
             bottom: 0;
             background: 
-                radial-gradient(circle at 30% 20%, rgba(0, 233, 68, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 70% 80%, rgba(0, 233, 68, 0.03) 0%, transparent 50%);
-            animation: bgMove 15s ease-in-out infinite;
+                radial-gradient(circle at 30% 20%, rgba(0, 233, 68, 0.02) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(0, 233, 68, 0.015) 0%, transparent 50%);
+            animation: bgMove 20s ease-in-out infinite;
         }
 
         @keyframes bgMove {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 0.8; }
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
         }
 
         .modern-card {
-            background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(15, 15, 15, 0.9) 100%);
-            border: 1px solid rgba(0, 233, 68, 0.2);
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(15, 15, 15, 0.8) 100%);
+            border: 1px solid rgba(0, 233, 68, 0.1);
             border-radius: 20px;
             backdrop-filter: blur(10px);
             box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.3),
-                0 0 20px rgba(0, 233, 68, 0.1);
+                0 8px 25px rgba(0, 0, 0, 0.2),
+                0 0 15px rgba(0, 233, 68, 0.05);
             transition: all 0.3s ease;
         }
 
         .modern-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
             box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.4),
-                0 0 30px rgba(0, 233, 68, 0.2);
-            border-color: rgba(0, 233, 68, 0.4);
+                0 15px 35px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(0, 233, 68, 0.1);
+            border-color: rgba(0, 233, 68, 0.2);
         }
 
         .btn-primary-modern {
-            background: linear-gradient(135deg, #00e944 0%, #00b836 100%);
+            background: linear-gradient(135deg, rgba(0, 233, 68, 0.9) 0%, rgba(0, 184, 54, 0.9) 100%);
             border: none;
             border-radius: 12px;
             padding: 12px 30px;
-            font-weight: 600;
+            font-weight: 500;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 233, 68, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 233, 68, 0.15);
+            color: white;
         }
 
         .btn-primary-modern:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 233, 68, 0.4);
-            background: linear-gradient(135deg, #00ff4d 0%, #00d63f 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 233, 68, 0.25);
+            background: linear-gradient(135deg, rgba(0, 233, 68, 1) 0%, rgba(0, 184, 54, 1) 100%);
+            color: white;
         }
 
         .form-control:focus,
         .form-select:focus {
-            border-color: #00e944;
-            box-shadow: 0 0 0 0.2rem rgba(0, 233, 68, 0.25);
+            border-color: rgba(0, 233, 68, 0.6);
+            box-shadow: 0 0 0 0.2rem rgba(0, 233, 68, 0.15);
         }
 
         /* FAQ Specific Styles */
         .accordion-button:not(.collapsed) {
-            background: linear-gradient(135deg, rgba(0, 233, 68, 0.2), rgba(0, 233, 68, 0.1)) !important;
-            color: #00e944 !important;
-            border-color: rgba(0, 233, 68, 0.3) !important;
-            box-shadow: 0 0 15px rgba(0, 233, 68, 0.2) !important;
+            background: linear-gradient(135deg, rgba(0, 233, 68, 0.08), rgba(0, 233, 68, 0.05)) !important;
+            color: rgba(0, 233, 68, 0.9) !important;
+            border-color: rgba(0, 233, 68, 0.15) !important;
+            box-shadow: 0 0 10px rgba(0, 233, 68, 0.1) !important;
         }
 
         .accordion-button:focus {
-            border-color: rgba(0, 233, 68, 0.4);
-            box-shadow: 0 0 0 0.25rem rgba(0, 233, 68, 0.25);
+            border-color: rgba(0, 233, 68, 0.2);
+            box-shadow: 0 0 0 0.25rem rgba(0, 233, 68, 0.1);
         }
 
         .accordion-button::after {
-            filter: brightness(0) saturate(100%) invert(64%) sepia(98%) saturate(1000%) hue-rotate(100deg) brightness(1.2) contrast(1);
+            filter: brightness(0) saturate(100%) invert(64%) sepia(98%) saturate(1000%) hue-rotate(100deg) brightness(0.8) contrast(1);
         }
 
         .glow-text {
             text-shadow: 
-                0 0 10px rgba(0, 233, 68, 0.5),
-                0 0 20px rgba(0, 233, 68, 0.3),
-                0 0 30px rgba(0, 233, 68, 0.2);
-            animation: textGlow 3s ease-in-out infinite;
+                0 0 8px rgba(0, 233, 68, 0.3),
+                0 0 15px rgba(0, 233, 68, 0.2),
+                0 0 25px rgba(0, 233, 68, 0.1);
+            animation: textGlow 4s ease-in-out infinite;
         }
 
         @keyframes textGlow {
             0%, 100% { 
                 text-shadow: 
-                    0 0 10px rgba(0, 233, 68, 0.5),
-                    0 0 20px rgba(0, 233, 68, 0.3),
-                    0 0 30px rgba(0, 233, 68, 0.2);
+                    0 0 8px rgba(0, 233, 68, 0.3),
+                    0 0 15px rgba(0, 233, 68, 0.2),
+                    0 0 25px rgba(0, 233, 68, 0.1);
             }
             50% { 
                 text-shadow: 
-                    0 0 15px rgba(0, 233, 68, 0.7),
-                    0 0 25px rgba(0, 233, 68, 0.5),
-                    0 0 35px rgba(0, 233, 68, 0.3);
+                    0 0 12px rgba(0, 233, 68, 0.4),
+                    0 0 20px rgba(0, 233, 68, 0.3),
+                    0 0 30px rgba(0, 233, 68, 0.15);
             }
         }
 
         @media (max-width: 768px) {
             .section-title {
-                font-size: 2.5rem;
+                font-size: 2.2rem;
             }
             
             .hero-section {
                 padding: 80px 0 60px;
             }
+        }
+
+        /* Seção de informações de contato com cores suaves */
+        .contact-info-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 60px 0;
+        }
+
+        .contact-info-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 233, 68, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .contact-info-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: rgba(0, 233, 68, 0.2);
+        }
+
+        .contact-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-icon.email {
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.1), rgba(0, 123, 255, 0.05));
+            color: rgba(0, 123, 255, 0.8);
+        }
+
+        .contact-icon.phone {
+            background: linear-gradient(135deg, rgba(0, 233, 68, 0.1), rgba(0, 233, 68, 0.05));
+            color: rgba(0, 233, 68, 0.8);
+        }
+
+        .contact-icon.time {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+            color: rgba(255, 193, 7, 0.8);
+        }
+
+        .contact-info-card h4 {
+            color: #495057;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .contact-info-card p {
+            color: #6c757d;
+            margin-bottom: 8px;
         }
     </style>
 
@@ -287,40 +343,37 @@
 </section>
 
 <!-- Contact Info Section -->
-<section class="py-5 bg-light">
+<section class="contact-info-section">
     <div class="container">
         <div class="row g-4">
             <div class="col-md-4">
-                <div class="text-center">
-                    <div class="bg-primary bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
-                         style="width: 80px; height: 80px;">
-                        <i class="fas fa-envelope fa-2x text-white"></i>
+                <div class="contact-info-card">
+                    <div class="contact-icon email">
+                        <i class="fas fa-envelope fa-2x"></i>
                     </div>
                     <h4 class="h5 fw-bold">E-mail</h4>
-                    <p class="text-muted mb-0">contato@backtest.com.br</p>
-                    <p class="text-muted">suporte@backtest.com.br</p>
+                    <p class="mb-0">contato@backtest.com.br</p>
+                    <p>suporte@backtest.com.br</p>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="text-center">
-                    <div class="bg-success bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
-                         style="width: 80px; height: 80px;">
-                        <i class="fas fa-phone fa-2x text-white"></i>
+                <div class="contact-info-card">
+                    <div class="contact-icon phone">
+                        <i class="fas fa-phone fa-2x"></i>
                     </div>
                     <h4 class="h5 fw-bold">Telefone</h4>
-                    <p class="text-muted mb-0">(11) 9999-9999</p>
-                    <p class="text-muted">Seg à Sex: 9h às 18h</p>
+                    <p class="mb-0">(11) 9999-9999</p>
+                    <p>Seg à Sex: 9h às 18h</p>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="text-center">
-                    <div class="bg-warning bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
-                         style="width: 80px; height: 80px;">
-                        <i class="fas fa-clock fa-2x text-white"></i>
+                <div class="contact-info-card">
+                    <div class="contact-icon time">
+                        <i class="fas fa-clock fa-2x"></i>
                     </div>
                     <h4 class="h5 fw-bold">Horário de Atendimento</h4>
-                    <p class="text-muted mb-0">Segunda à Sexta</p>
-                    <p class="text-muted">09:00 às 18:00</p>
+                    <p class="mb-0">Segunda à Sexta</p>
+                    <p>09:00 às 18:00</p>
                 </div>
             </div>
         </div>
