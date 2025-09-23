@@ -1,8 +1,12 @@
 RewriteEngine On
 
-# Handle Angular Router
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+# Serve static files directly (CSS, JS, Images)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^.*$ - [L]
 
-# Redirect everything to index.php
+# Handle directories
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [L]
+
+# Redirect everything else to index.php (CakePHP routing)
 RewriteRule ^(.*)$ index.php [QSA,L]
